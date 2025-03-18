@@ -1,6 +1,4 @@
 
-# portfolio-website
-=======
 # Personal Portfolio Website
 
 A modern, dynamic portfolio website built with Next.js 13, React, and Tailwind CSS, featuring a futuristic design with interactive elements and smooth animations.
