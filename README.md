@@ -1,3 +1,25 @@
+# Personal Portfolio Website
+
+A modern, dynamic portfolio website built with Next.js 13, React, and Tailwind CSS, featuring a futuristic design with interactive elements and smooth animations.
+
+## Features
+
+- 🎨 Modern, futuristic UI design with animated backgrounds and grid patterns
+- 💫 Interactive floating skill icons with dynamic animations
+- 📱 Fully responsive layout
+- 🚀 Server-side rendering and API routes using Next.js 15.2.2
+- 📂 Dynamic project showcase with detailed case studies
+- ⚡ Optimized performance with next/image and static assets
+
+## Tech Stack
+
+- **Frontend Framework:** Next.js 15.2.2 (App Router)
+- **UI Library:** React 19
+- **Styling:** Tailwind CSS
+- **Icons:** SVG icons with dynamic loading
+- **Deployment:** Vercel
+
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
