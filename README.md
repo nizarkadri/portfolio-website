@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 # portfolio-website
 =======
 # Personal Portfolio Website
