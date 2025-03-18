@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 1, "column": 0}, "map": {"version":3,"sources":["file:///home/nkdev/Portfolio/my-portfolio/app/globals.css"],"sourcesContent":["/* styles/globals.css */\n@tailwind base;\n@tailwind components;\n@tailwind utilities;\n\n/* Optional: Add some basic global styles here */\n/* For example, to set a default font: */\n/*\nbody {\n  font-family: 'Inter', sans-serif; \n}\n*/\n\n/* Custom scrollbar (optional, example for webkit browsers) */\n::-webkit-scrollbar {\n  width: 8px;\n}\n\n::-webkit-scrollbar-track {\n  background: #f1f1f1;\n}\n\n::-webkit-scrollbar-thumb {\n  background: #888;\n  border-radius: 4px;\n}\n\n::-webkit-scrollbar-thumb:hover {\n  background: #555;\n}\n\n/* Dark mode scrollbar (optional)*/\n@media (prefers-color-scheme: dark) {\n    ::-webkit-scrollbar-track {\n      background: #333;\n    }\n\n    ::-webkit-scrollbar-thumb {\n      background: #bbb;\n    }\n\n    ::-webkit-scrollbar-thumb:hover {\n      background: #ddd;\n    }\n}"],"names":[],"mappings":"AACA;;AACA;;AACA;;AAWA;;;;AAIA;;;;AAIA;;;;;AAKA;;;;AAKA;EACI;;;;EAIA;;;;EAIA","debugId":null}}]
+}
