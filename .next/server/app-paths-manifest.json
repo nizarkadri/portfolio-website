@@ -1,6 +1,4 @@
 {
-  "/(root)/about/page": "app/(root)/about/page.js",
-  "/(root)/contact/page": "app/(root)/contact/page.js",
   "/(root)/experience/page": "app/(root)/experience/page.js",
   "/(root)/page": "app/(root)/page.js",
   "/(root)/projects/page": "app/(root)/projects/page.js",
