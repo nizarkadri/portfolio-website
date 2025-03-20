@@ -9,6 +9,7 @@
   import Projects from '../../components/Projects';
   import Experience from '../../components/Experience';
   import Footer from '../../components/Footer';
+  
   const Home = () => {
     useEffect(() => {
       const skillItems = document.querySelectorAll('.skill-item.floating');
@@ -54,6 +55,7 @@
     return (
       <div className="space-y-40">
         {/* Hero Section inspired by NeoCultural Couture */}
+        
         <Hero />
 
         {/* Skills Section - Inspired by uxdesignerstockholm.se */}

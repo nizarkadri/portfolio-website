@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function ExperiencePage() {
+const ExperiencePage: React.FC = () => {
   const experiences = [
     {
       id: 1,
@@ -121,3 +121,5 @@ export default function ExperiencePage() {
     </div>
   );
 }
+
+export default ExperiencePage;
