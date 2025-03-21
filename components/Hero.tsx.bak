@@ -1,128 +1,6 @@
+
 import Link from 'next/link';
 import Image from 'next/image';
-import { useRef, useEffect } from 'react';
-import { motion, useMotionValue, useTransform } from 'framer-motion';
-
-const Logo3D = () => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const rotateX = useMotionValue(0);
-  const rotateY = useMotionValue(0);
-
-  // Transform values for 3D effect
-  const z = useTransform(rotateX, [-40, 40], [8, -8]);
-  
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      if (!containerRef.current) return;
-      
-      const rect = containerRef.current.getBoundingClientRect();
-      const centerX = rect.left + rect.width / 2;
-      const centerY = rect.top + rect.height / 2;
-      
-      // Calculate rotation based on mouse position relative to center
-      const rotX = ((e.clientY - centerY) / 10);
-      const rotY = -((e.clientX - centerX) / 10);
-      
-      rotateX.set(rotX);
-      rotateY.set(rotY);
-    };
-    
-    window.addEventListener('mousemove', handleMouseMove);
-    
-    return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-    };
-  }, [rotateX, rotateY]);
-
-  return (
-    <motion.div 
-      ref={containerRef}
-      className="relative w-80 h-80 perspective-[800px]"
-      initial={{ opacity: 0, scale: 0.9 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.8, delay: 0.3 }}
-    >
-      {/* The cube */}
-      <motion.div
-        className="w-full h-full absolute transform-style-3d"
-        style={{
-          rotateX: rotateX,
-          rotateY: rotateY,
-          z,
-          transformStyle: "preserve-3d"
-        }}
-        animate={{ rotateZ: [0, 360] }}
-        transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-      >
-        {/* Front face */}
-        <motion.div
-          className="absolute w-full h-full flex items-center justify-center bg-[#111111] border-2 border-[#8acea2]/30"
-          style={{
-            transform: "translateZ(40px)",
-            backfaceVisibility: "hidden"
-          }}
-        >
-          <span className="font-black text-5xl md:text-6xl text-white">FULL<span className="text-[#8acea2]">STACK</span></span>
-        </motion.div>
-        
-        {/* Back face */}
-        <motion.div
-          className="absolute w-full h-full flex items-center justify-center bg-[#111111] border-2 border-[#8acea2]/30"
-          style={{
-            transform: "rotateY(180deg) translateZ(40px)",
-            backfaceVisibility: "hidden"
-          }}
-        >
-          <span className="font-black text-5xl md:text-6xl text-[#8acea2]">DEV<span className="text-white">OPS</span></span>
-        </motion.div>
-        
-        {/* Left face */}
-        <motion.div
-          className="absolute w-full h-full flex items-center justify-center bg-[#111111] border-2 border-[#8acea2]/30"
-          style={{
-            transform: "rotateY(-90deg) translateZ(40px)",
-            backfaceVisibility: "hidden"
-          }}
-        >
-          <span className="font-black text-5xl md:text-6xl text-white">FRONT<span className="text-[#8acea2]">END</span></span>
-        </motion.div>
-        
-        {/* Right face */}
-        <motion.div
-          className="absolute w-full h-full flex items-center justify-center bg-[#111111] border-2 border-[#8acea2]/30"
-          style={{
-            transform: "rotateY(90deg) translateZ(40px)",
-            backfaceVisibility: "hidden"
-          }}
-        >
-          <span className="font-black text-5xl md:text-6xl text-[#8acea2]">BACK<span className="text-white">END</span></span>
-        </motion.div>
-        
-        {/* Top face */}
-        <motion.div
-          className="absolute w-full h-full flex items-center justify-center bg-[#111111] border-2 border-[#8acea2]/30"
-          style={{
-            transform: "rotateX(90deg) translateZ(40px)",
-            backfaceVisibility: "hidden"
-          }}
-        >
-          <span className="font-black text-5xl md:text-6xl text-[#8acea2]/80">N<span className="text-white/80">K</span></span>
-        </motion.div>
-        
-        {/* Bottom face */}
-        <motion.div
-          className="absolute w-full h-full flex items-center justify-center bg-[#111111] border-2 border-[#8acea2]/30"
-          style={{
-            transform: "rotateX(-90deg) translateZ(40px)",
-            backfaceVisibility: "hidden"
-          }}
-        >
-          <span className="font-black text-5xl md:text-6xl text-white/80">DEV<span className="text-[#8acea2]/80">ELOPER</span></span>
-        </motion.div>
-      </motion.div>
-    </motion.div>
-  );
-};
 
 const Hero = () => {
     return (
@@ -197,25 +75,31 @@ const Hero = () => {
                 </div>
               </div>
               
-              {/* 3D rotating NK cube */}
+              {/* User photo with anime filter instead of 3D cube */}
               <div className="relative flex justify-center">
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent to-deep-black/90 z-20 md:hidden"></div>
-                <div className="relative w-64 h-64 md:w-[420px] md:h-[420px] group perspective">
-                  <div className="absolute inset-8 rounded-full bg-gradient-to-br from-[#8acea2]/10 to-[#8acea2]/5 blur-[30px] animate-pulse-subtle"></div>
+                <div className="w-64 h-64 md:w-[420px] md:h-[420px] relative group perspective">
+                  <div className="absolute inset-0 rounded-full bg-gradient-to-br from-[#312e81]/30 to-[#5b21b6]/10 blur-[5px] animate-pulse-subtle"></div>
                   
-                  {/* 3D NK Cube */}
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <Logo3D />
+                  {/* Profile image with anime filter */}
+                  <div className="absolute inset-0 rounded-full overflow-hidden border border-white/10 shadow-2xl z-10 animate-float">
+                    <Image 
+                      src="/images/anime-profile.png" 
+                      alt="Nizar K - Anime Style" 
+                      width={500} 
+                      height={500} 
+                      className="object-cover w-full h-full"
+                    />
                   </div>
                   
                   {/* Decorative orb halos */}
-                  <div className="absolute -inset-10 border border-[#8acea2]/10 rounded-full animate-spin-slow"></div>
-                  <div className="absolute -inset-20 border border-[#8acea2]/5 rounded-full animate-reverse-spin-slow"></div>
+                  <div className="absolute -inset-10 border border-white/5 rounded-full animate-spin-slow"></div>
+                  <div className="absolute -inset-20 border border-white/3 rounded-full animate-reverse-spin-slow"></div>
                   
-                  {/* Floating elements around the cube */}
-                  <div className="absolute top-1/4 -right-8 w-16 h-16 rounded-full border border-[#8acea2]/10 animate-float-slow z-30"></div>
-                  <div className="absolute bottom-1/4 -left-12 w-20 h-20 rounded-full bg-gradient-to-br from-[#8acea2]/10 to-transparent backdrop-blur-sm animate-float z-30"></div>
-                  <div className="absolute top-0 left-1/2 w-1 h-24 bg-gradient-to-b from-[#8acea2]/20 to-transparent animate-pulse-subtle z-30"></div>
+                  {/* Floating elements around the image */}
+                  <div className="absolute top-1/4 -right-8 w-16 h-16 rounded-full border border-white/10 animate-float-slow z-30"></div>
+                  <div className="absolute bottom-1/4 -left-12 w-20 h-20 rounded-full bg-gradient-to-br from-[#4f46e5]/10 to-transparent backdrop-blur-sm animate-float z-30"></div>
+                  <div className="absolute top-0 left-1/2 w-1 h-24 bg-gradient-to-b from-white/5 to-transparent animate-pulse-subtle z-30"></div>
                 </div>
               </div>
             </div>
