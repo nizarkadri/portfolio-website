@@ -145,12 +145,12 @@
             </div>
           </div>
         </section> */}
-
+        {/* Experience Preview Section */}
+        <Experience />
         {/* Projects Preview Section */}
         <Projects />
 
-        {/* Experience Preview Section */}
-        <Experience />
+
         <Footer />
       </div>
     );
