@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState, useRef } from 'react';
 import { motion, useReducedMotion, AnimatePresence, useInView, useMotionValue, useTransform } from 'framer-motion';
-import { cn } from '@/lib/utils';
 
 /** Subtle 3D float for each icon - Mobbin-inspired animation */
 const createFloatAnimation = (duration: number, delay: number) => ({
@@ -32,9 +31,14 @@ const createFloatAnimation = (duration: number, delay: number) => ({
 const createPulseAnimation = (duration: number) => ({
   animate: {
     boxShadow: [
-      '0 0 0 rgba(255, 255, 255, 0)',
-      '0 0 8px rgba(255, 255, 255, 0.1)',
-      '0 0 0 rgba(255, 255, 255, 0)',
+      '0 4px 12px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.1)',
+      '0 6px 16px rgba(0, 0, 0, 0.4), inset 0 1px 2px rgba(255, 255, 255, 0.15)',
+      '0 4px 12px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.1)',
+    ],
+    transform: [
+      'translateZ(-2px)',
+      'translateZ(-1px)',
+      'translateZ(-2px)',
     ],
     transition: {
       boxShadow: {
@@ -42,6 +46,12 @@ const createPulseAnimation = (duration: number) => ({
         repeat: Infinity,
         repeatType: 'reverse',
         ease: [0.33, 1, 0.68, 1] // Mobbin-like easing
+      },
+      transform: {
+        duration: duration * 0.5,
+        repeat: Infinity,
+        repeatType: 'reverse',
+        ease: [0.33, 1, 0.68, 1]
       }
     }
   }
@@ -120,34 +130,39 @@ function getSkillGlowColors(skill: string): { from: string; to: string } {
     JavaScript: { from: '#fcd34d', to: '#f59e0b' },
     Typescript: { from: '#60a5fa', to: '#4f46e5' },
     HTML5: { from: '#fb923c', to: '#ea580c' },
-    CSS: { from: '#60a5fa', to: '#2563eb' },
+    CSS: { from: '#456EEF', to: '#2563eb' },
 
     // Backend
     NodeJs: { from: '#4ade80', to: '#16a34a' },
-    Django: { from: '#16a34a', to: '#065f46' },
+    Django: { from: '#FFFFFF', to: '#E5E5E5' },
     Python: { from: '#60a5fa', to: '#facc15' },
     Java: { from: '#fb923c', to: '#ef4444' },
     'C++': { from: '#60a5fa', to: '#4f46e5' },
     C_Sharp: { from: '#68bc71', to: '#37A041' },
+    CSharp: { from: '#68bc71', to: '#37A041' }, // Added alias for C#
 
     // Databases
     MySQL: { from: '#60a5fa', to: '#0284c7' },
     Postgresql: { from: '#60a5fa', to: '#4338ca' },
-    Firebase: { from: '#facc15', to: '#ea580c' },
+    Firebase: { from: '#EEBE32', to: '#F5A623' },
 
     // DevOps & Tools
-    Docker: { from: '#60a5fa', to: '#0891b2' },
+    Docker: { from: '#18B9C5', to: '#0891b2' },
     Kubernetes: { from: '#60a5fa', to: '#4f46e5' },
-    'Git-logo': { from: '#fb923c', to: '#dc2626' },
+    Git: { from: '#fb923c', to: '#dc2626' },
     Jenkins: { from: '#f87171', to: '#b91c1c' },
     VS_Code: { from: '#60a5fa', to: '#4f46e5' },
     AWS: { from: '#fb923c', to: '#c2410c' },
+    GitHub: { from: '#E5E5E5', to: '#CCCCCC' },
+    GitLab: { from: '#FC6D26', to: '#E24329' },
     Microsoft_Azure: { from: '#60a5fa', to: '#4f46e5' },
     Linux: { from: '#facc15', to: '#ea580c' },
     Wordpress: { from: '#60a5fa', to: '#4338ca' },
+    WordPress: { from: '#60a5fa', to: '#4338ca' },
+    Shopify: { from: '#5B8A3C', to: '#479537' },
   };
 
-  return colorMap[skill] || { from: '#3b82f6', to: '#9333ea' };
+  return colorMap[skill] || { from: '#FFFFFF', to: '#FFFFFF' };
 }
 
 /**
@@ -157,14 +172,67 @@ function needsBackground(skill: string): boolean {
   const nonLinearShapes = [
     'React', 'NodeJs', 'Vue', 'Python', 'Docker',
     'Kubernetes', 'Git-logo', 'AWS', 'Firebase',
-    'Jenkins', 'Linux', 'HTML5', 'Nextjs', 'Django'
+    'Jenkins', 'Linux', 'HTML5', 'Nextjs', 'Django',
+    'JavaScript', 'Typescript'
   ];
   return nonLinearShapes.includes(skill);
 }
 
+/**
+ * Check if we should use PNG version of a skill icon
+ */
+function isPngIcon(skill: string): boolean {
+  // List of skills that only have PNG files
+  const pngIcons = [
+    'JavaScript',
+    'Docker',
+    'GitHub',
+    'Azure',
+    'WordPress',
+    'Shopify',
+    'aws',
+    'GitLab',
+    'Nextjs',
+    'Django',
+    'Firebase'
+  ];
+  return pngIcons.includes(skill);
+}
+
+/**
+ * Get SVG tile effect styles for an icon
+ */
+function getSvgTileEffectStyles(skill: string): React.CSSProperties {
+  const glowColors = getSkillGlowColors(skill);
+  
+  return {
+    background: `#FFFFFF`,
+    boxShadow: `0 8px 20px rgba(0, 0, 0, 0.4), inset 0 1px 1px ${glowColors.from}20`,
+    border: `1px solid ${glowColors.from}15`,
+    borderRadius: '14px',
+    padding: '10px',
+    backdropFilter: 'blur(5px)'
+  };
+}
+
+/**
+ * Get PNG specific background styles
+ */
+function getPngBackgroundStyles(skill: string): React.CSSProperties {
+  const glowColors = getSkillGlowColors(skill);
+  
+  return {
+    background: `#FFFFFF`,
+    boxShadow: `0 8px 20px rgba(0, 0, 0, 0.5), inset 0 1px 1px ${glowColors.from}15`,
+    border: `1px solid ${glowColors.from}10`,
+    borderRadius: '14px',
+    padding: '8px',
+  };
+}
+
 // Constants
 const MAX_VISIBLE_SKILLS = 12;
-const ICON_SIZE = 64; // px - smaller for more like Mobbin
+const ICON_SIZE = 80; // Increased from 64 to match the WordPress size
 const ROTATION_INTERVAL = 6000; // Rotate skills every 6 seconds
 
 // SkillIcon component to handle hover state properly
@@ -186,6 +254,9 @@ const SkillIcon = ({
   const [isHovered, setIsHovered] = useState(false);
   const glowColors = getSkillGlowColors(skill);
   const requiresBackground = needsBackground(skill);
+  const isPng = isPngIcon(skill);
+  const isWordPress = skill === 'WordPress' || skill === 'Wordpress';
+  const isJsOrTs = skill === 'JavaScript' || skill === 'Typescript';
 
   // If user prefers no motion, skip fancy animations
   const floatVariants = prefersReducedMotion
@@ -212,7 +283,7 @@ const SkillIcon = ({
         opacity: isHighlighted ? 1 : 0.95,
         scale: isHighlighted ? 1.03 : 1,
         y: 0,
-        zIndex: isHighlighted ? 50 : 'auto',
+        zIndex: isHighlighted ? 50 : isWordPress ? 30 : 'auto',
       }}
       exit={{ opacity: 0, y: -10, transition: { duration: 0.4 } }}
       transition={{
@@ -232,45 +303,64 @@ const SkillIcon = ({
         <motion.div
           variants={pulseVariants}
           animate="animate"
-          className="w-[85%] h-[85%] relative z-10 flex items-center justify-center rounded-2xl overflow-hidden"
+          className="w-[90%] h-[90%] relative z-10 flex items-center justify-center rounded-2xl overflow-hidden"
           style={{
-            boxShadow: '0 10px 30px rgba(0, 0, 0, 0.2)',
-            background: 'linear-gradient(145deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05))',
+            boxShadow: '0 10px 30px rgba(0, 0, 0, 0.3)',
+            background: isJsOrTs ? 'transparent' : 'white',
           }}
         >
-          {/* Clean white background for icons - Mobbin style */}
-          <div className="absolute inset-0 rounded-2xl shadow-lg bg-white z-10" />
+          {/* Clean background for icons - Mobbin style */}
+          {!isJsOrTs && (
+            <div className="absolute inset-0 rounded-2xl shadow-lg bg-white z-10" 
+                style={{
+                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.1)',
+                  transform: 'translateZ(-2px)',
+                  border: '1px solid rgba(255, 255, 255, 0.05)'
+                }}
+            />
+          )}
+
+          {/* Tile Effect - Different styling for PNG vs SVG */}
+          {!isJsOrTs && (
+            <div 
+              className={`absolute ${isPng ? 'inset-[8%]' : 'inset-[10%]'} z-15 rounded-xl`} 
+              style={isPng ? getPngBackgroundStyles(skill) : getSvgTileEffectStyles(skill)}
+            />
+          )}
 
           <img
-            src={`/images/NewIcons/${
-              skill === 'JavaScript' ? `${skill}.png` : `${skill}.svg`
-            }`}
-            alt={skill}
+            src={`/images/NewIcons/${skill === 'C_Sharp' ? 'CSharp' : skill}${isPng ? '.png' : '.svg'}`}
+            alt={skill === 'C_Sharp' ? 'C#' : skill.replace('_', ' ').replace('-', ' ')}
             className={`
               w-full h-full object-contain transition-all duration-300 relative z-20
-              p-3 rounded-2xl
-              filter brightness-100 contrast-100
+              ${isJsOrTs ? '' : 'p-2 rounded-2xl'}
+              ${isPng ? 'filter brightness-100 contrast-100' : 'filter brightness-100 contrast-100 saturate-100'}
+              scale-110
             `}
             style={{
-              imageRendering: 'crisp-edges'
+              imageRendering: 'crisp-edges',
+              mixBlendMode: 'normal'
             }}
           />
         </motion.div>
       </motion.div>
 
       <div className="mt-2 absolute -bottom-6">
-        <span
-          className="text-xs font-medium bg-black/70 px-3 py-1 rounded-full backdrop-blur-sm whitespace-nowrap block transition-all duration-300"
-          style={{
-            color: glowColors.from,
-            boxShadow: `0 4px 12px ${glowColors.from}20`,
-            border: `1px solid ${glowColors.from}20`,
+        <motion.span
+          initial={{ opacity: 0, y: 5 }}
+          animate={{ 
             opacity: isHovered ? 1 : 0,
-            transform: isHovered ? 'translateY(0)' : 'translateY(5px)',
+            y: isHovered ? 0 : 5,
+            scale: isHovered ? 1 : 0.95
           }}
+          transition={{
+            duration: 0.2,
+            ease: [0.33, 1, 0.68, 1]
+          }}
+          className="text-xs font-medium bg-black/80 px-3 py-1 rounded-full backdrop-blur-sm whitespace-nowrap block text-white"
         >
           {skill === 'C_Sharp' ? 'C#' : skill.replace('_', ' ').replace('-', ' ')}
-        </span>
+        </motion.span>
       </div>
     </motion.div>
   );
@@ -320,10 +410,13 @@ const Skills = () => {
         const names: string[] = iconFiles.map((skill: string) =>
           skill.replace('.svg', '').replace('.png', '')
         );
-        setAvailableSkills(names);
+        
+        // Filter out unwanted skills
+        const filteredSkills = names.filter(skill => !shouldExcludeSkill(skill));
+        setAvailableSkills(filteredSkills);
 
         // Only show up to MAX_VISIBLE_SKILLS
-        const initialSkills: string[] = names.slice(0, MAX_VISIBLE_SKILLS);
+        const initialSkills: string[] = filteredSkills.slice(0, MAX_VISIBLE_SKILLS);
         setVisibleSkills(initialSkills);
         
         // Create unique IDs for initial skills
@@ -334,7 +427,7 @@ const Skills = () => {
         // Fallback skill list
         const fallbackSkills: string[] = [
           'JavaScript', 'Typescript', 'React', 'Nextjs', 'NodeJs',
-          'HTML5', 'CSS', 'Git-logo', 'Java'
+          'Git-logo', 'Java'
         ];
         setAvailableSkills(fallbackSkills);
 
@@ -507,6 +600,7 @@ const Skills = () => {
   // Render a single skill icon
   const renderSkillIcon = (skill: string, index: number, skillId: string) => {
     if (!positions || positions.length === 0) return null;
+    if (shouldExcludeSkill(skill) || skill === 'C#') return null; // Extra check to exclude C#
     const position = positions[index % positions.length];
     if (!position) return null;
 
@@ -524,6 +618,15 @@ const Skills = () => {
       />
     );
   };
+
+  // Function to determine if a skill should be excluded
+  function shouldExcludeSkill(skill: string): boolean {
+    const excludedSkills = [
+      'HTML5', 'CSS', 'C++', 'Azure', 'C_Sharp', 'CSharp', 
+      'WordPress', 'Wordpress', 'Microsoft_Azure', 'C#'
+    ];
+    return excludedSkills.includes(skill);
+  }
 
   return (
     <section className="relative py-20 overflow-hidden min-h-[90vh] bg-deep-black">
@@ -579,6 +682,9 @@ const Skills = () => {
                 >
                   {/* Map all skills to 3D sphere points */}
                   {availableSkills && availableSkills.length > 0 && availableSkills.map((skill, index) => {
+                    // Skip rendering excluded skills
+                    if (shouldExcludeSkill(skill)) return null;
+                    
                     // Calculate position on a sphere
                     const radius = 200; // Radius of the sphere
                     const colors = getSkillGlowColors(skill);
@@ -602,13 +708,10 @@ const Skills = () => {
                       fontWeight = 700;
                     } 
                     // Medium-important skills
-                    else if (["JavaScript", "TypeScript", "HTML5", "CSS", "Docker", "Firebase"].includes(skill)) {
+                    else if (["JavaScript", "TypeScript", "Docker", "Firebase"].includes(skill)) {
                       fontSize = "1.5rem";
                       fontWeight = 600;
                     }
-                    
-                    // Calculate text shadow for glow based on skill color
-                    const textShadow = `0 0 8px ${colors.from}, 0 0 12px ${colors.from}`;
                     
                     // Calculate opacity based on z position (to create depth)
                     const zScaled = (z + radius) / (2 * radius); // Scale to 0-1
@@ -624,8 +727,7 @@ const Skills = () => {
                           top: '50%',
                           fontSize,
                           fontWeight,
-                          textShadow,
-                          color: colors.from,
+                          color: '#FFFFFF',
                           transform: `translate(-50%, -50%) translate3d(${x}px, ${y}px, ${z}px)`,
                           opacity,
                           willChange: 'transform, opacity',

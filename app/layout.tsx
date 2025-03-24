@@ -21,7 +21,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`dark ${inter.variable}`}>
-      <body className="bg-deep-black text-soft-white min-h-screen flex flex-col">
+      <body suppressHydrationWarning className="bg-deep-black text-soft-white min-h-screen flex flex-col">
         {/* Background grid */}
         <div className="fixed inset-0 bg-[url('/grid-dark.svg')] bg-center opacity-[0.02] pointer-events-none" />
         
