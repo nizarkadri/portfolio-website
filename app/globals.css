@@ -532,7 +532,6 @@ img[src$=".svg"] {
 
 /* Skills collage styles */
 .skill-word {
-  color: white !important;
   transition: none !important;
   animation: none !important;
   transform-style: flat !important;
@@ -540,4 +539,75 @@ img[src$=".svg"] {
   perspective: none !important;
   backface-visibility: visible !important;
   transform-origin: center center !important;
+}
+
+/* 3D text effects for skill collage */
+.skill-3d {
+  transform-style: preserve-3d !important;
+  transition: transform 0.3s ease-out, text-shadow 0.3s ease-out !important;
+  will-change: transform !important;
+}
+
+.skill-3d:hover {
+  transform: translateZ(30px) scale(1.1) !important;
+  z-index: 20 !important;
+  filter: brightness(1.2) !important;
+}
+
+/* 3D Sphere for skill collage */
+.perspective-container {
+  transform-style: preserve-3d;
+  transform: rotateX(0deg) rotateY(0deg);
+  will-change: transform;
+}
+
+.skill-sphere {
+  transform-style: preserve-3d;
+  opacity: 1;
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.skill-3d {
+  transform-style: preserve-3d !important;
+  transition: transform 0.3s ease-out, text-shadow 0.3s ease-out !important;
+  will-change: transform !important;
+  backface-visibility: visible !important;
+}
+
+.skill-3d:hover {
+  transform: scale(1.2) translateZ(40px) !important;
+  z-index: 1000 !important;
+  filter: brightness(1.5) !important;
+  text-shadow: 0 0 10px currentColor !important;
+}
+
+/* Revolving sphere styles */
+.revolving-sphere {
+  transform-style: preserve-3d;
+}
+
+/* Individual word animations */
+.skill-3d {
+  transform-style: preserve-3d !important;
+  transition: transform 0.3s ease-out, text-shadow 0.3s ease-out !important;
+  will-change: transform !important;
+  backface-visibility: visible !important;
+}
+
+/* Fade in animation for the sphere */
+@keyframes fadeInUp {
+  from { 
+    opacity: 0;
+    transform: translateY(30px) scale(0.9);
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes float3D {
+  0% { transform: translateZ(0px) rotateX(0deg) rotateY(0deg); }
+  50% { transform: translateZ(20px) rotateX(5deg) rotateY(5deg); }
+  100% { transform: translateZ(0px) rotateX(0deg) rotateY(0deg); }
 }

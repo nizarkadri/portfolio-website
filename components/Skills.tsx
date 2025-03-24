@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useEffect, useState, useRef } from 'react';
-import { motion, useReducedMotion, AnimatePresence } from 'framer-motion';
+import { motion, useReducedMotion, AnimatePresence, useInView, useMotionValue, useTransform } from 'framer-motion';
+import { cn } from '@/lib/utils';
 
 /** Subtle 3D float for each icon - Mobbin-inspired animation */
 const createFloatAnimation = (duration: number, delay: number) => ({
@@ -277,7 +278,7 @@ const SkillIcon = ({
 
 const Skills = () => {
   // State variables
-  const [allSkills, setAllSkills] = useState<string[]>([]);
+  const [availableSkills, setAvailableSkills] = useState<string[]>([]);
   const [visibleSkills, setVisibleSkills] = useState<string[]>([]);
   const [displayedSkillIds, setDisplayedSkillIds] = useState<string[]>([]);
   const [positions, setPositions] = useState<PositionProps[]>([]);
@@ -286,8 +287,21 @@ const Skills = () => {
   const [showingOverlay, setShowingOverlay] = useState(false);
   const [currentCompanyIndex, setCurrentCompanyIndex] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
+  const collageRef = useRef<HTMLDivElement>(null);
   const prefersReducedMotion = useReducedMotion();
   const [collageVisible, setCollageVisible] = useState(true);
+  const [activeSkill, setActiveSkill] = useState<string | null>(null);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [isHovered, setIsHovered] = useState(false);
+  const isInView = useInView(containerRef, { once: false, amount: 0.2 });
+  
+  // Framer Motion values for mouse tracking
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+  
+  // Transform mouse position to rotation values
+  const rotateY = useTransform(mouseX, [-1, 1], [30, -30]);
+  const rotateX = useTransform(mouseY, [-1, 1], [-30, 30]);
 
   // List of companies to display in the overlay
   const companies = [
@@ -306,7 +320,7 @@ const Skills = () => {
         const names: string[] = iconFiles.map((skill: string) =>
           skill.replace('.svg', '').replace('.png', '')
         );
-        setAllSkills(names);
+        setAvailableSkills(names);
 
         // Only show up to MAX_VISIBLE_SKILLS
         const initialSkills: string[] = names.slice(0, MAX_VISIBLE_SKILLS);
@@ -322,7 +336,7 @@ const Skills = () => {
           'JavaScript', 'Typescript', 'React', 'Nextjs', 'NodeJs',
           'HTML5', 'CSS', 'Git-logo', 'Java'
         ];
-        setAllSkills(fallbackSkills);
+        setAvailableSkills(fallbackSkills);
 
         const initialSkills: string[] = fallbackSkills.slice(0, MAX_VISIBLE_SKILLS);
         setVisibleSkills(initialSkills);
@@ -340,7 +354,7 @@ const Skills = () => {
 
   // Rotate skills periodically
   useEffect(() => {
-    if (isLoading || allSkills.length <= MAX_VISIBLE_SKILLS) return;
+    if (isLoading || !availableSkills || availableSkills.length <= MAX_VISIBLE_SKILLS) return;
 
     const rotateSkills = () => {
       // Keep 2/3 of current skills, replace 1/3 with new ones
@@ -351,24 +365,24 @@ const Skills = () => {
       const keepSkills = visibleSkills.slice(0, keepCount);
       
       // Get pool of skills not currently displayed
-      const availableSkills = allSkills.filter(skill => !visibleSkills.includes(skill));
+      const unusedSkills = availableSkills.filter(skill => !visibleSkills.includes(skill));
       
-      // If we don't have enough new skills, reuse some from the beginning of allSkills
+      // If we don't have enough new skills, reuse some from the beginning of availableSkills
       let newSkills: string[] = [];
-      if (availableSkills.length >= replaceCount) {
+      if (unusedSkills.length >= replaceCount) {
         // Randomly select from available skills
         newSkills = Array.from({ length: replaceCount }).map(() => {
-          const randomIndex = Math.floor(Math.random() * availableSkills.length);
-          const selected = availableSkills[randomIndex];
+          const randomIndex = Math.floor(Math.random() * unusedSkills.length);
+          const selected = unusedSkills[randomIndex];
           // Remove selected skill to avoid duplicates
-          availableSkills.splice(randomIndex, 1);
+          unusedSkills.splice(randomIndex, 1);
           return selected;
         });
       } else {
         // Use all available skills + some from all skills
         newSkills = [
-          ...availableSkills,
-          ...allSkills.slice(0, replaceCount - availableSkills.length)
+          ...unusedSkills,
+          ...availableSkills.slice(0, replaceCount - unusedSkills.length)
         ];
       }
 
@@ -382,7 +396,7 @@ const Skills = () => {
 
     const intervalId = setInterval(rotateSkills, ROTATION_INTERVAL);
     return () => clearInterval(intervalId);
-  }, [isLoading, allSkills, visibleSkills]);
+  }, [isLoading, availableSkills, visibleSkills]);
 
   // Set positions for skill icons
   useEffect(() => {
@@ -443,8 +457,56 @@ const Skills = () => {
     return () => clearInterval(intervalId);
   }, [isLoading, visibleSkills]);
 
+  // Handle mouse movement for 3D effect using Framer Motion
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!collageRef.current) return;
+      
+      const { left, top, width, height } = collageRef.current.getBoundingClientRect();
+      const centerX = left + width / 2;
+      const centerY = top + height / 2;
+      
+      // Calculate normalized position (-1 to 1)
+      const normalizedX = ((e.clientX - centerX) / (width / 2)) * -1; // Invert for natural feeling
+      const normalizedY = (e.clientY - centerY) / (height / 2);
+      
+      // Smooth the values
+      setMousePosition({
+        x: normalizedX * 20, // Amplify the effect
+        y: normalizedY * 15  // Less effect on the Y axis
+      });
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+    };
+  }, []);
+
+  // Auto-rotation effect
+  useEffect(() => {
+    if (!isHovered) {
+      const interval = setInterval(() => {
+        setMousePosition(prev => ({
+          x: prev.x + 0.05,
+          y: prev.y
+        }));
+      }, 20);
+      
+      return () => clearInterval(interval);
+    }
+  }, [isHovered]);
+
+  // Handle clicking on a skill
+  const handleSkillClick = (skill: string) => {
+    setActiveSkill(skill);
+    // You could add additional actions here if needed
+  };
+
   // Render a single skill icon
   const renderSkillIcon = (skill: string, index: number, skillId: string) => {
+    if (!positions || positions.length === 0) return null;
     const position = positions[index % positions.length];
     if (!position) return null;
 
@@ -478,79 +540,136 @@ const Skills = () => {
           <div className="text-center">Loading skills...</div>
         ) : (
           <div ref={containerRef} className="relative w-full h-[600px] grid place-items-center">
-            {/* Skill text collage in the middle - Static, fixed position */}
-            <div 
-              className="absolute z-10 pointer-events-none"
-              style={{
-                position: 'absolute',
-                height: '60vh',
-                width: '100%', 
-                maxWidth: '800px',
-                left: '50%',
-                top: '50%',
-                transform: 'translate(-50%, -50%)',
-                overflow: 'hidden'
-              }}
-            >
-              {allSkills.map((skill, i) => {
-                // Use a static seed for consistent positioning
-                const seed = i * 100;
-                const fixedRandomX = ((seed % 73) / 73 * 50) - 25; // -25% to 25% consistent position
-                const fixedRandomY = ((seed % 91) / 91 * 40) - 20; // -20% to 20% consistent position
-                const fixedRotation = ((seed % 11) / 11 * 10) - 5; // -5 to 5 degrees
-                
-                // Make certain skills bigger - mimic the reference image
-                const prominentSkills = ['Java', 'Python', 'React', 'NodeJs'];
-                const mediumSkills = ['JavaScript', 'Typescript', 'HTML5', 'CSS', 'Docker', 'Firebase'];
-                
-                // Font sizes for the reference
-                let fontSize = '0.75rem';
-                let fontWeight = 400;
-                let opacity = 0.7; // Lighter opacity for less important words
-                
-                if (prominentSkills.includes(skill)) {
-                  fontSize = '2.2rem';
-                  fontWeight = 700;
-                  opacity = 1;
-                } else if (mediumSkills.includes(skill)) {
-                  fontSize = '1.5rem';
-                  fontWeight = 500;
-                  opacity = 0.9;
-                }
-
-                return (
-                  <div 
-                    key={`collage-static-${skill}-${i}`} 
-                    className="skill-word text-white"
-                    style={{
-                      fontSize,
-                      fontWeight,
-                      color: '#FFFFFF',
-                      position: 'absolute',
-                      left: `calc(50% + ${fixedRandomX}%)`,
-                      top: `calc(50% + ${fixedRandomY}%)`,
-                      transform: `translate(-50%, -50%) rotate(${fixedRotation}deg)`,
-                      opacity,
-                      zIndex: prominentSkills.includes(skill) ? 10 : (mediumSkills.includes(skill) ? 5 : 1),
-                      whiteSpace: 'nowrap',
-                      userSelect: 'none',
-                      pointerEvents: 'none'
-                    }}
-                  >
-                    {skill === 'C_Sharp' ? 'C#' : skill.replace('_', ' ').replace('-', ' ')}
-                  </div>
-                );
-              })}
-            </div>
-
             {/* Skill icons floating layer */}
-            <div className="absolute inset-0 pointer-events-none">
+            <div className="absolute inset-0 pointer-events-none z-20">
               {/* Make it pointer-events-auto to enable interactions */}
               <div className="relative w-full h-full pointer-events-auto">
                 <AnimatePresence mode="sync">
                   {visibleSkills.map((skill: string, index: number) => renderSkillIcon(skill, index, displayedSkillIds[index] || `skill-${index}-${Date.now()}`))}
                 </AnimatePresence>
               </div>
+            </div>
+
+            {/* Skill text collage in the middle */}
+            <div className="absolute inset-0 z-10">
+              <motion.div 
+                className="perspective-container skill-sphere"
+                ref={collageRef} 
+                style={{ 
+                  position: 'absolute',
+                  height: '100%', 
+                  width: '100%',
+                  perspective: '1200px',
+                  transformStyle: 'preserve-3d'
+                }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ opacity: { duration: 0.5 } }}
+                onHoverStart={() => setIsHovered(true)}
+                onHoverEnd={() => setIsHovered(false)}
+              >
+                {/* Rotating container */}
+                <motion.div 
+                  style={{ 
+                    width: '100%', 
+                    height: '100%', 
+                    transformStyle: 'preserve-3d',
+                    transform: `rotateX(${mousePosition.y}deg) rotateY(${mousePosition.x}deg)`
+                  }}
+                >
+                  {/* Map all skills to 3D sphere points */}
+                  {availableSkills && availableSkills.length > 0 && availableSkills.map((skill, index) => {
+                    // Calculate position on a sphere
+                    const radius = 200; // Radius of the sphere
+                    const colors = getSkillGlowColors(skill);
+                    
+                    // Generate sphere positions
+                    const phi = Math.acos(-1 + (2 * index) / availableSkills.length);
+                    const theta = Math.sqrt(availableSkills.length * Math.PI) * phi;
+                    
+                    // Convert to Cartesian coordinates
+                    const x = radius * Math.cos(theta) * Math.sin(phi);
+                    const y = radius * Math.sin(theta) * Math.sin(phi);
+                    const z = radius * Math.cos(phi);
+                    
+                    // Determine font size and weight based on importance
+                    let fontSize = "1rem";
+                    let fontWeight = 400;
+                    
+                    // Prominent skills (bigger)
+                    if (["Java", "Python", "React", "NodeJs"].includes(skill)) {
+                      fontSize = "2.2rem";
+                      fontWeight = 700;
+                    } 
+                    // Medium-important skills
+                    else if (["JavaScript", "TypeScript", "HTML5", "CSS", "Docker", "Firebase"].includes(skill)) {
+                      fontSize = "1.5rem";
+                      fontWeight = 600;
+                    }
+                    
+                    // Calculate text shadow for glow based on skill color
+                    const textShadow = `0 0 8px ${colors.from}, 0 0 12px ${colors.from}`;
+                    
+                    // Calculate opacity based on z position (to create depth)
+                    const zScaled = (z + radius) / (2 * radius); // Scale to 0-1
+                    const opacity = Math.max(0.4, zScaled);
+                            
+                    return (
+                      <motion.div
+                        key={skill}
+                        className={`skill-word ${activeSkill === skill ? 'active-skill' : ''}`}
+                        style={{
+                          position: 'absolute',
+                          left: '50%',
+                          top: '50%',
+                          fontSize,
+                          fontWeight,
+                          textShadow,
+                          color: colors.from,
+                          transform: `translate(-50%, -50%) translate3d(${x}px, ${y}px, ${z}px)`,
+                          opacity,
+                          willChange: 'transform, opacity',
+                        }}
+                        initial={{
+                          opacity: 0,
+                          x: (Math.random() - 0.5) * 1000,
+                          y: (Math.random() - 0.5) * 1000,
+                          z: (Math.random() - 0.5) * 1000,
+                          rotateX: Math.random() * 360,
+                          rotateY: Math.random() * 360,
+                          rotateZ: Math.random() * 360,
+                          scale: 0
+                        }}
+                        animate={{
+                          opacity,
+                          x: x,
+                          y: y,
+                          z: z,
+                          rotateX: 0,
+                          rotateY: 0,
+                          rotateZ: 0,
+                          scale: 1
+                        }}
+                        transition={{
+                          duration: 2,
+                          delay: index * 0.05,
+                          type: "spring",
+                          stiffness: 50,
+                          damping: 20
+                        }}
+                        whileHover={{
+                          scale: 1.3,
+                          z: z + 30,
+                          transition: { duration: 0.3 }
+                        }}
+                        onClick={() => handleSkillClick(skill)}
+                      >
+                        {skill}
+                      </motion.div>
+                    );
+                  })}
+                </motion.div>
+              </motion.div>
             </div>
 
             {/* Center overlay for company logos */}
