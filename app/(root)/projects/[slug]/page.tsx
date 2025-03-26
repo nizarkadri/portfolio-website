@@ -1,22 +1,130 @@
 // app/projects/[slug]/page.tsx
 
-import React from 'react';
+'use client';
+
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { notFound } from 'next/navigation';
-import type { Metadata } from 'next';
-import { getAllProjectSlugs, getProjectData } from '../../../api/projects';
+import { useParams } from 'next/navigation';
 
-interface PageProps {
-    params: { slug: string };
+interface Project {
+    slug: string;
+    title: string;
+    description: string;
+    imageUrl: string;
+    technologies: string[];
+    contentHtml: string;
 }
 
-export default async function ProjectPage({ params }: PageProps) {
-    // Get real project data from markdown files
-    const project = await getProjectData(params.slug);
+export default function ProjectPage() {
+    const params = useParams();
+    const slug = params.slug as string;
+    
+    const [project, setProject] = useState<Project | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState("");
+    
+    useEffect(() => {
+        // Fetch project data from API
+        const fetchProject = async () => {
+            try {
+                const response = await fetch(`/api/projects/${slug}`);
+                
+                if (!response.ok) {
+                    if (response.status === 404) {
+                        throw new Error('Project not found');
+                    }
+                    throw new Error('Failed to fetch project');
+                }
+                
+                const data = await response.json();
+                setProject(data);
+            } catch (err) {
+                console.error('Error fetching project:', err);
+                setError(err instanceof Error ? err.message : 'Failed to load project');
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        
+        if (slug) {
+            fetchProject();
+        }
+    }, [slug]);
 
+    // Loading state
+    if (isLoading) {
+        return (
+            <div className="min-h-screen py-20">
+                <div className="container mx-auto px-4">
+                    <Link 
+                        href="/projects" 
+                        className="text-white/70 hover:text-blue-400 flex items-center mb-10 text-sm transition-colors duration-300 group"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="mr-2 h-4 w-4 transition-transform duration-300 group-hover:-translate-x-1" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M9.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L7.414 9H15a1 1 0 110 2H7.414l2.293 2.293a1 1 0 010 1.414z" clipRule="evenodd" />
+                        </svg>
+                        Back to Projects
+                    </Link>
+                    
+                    <div className="h-96 flex items-center justify-center">
+                        <div className="animate-pulse text-xl text-white">Loading project...</div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+    
+    // Error state
+    if (error) {
+        return (
+            <div className="min-h-screen py-20">
+                <div className="container mx-auto px-4">
+                    <Link 
+                        href="/projects" 
+                        className="text-white/70 hover:text-blue-400 flex items-center mb-10 text-sm transition-colors duration-300 group"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="mr-2 h-4 w-4 transition-transform duration-300 group-hover:-translate-x-1" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M9.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L7.414 9H15a1 1 0 110 2H7.414l2.293 2.293a1 1 0 010 1.414z" clipRule="evenodd" />
+                        </svg>
+                        Back to Projects
+                    </Link>
+                    
+                    <div className="text-center py-20">
+                        <p className="text-red-500 text-xl">{error}</p>
+                        <button 
+                            onClick={() => window.location.reload()} 
+                            className="mt-4 px-4 py-2 bg-white/10 text-white rounded-md hover:bg-white/20"
+                        >
+                            Try Again
+                        </button>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+    
+    // If project data is not available
     if (!project) {
-        return notFound();
+        return (
+            <div className="min-h-screen py-20">
+                <div className="container mx-auto px-4">
+                    <Link 
+                        href="/projects" 
+                        className="text-white/70 hover:text-blue-400 flex items-center mb-10 text-sm transition-colors duration-300 group"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="mr-2 h-4 w-4 transition-transform duration-300 group-hover:-translate-x-1" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M9.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L7.414 9H15a1 1 0 110 2H7.414l2.293 2.293a1 1 0 010 1.414z" clipRule="evenodd" />
+                        </svg>
+                        Back to Projects
+                    </Link>
+                    
+                    <div className="text-center py-20">
+                        <p className="text-red-500 text-xl">Project not found</p>
+                    </div>
+                </div>
+            </div>
+        );
     }
 
     return (
@@ -87,7 +195,7 @@ export default async function ProjectPage({ params }: PageProps) {
                             
                             <div 
                                 className="prose prose-invert prose-lg max-w-none prose-p:text-soft-white/80 prose-headings:text-white prose-li:text-soft-white/70 prose-a:text-blue-400 prose-strong:text-blue-300 prose-pre:bg-deep-black/50 prose-pre:border prose-pre:border-white/5 prose-code:text-blue-300"
-                                dangerouslySetInnerHTML={{ __html: project.contentHtml }}
+                                dangerouslySetInnerHTML={{ __html: project.contentHtml || '' }}
                             >
                             </div>
                         </div>
@@ -96,25 +204,4 @@ export default async function ProjectPage({ params }: PageProps) {
             </div>
         </div>
     );
-}
-
-export async function generateStaticParams() {
-    const projects = getAllProjectSlugs();
-    return projects;
-}
-
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-    // Get real project data for metadata
-    const project = await getProjectData(params.slug);
-    
-    if (!project) {
-        return {
-            title: 'Project Not Found'
-        };
-    }
-
-    return {
-        title: project.title,
-        description: project.description,
-    };
 }

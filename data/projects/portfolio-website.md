@@ -1,7 +1,7 @@
 ---
 title: Portfolio Website
 description: A personal portfolio website showcasing my skills and projects.
-imageUrl: /images/project-placeholder.jpg
+imageUrl: /images/Projects/portfolio-website.png
 slug: portfolio-website
 technologies: ['Next.js', 'TypeScript', 'Tailwind CSS']
 ---

@@ -1,7 +1,7 @@
 ---
 title: Skin Disease Detection App
 description: A full-stack web app that detects 20+ skin diseases from uploaded images with 92% accuracy.
-imageUrl: /images/skin-disease-detection.jpg  # Place this image in your public/images folder
+imageUrl: /images/Projects/skin-disease-detection.jpg  # Place this image in your public/images folder
 slug: skin-disease-detection
 technologies: ['Node.js', 'React', 'MongoDB', 'Microsoft Custom Vision AI', 'Git']
 ---
@@ -19,7 +19,7 @@ This project was developed to provide a quick and accurate way to identify skin 
 
 ## Technologies Used
   * Node.js
-  * React
+  * Reacts
   * MongoDB
   * Microsoft Custom Vision AI
   * Git

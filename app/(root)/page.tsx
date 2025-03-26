@@ -60,96 +60,12 @@
 
         {/* Skills Section - Inspired by uxdesignerstockholm.se */}
         <Skills />
-        {/* <section className="py-20">
-          <div className="container px-4 mx-auto">
-            <div className="flex flex-col items-center mb-12">
-              <h2 className="text-4xl font-bold mb-4 tracking-tight">Skills</h2>
-              <p className="text-xl text-gray-400 text-center max-w-3xl">
-                Technologies and languages I work with
-              </p>
-            </div>
-            
-            <div className="floating-skills-container">
-              <div className="skill-item floating">
-                <img src="/images/icons/java.svg" alt="Java" className="skill-logo" />
-                <span>Java</span>
-              </div>
-              <div className="skill-item floating">
-                <img src="/images/icons/python.svg" alt="Python" className="skill-logo" />
-                <span>Python</span>
-              </div>
-              <div className="skill-item floating">
-                <img src="/images/icons/csharp.svg" alt="C#" className="skill-logo" />
-                <span>C#</span>
-              </div>
-              <div className="skill-item floating">
-                <img src="/images/icons/cpp.svg" alt="C++" className="skill-logo" />
-                <span>C++</span>
-              </div>
-              <div className="skill-item floating">
-                <img src="/images/icons/javascript.svg" alt="JavaScript" className="skill-logo" />
-                <span>JavaScript</span>
-              </div>
-              <div className="skill-item floating">
-                <img src="/images/icons/typescript.svg" alt="TypeScript" className="skill-logo" />
-                <span>TypeScript</span>
-              </div>
-              <div className="skill-item floating">
-                <img src="/images/icons/react.svg" alt="React" className="skill-logo" />
-                <span>React</span>
-              </div>
-              <div className="skill-item floating">
-                <img src="/images/icons/nodejs.svg" alt="Node.js" className="skill-logo" />
-                <span>Node.js</span>
-              </div>
-              <div className="skill-item floating">
-                <img src="/images/icons/nextjs.svg" alt="Next.js" className="skill-logo" />
-                <span>Next.js</span>
-              </div>
-              <div className="skill-item floating">
-                <img src="/images/icons/vuejs.svg" alt="Vue.js" className="skill-logo" />
-                <span>Vue.js</span>
-              </div>
-              <div className="skill-item floating">
-                <img src="/images/icons/restapi.svg" alt="REST API" className="skill-logo" />
-                <span>REST API</span>
-              </div>
-              <div className="skill-item floating">
-                <img src="/images/icons/wordpress.svg" alt="WordPress" className="skill-logo" />
-                <span>WordPress</span>
-              </div>
-              <div className="skill-item floating">
-                <img src="/images/icons/mysql.svg" alt="MySQL" className="skill-logo" />
-                <span>MySQL</span>
-              </div>
-              <div className="skill-item floating">
-                <img src="/images/icons/mongodb.svg" alt="MongoDB" className="skill-logo" />
-                <span>MongoDB</span>
-              </div>
-              <div className="skill-item floating">
-                <img src="/images/icons/git.svg" alt="Git" className="skill-logo" />
-                <span>Git</span>
-              </div>
-              <div className="skill-item floating">
-                <img src="/images/icons/docker.svg" alt="Docker" className="skill-logo" />
-                <span>Docker</span>
-              </div>
-              <div className="skill-item floating">
-                <img src="/images/icons/aws.svg" alt="AWS" className="skill-logo" />
-                <span>AWS</span>
-              </div>
-              <div className="skill-item floating">
-                <img src="/images/icons/azure.svg" alt="Azure" className="skill-logo" />
-                <span>Azure</span>
-              </div>
-            </div>
-          </div>
-        </section> */}
+
         {/* Experience Preview Section */}
         <Experience />
+        
         {/* Projects Preview Section */}
         <Projects />
-
 
         <Footer />
       </div>

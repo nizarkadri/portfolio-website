@@ -162,7 +162,7 @@ function getSkillGlowColors(skill: string): { from: string; to: string } {
     Shopify: { from: '#5B8A3C', to: '#479537' },
   };
 
-  return colorMap[skill] || { from: '#FFFFFF', to: '#FFFFFF' };
+  return colorMap[skill] || { from: '#3B82F6', to: '#3B82F6' };
 }
 
 /**
@@ -206,7 +206,7 @@ function getSvgTileEffectStyles(skill: string): React.CSSProperties {
   const glowColors = getSkillGlowColors(skill);
   
   return {
-    background: `#FFFFFF`,
+    background: `#18181B`,
     boxShadow: `0 8px 20px rgba(0, 0, 0, 0.4), inset 0 1px 1px ${glowColors.from}20`,
     border: `1px solid ${glowColors.from}15`,
     borderRadius: '14px',
@@ -222,7 +222,7 @@ function getPngBackgroundStyles(skill: string): React.CSSProperties {
   const glowColors = getSkillGlowColors(skill);
   
   return {
-    background: `#FFFFFF`,
+    background: `#18181B`,
     boxShadow: `0 8px 20px rgba(0, 0, 0, 0.5), inset 0 1px 1px ${glowColors.from}15`,
     border: `1px solid ${glowColors.from}10`,
     borderRadius: '14px',
@@ -306,12 +306,12 @@ const SkillIcon = ({
           className="w-[90%] h-[90%] relative z-10 flex items-center justify-center rounded-2xl overflow-hidden"
           style={{
             boxShadow: '0 10px 30px rgba(0, 0, 0, 0.3)',
-            background: isJsOrTs ? 'transparent' : 'white',
+            background: isJsOrTs ? 'transparent' : '#18181B',
           }}
         >
           {/* Clean background for icons - Mobbin style */}
           {!isJsOrTs && (
-            <div className="absolute inset-0 rounded-2xl shadow-lg bg-white z-10" 
+            <div className="absolute inset-0 rounded-2xl shadow-lg bg-[#18181B] z-10" 
                 style={{
                   boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.1)',
                   transform: 'translateZ(-2px)',
@@ -357,7 +357,7 @@ const SkillIcon = ({
             duration: 0.2,
             ease: [0.33, 1, 0.68, 1]
           }}
-          className="text-xs font-medium bg-black/80 px-3 py-1 rounded-full backdrop-blur-sm whitespace-nowrap block text-white"
+          className="text-xs font-medium bg-[#1F2937] px-3 py-1 rounded-full backdrop-blur-sm whitespace-nowrap block text-[#E5E7EB]"
         >
           {skill === 'C_Sharp' ? 'C#' : skill.replace('_', ' ').replace('-', ' ')}
         </motion.span>
@@ -629,18 +629,18 @@ const Skills = () => {
   }
 
   return (
-    <section className="relative py-20 overflow-hidden min-h-[90vh] bg-deep-black">
+    <section className="relative py-20 overflow-hidden min-h-[90vh] bg-[#0E0E0E]">
       <div className="container px-4 mx-auto">
         {/* Title - Centered like Mobbin's layout */}
         <div className="flex flex-col items-center mb-20">
-          <h2 className="text-4xl font-bold mb-4 tracking-tight">Skills</h2>
-          <p className="text-xl text-gray-400 text-center max-w-3xl">
+          <h2 className="text-4xl font-bold mb-4 tracking-tight text-[#FFFFFF]">Skills</h2>
+          <p className="text-xl text-[#9CA3AF] text-center max-w-3xl">
             Technologies and languages I work with
           </p>
         </div>
 
         {isLoading ? (
-          <div className="text-center">Loading skills...</div>
+          <div className="text-center text-[#FFFFFF]">Loading skills...</div>
         ) : (
           <div ref={containerRef} className="relative w-full h-[600px] grid place-items-center">
             {/* Skill icons floating layer */}
@@ -727,7 +727,7 @@ const Skills = () => {
                           top: '50%',
                           fontSize,
                           fontWeight,
-                          color: '#FFFFFF',
+                          color: '#B8E62D',
                           transform: `translate(-50%, -50%) translate3d(${x}px, ${y}px, ${z}px)`,
                           opacity,
                           willChange: 'transform, opacity',
