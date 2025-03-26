@@ -60,6 +60,9 @@ module.exports = {
             950: '#0a0a0a',
           },
         },
+        backgroundImage: {
+          'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+        },
         borderRadius: {
           none: '0',
           'sm': '0.25rem',

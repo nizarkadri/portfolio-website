@@ -3,7 +3,7 @@ import fs from 'fs';
 import path from 'path';
 
 export async function GET() {
-  const iconsDirectory = path.join(process.cwd(), 'public/images/icons');
+  const iconsDirectory = path.join(process.cwd(), 'public/images/NewIcons');
   
   try {
     // Read directory and get file names
