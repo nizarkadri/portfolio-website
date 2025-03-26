@@ -21,28 +21,7 @@ const Logo3D = () => {
   // Transform values for 3D effect
   const z = useTransform(rotateX, [-40, 40], [8, -8]);
   
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      if (!containerRef.current) return;
-      
-      const rect = containerRef.current.getBoundingClientRect();
-      const centerX = rect.left + rect.width / 2;
-      const centerY = rect.top + rect.height / 2;
-      
-      // Calculate rotation based on mouse position relative to center
-      const rotX = ((e.clientY - centerY) / 10);
-      const rotY = -((e.clientX - centerX) / 10);
-      
-      rotateX.set(rotX);
-      rotateY.set(rotY);
-    };
-    
-    window.addEventListener('mousemove', handleMouseMove);
-    
-    return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-    };
-  }, [rotateX, rotateY]);
+  // Removed mouse tracking effect
 
   return (
     <motion.div 
@@ -56,9 +35,9 @@ const Logo3D = () => {
       <motion.div
         className="w-full h-full absolute transform-style-3d"
         style={{
-          rotateX: rotateX,
-          rotateY: rotateY,
-          z,
+          rotateX: 15,
+          rotateY: 15,
+          z: 0,
           transformStyle: "preserve-3d"
         }}
         animate={{ rotateZ: [0, 360] }}
@@ -137,10 +116,7 @@ const Logo3D = () => {
 const Hero = () => {
     return (
         <section className="relative min-h-[100vh] flex items-center overflow-hidden">
-          {/* Simplified background */}
-          <div className="absolute inset-0 bg-[#0E0E0E] z-0">
-            <div className="absolute inset-0 opacity-20 bg-[url('/images/tech-background.jpg')] bg-cover bg-center"></div>
-          </div>
+          {/* Removed tech background image */}
           
           {/* Floating 3D spheres */}
           <div className="absolute inset-0 z-0 overflow-hidden">

@@ -366,6 +366,90 @@ const SkillIcon = ({
   );
 };
 
+const SectionTitle = () => {
+  const titleVariants = {
+    initial: { opacity: 0, y: 20 },
+    animate: { 
+      opacity: 1, 
+      y: 0,
+      transition: {
+        duration: 0.8,
+        ease: [0.22, 1, 0.36, 1]
+      }
+    }
+  };
+  
+  const highlightVariants = {
+    initial: { width: 0 },
+    animate: { 
+      width: "100%",
+      transition: {
+        duration: 1.2,
+        ease: [0.22, 1, 0.36, 1],
+        delay: 0.3
+      }
+    }
+  };
+  
+  const decorationVariants = {
+    initial: { opacity: 0, scale: 0.8 },
+    animate: { 
+      opacity: 1, 
+      scale: 1,
+      transition: {
+        duration: 0.6,
+        ease: "easeOut",
+        delay: 0.6
+      }
+    }
+  };
+  
+  return (
+    <div className="flex flex-col items-center mb-16">
+      <motion.div
+        initial="initial"
+        whileInView="animate"
+        viewport={{ once: true, margin: "-100px" }}
+        className="relative"
+      >
+        <motion.h2 
+          className="text-5xl md:text-6xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-[#B8E62D] to-[#89D32D] mb-2"
+          variants={titleVariants}
+        >
+          Skills & Expertise
+        </motion.h2>
+        <motion.div 
+          className="absolute -bottom-2 left-0 h-1 bg-[#B8E62D]/30 rounded-full"
+          variants={highlightVariants}
+        />
+        <motion.div 
+          className="absolute -right-8 -top-6 text-[#B8E62D] opacity-50"
+          variants={decorationVariants}
+        >
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 17L6.12 21.5L8 14.87L2 10.5L8.6 10.13L12 4L15.4 10.13L22 10.5L16 14.87L17.88 21.5L12 17Z" fill="currentColor"/>
+          </svg>
+        </motion.div>
+      </motion.div>
+      <motion.p 
+        className="text-xl text-soft-white/70 text-center max-w-3xl mt-2"
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ 
+          opacity: 1, 
+          y: 0,
+          transition: {
+            duration: 0.5,
+            delay: 0.4
+          }
+        }}
+        viewport={{ once: true, margin: "-100px" }}
+      >
+        Technologies and frameworks I work with
+      </motion.p>
+    </div>
+  );
+};
+
 const Skills = () => {
   // State variables
   const [availableSkills, setAvailableSkills] = useState<string[]>([]);
@@ -552,44 +636,17 @@ const Skills = () => {
 
   // Handle mouse movement for 3D effect using Framer Motion
   useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      if (!collageRef.current) return;
-      
-      const { left, top, width, height } = collageRef.current.getBoundingClientRect();
-      const centerX = left + width / 2;
-      const centerY = top + height / 2;
-      
-      // Calculate normalized position (-1 to 1)
-      const normalizedX = ((e.clientX - centerX) / (width / 2)) * -1; // Invert for natural feeling
-      const normalizedY = (e.clientY - centerY) / (height / 2);
-      
-      // Smooth the values
-      setMousePosition({
-        x: normalizedX * 20, // Amplify the effect
-        y: normalizedY * 15  // Less effect on the Y axis
-      });
-    };
-
-    window.addEventListener('mousemove', handleMouseMove);
+    const autoRotationInterval = setInterval(() => {
+      setMousePosition(prev => ({
+        x: prev.x + 0.05,
+        y: Math.sin(Date.now() / 2000) * 5 // Gentle up-down movement based on time
+      }));
+    }, 20);
     
     return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
+      clearInterval(autoRotationInterval);
     };
   }, []);
-
-  // Auto-rotation effect
-  useEffect(() => {
-    if (!isHovered) {
-      const interval = setInterval(() => {
-        setMousePosition(prev => ({
-          x: prev.x + 0.05,
-          y: prev.y
-        }));
-      }, 20);
-      
-      return () => clearInterval(interval);
-    }
-  }, [isHovered]);
 
   // Handle clicking on a skill
   const handleSkillClick = (skill: string) => {
@@ -629,16 +686,13 @@ const Skills = () => {
   }
 
   return (
-    <section className="relative py-20 overflow-hidden min-h-[90vh] bg-[#0E0E0E]">
+    <section className="relative py-24" id="skills">
+      <h2 className="huge-text absolute -top-8 left-0 opacity-40 text-[#B8E62D]/10 font-bold select-none">SKILLS</h2>
+      
+      {/* Replace the existing title with our new animated title */}
+      <SectionTitle />
+      
       <div className="container px-4 mx-auto">
-        {/* Title - Centered like Mobbin's layout */}
-        <div className="flex flex-col items-center mb-20">
-          <h2 className="text-4xl font-bold mb-4 tracking-tight text-[#FFFFFF]">Skills</h2>
-          <p className="text-xl text-[#9CA3AF] text-center max-w-3xl">
-            Technologies and languages I work with
-          </p>
-        </div>
-
         {isLoading ? (
           <div className="text-center text-[#FFFFFF]">Loading skills...</div>
         ) : (

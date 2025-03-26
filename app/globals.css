@@ -10,7 +10,7 @@
   --mid-gray: #a0a0a0;
   --dark-gray: #333333;
   --off-black: #1a1a1a;
-  --deep-black: #080808;
+  --deep-black: #000000;
   --transition-speed: 0.3s;
 }
 
@@ -18,7 +18,7 @@
   body {
     @apply antialiased;
     font-feature-settings: "ss01", "ss02", "cv01", "cv02";
-    background-color: var(--deep-black);
+    background-color: #000000;
   }
   
   h1, h2, h3, h4, h5, h6 {

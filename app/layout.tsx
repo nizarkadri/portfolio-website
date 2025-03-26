@@ -21,10 +21,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`dark ${inter.variable}`}>
-      <body suppressHydrationWarning className="bg-[#0E0E0E] text-soft-white min-h-screen flex flex-col">
-        {/* Background grid */}
-        <div className="fixed inset-0 bg-[url('/grid-dark.svg')] bg-center opacity-[0.02] pointer-events-none" />
-        
+      <body suppressHydrationWarning className="bg-black text-soft-white min-h-screen flex flex-col">
         {/* Floating particles */}
         <div className="particle particle-sm top-[15%] left-[10%] animate-float-slow"></div>
         <div className="particle particle-md top-[45%] left-[15%] animate-float"></div>
