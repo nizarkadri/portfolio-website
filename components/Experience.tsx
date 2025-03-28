@@ -2,29 +2,29 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 
 const SectionTitle = () => {
-  const titleVariants = {
-    initial: { opacity: 0, y: 20 },
-    animate: { 
-      opacity: 1, 
-      y: 0,
-      transition: {
-        duration: 0.8,
-        ease: [0.22, 1, 0.36, 1]
-      }
-    }
-  };
+  // const titleVariants = {
+  //   initial: { opacity: 0, y: 20 },
+  //   animate: { 
+  //     opacity: 1, 
+  //     y: 0,
+  //     transition: {
+  //       duration: 0.8,
+  //       ease: [0.22, 1, 0.36, 1]
+  //     }
+  //   }
+  // };
   
-  const lineVariants = {
-    initial: { width: 0 },
-    animate: { 
-      width: "100%",
-      transition: {
-        duration: 1.2,
-        ease: [0.22, 1, 0.36, 1],
-        delay: 0.3
-      }
-    }
-  };
+  // const lineVariants = {
+  //   initial: { width: 0 },
+  //   animate: { 
+  //     width: "100%",
+  //     transition: {
+  //       duration: 1.2,
+  //       ease: [0.22, 1, 0.36, 1],
+  //       delay: 0.3
+  //     }
+  //   }
+  // };
   
   const buttonVariants = {
     initial: { opacity: 0, x: 20 },
@@ -38,8 +38,8 @@ const SectionTitle = () => {
       }
     },
     hover: { 
-      backgroundColor: "#B8E62D",
-      color: "#000",
+      backgroundColor: "rgba(184, 230, 45, 0.08)",  // Subtle lime tint (8%)
+      color: "#D9FF4B",                             // Softer neon text
       borderColor: "#B8E62D",
       transition: { duration: 0.3 }
     }
@@ -93,7 +93,7 @@ const Experience = () => {
     return (
         <section className="relative pt-24 pb-16">
           <motion.h2 
-            className="huge-text absolute -top-16 left-0 opacity-40 text-[#B8E611]/10 font-bold select-none"
+            className="huge-text absolute -top-16 left-0 opacity-80 text-[#B8E62D]/90 font-bold select-none"
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 0.8, x: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}

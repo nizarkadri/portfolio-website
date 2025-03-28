@@ -347,7 +347,7 @@ img[src$=".svg"] {
 /* Huge text for sections */
 .huge-text {
   @apply text-8xl md:text-9xl font-black text-transparent opacity-5;
-  -webkit-text-stroke: 1px rgba(255,255,255,0.1);
+  -webkit-text-stroke: 1px rgba(205, 255, 144, 0.142);
 }
 
 /* Skill icons with embossed effect */
