@@ -93,9 +93,9 @@ const Experience = () => {
     return (
         <section className="relative pt-24 pb-16">
           <motion.h2 
-            className="huge-text absolute -top-16 left-0 opacity-40 text-[#B8E62D]/10 font-bold select-none"
+            className="huge-text absolute -top-16 left-0 opacity-40 text-[#B8E611]/10 font-bold select-none"
             initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 0.4, x: 0 }}
+            animate={{ opacity: 0.8, x: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
           >
             EXPERIENCE
