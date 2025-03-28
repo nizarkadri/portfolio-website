@@ -1,12 +1,13 @@
 // app/layout.tsx
 import type { Metadata } from 'next'
 import Navbar from '../components/Navbar';
+import NewFooter from '../components/NewFooter';
 import './globals.css';
-import { Inter } from 'next/font/google'; // Import Inter
+import { Inter } from 'next/font/google'; 
 
 const inter = Inter({
   subsets: ['latin'],
-  variable: '--font-inter', // Optional: Define a CSS variable
+  variable: '--font-inter', 
 });
 
 export const metadata: Metadata = {
@@ -20,7 +21,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={`dark ${inter.variable}`}>
+    <html lang="en" className={inter.variable}>
       <body suppressHydrationWarning className="bg-black text-soft-white min-h-screen flex flex-col">
         {/* Floating particles */}
         <div className="particle particle-sm top-[15%] left-[10%] animate-float-slow"></div>
@@ -36,7 +37,7 @@ export default function RootLayout({
             {children}
           </div>
         </main>
-        {/* <Footer /> */}
+        <NewFooter />
       </body>
     </html>
   );

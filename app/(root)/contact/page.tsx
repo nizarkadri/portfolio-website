@@ -200,7 +200,7 @@ export default function ContactPage() {
             key="step-0"
           >
             <h2 className="text-3xl md:text-4xl font-bold mb-8 text-white">Who are you?</h2>
-            <p className="text-[#9CA3AF] mb-10">I'll tailor our conversation based on your needs.</p>
+            <p className="text-soft-white/70 mb-10">I'll tailor our conversation based on your needs.</p>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <motion.button
@@ -216,7 +216,7 @@ export default function ContactPage() {
                   </svg>
                 </div>
                 <h3 className="text-xl font-semibold text-white mb-2">Recruiter / Hiring Manager</h3>
-                <p className="text-[#9CA3AF] text-sm">Looking to hire me for a position</p>
+                <p className="text-soft-white/70 text-sm">Looking to hire me for a position</p>
               </motion.button>
               
               <motion.button
@@ -232,7 +232,7 @@ export default function ContactPage() {
                   </svg>
                 </div>
                 <h3 className="text-xl font-semibold text-white mb-2">Client</h3>
-                <p className="text-[#9CA3AF] text-sm">Looking for development services</p>
+                <p className="text-soft-white/70 text-sm">Looking for development services</p>
               </motion.button>
             </div>
           </motion.div>
@@ -250,13 +250,13 @@ export default function ContactPage() {
               key="step-1-client"
             >
               <h2 className="text-3xl md:text-4xl font-bold mb-3 text-white">What's your name?</h2>
-              <p className="text-[#9CA3AF] mb-10">Let's start with an introduction.</p>
+              <p className="text-soft-white/70 mb-10">Let's start with an introduction.</p>
               
               <div className="space-y-2">
                 <input
                   {...register('name')}
                   type="text"
-                  className="w-full p-4 bg-white/5 border border-[#B8E62D]/10 rounded-xl text-white text-xl placeholder-[#9CA3AF]/50 focus:outline-none focus:ring-2 focus:ring-[#B8E62D]/30 focus:border-transparent transition-all"
+                  className="w-full p-4 bg-white/5 border border-[#B8E62D]/10 rounded-xl text-white text-xl placeholder-soft-white/50 focus:outline-none focus:ring-2 focus:ring-[#B8E62D]/30 focus:border-transparent transition-all"
                   placeholder="Enter your name"
                   autoFocus
                 />
@@ -283,13 +283,13 @@ export default function ContactPage() {
               key="step-1-recruiter"
             >
               <h2 className="text-3xl md:text-4xl font-bold mb-3 text-white">Which company do you represent?</h2>
-              <p className="text-[#9CA3AF] mb-10">Let me know where you work.</p>
+              <p className="text-soft-white/70 mb-10">Let me know where you work.</p>
               
               <div className="space-y-2">
                 <input
                   {...register('company')}
                   type="text"
-                  className="w-full p-4 bg-white/5 border border-[#B8E62D]/10 rounded-xl text-white text-xl placeholder-[#9CA3AF]/50 focus:outline-none focus:ring-2 focus:ring-[#B8E62D]/30 focus:border-transparent transition-all"
+                  className="w-full p-4 bg-white/5 border border-[#B8E62D]/10 rounded-xl text-white text-xl placeholder-soft-white/50 focus:outline-none focus:ring-2 focus:ring-[#B8E62D]/30 focus:border-transparent transition-all"
                   placeholder="Enter company name"
                   autoFocus
                 />
@@ -319,13 +319,13 @@ export default function ContactPage() {
               key="step-2-client"
             >
               <h2 className="text-3xl md:text-4xl font-bold mb-3 text-white">What's your email?</h2>
-              <p className="text-[#9CA3AF] mb-10">I'll use this to get back to you.</p>
+              <p className="text-soft-white/70 mb-10">I'll use this to get back to you.</p>
               
               <div className="space-y-2">
                 <input
                   {...register('email')}
                   type="email"
-                  className="w-full p-4 bg-white/5 border border-[#B8E62D]/10 rounded-xl text-white text-xl placeholder-[#9CA3AF]/50 focus:outline-none focus:ring-2 focus:ring-[#B8E62D]/30 focus:border-transparent transition-all"
+                  className="w-full p-4 bg-white/5 border border-[#B8E62D]/10 rounded-xl text-white text-xl placeholder-soft-white/50 focus:outline-none focus:ring-2 focus:ring-[#B8E62D]/30 focus:border-transparent transition-all"
                   placeholder="Enter your email"
                   autoFocus
                 />
@@ -352,13 +352,13 @@ export default function ContactPage() {
               key="step-2-recruiter"
             >
               <h2 className="text-3xl md:text-4xl font-bold mb-3 text-white">What position are you hiring for?</h2>
-              <p className="text-[#9CA3AF] mb-10">What role are you looking to fill?</p>
+              <p className="text-soft-white/70 mb-10">What role are you looking to fill?</p>
               
               <div className="space-y-2">
                 <input
                   {...register('position')}
                   type="text"
-                  className="w-full p-4 bg-white/5 border border-[#B8E62D]/10 rounded-xl text-white text-xl placeholder-[#9CA3AF]/50 focus:outline-none focus:ring-2 focus:ring-[#B8E62D]/30 focus:border-transparent transition-all"
+                  className="w-full p-4 bg-white/5 border border-[#B8E62D]/10 rounded-xl text-white text-xl placeholder-soft-white/50 focus:outline-none focus:ring-2 focus:ring-[#B8E62D]/30 focus:border-transparent transition-all"
                   placeholder="e.g. Frontend Developer, Full Stack Engineer"
                   autoFocus
                 />
@@ -388,13 +388,13 @@ export default function ContactPage() {
               key="step-3-client"
             >
               <h2 className="text-3xl md:text-4xl font-bold mb-3 text-white">What type of project are you looking for?</h2>
-              <p className="text-[#9CA3AF] mb-10">Tell me about your project needs.</p>
+              <p className="text-soft-white/70 mb-10">Tell me about your project needs.</p>
               
               <div className="space-y-2">
                 <input
                   {...register('projectType')}
                   type="text"
-                  className="w-full p-4 bg-white/5 border border-[#B8E62D]/10 rounded-xl text-white text-xl placeholder-[#9CA3AF]/50 focus:outline-none focus:ring-2 focus:ring-[#B8E62D]/30 focus:border-transparent transition-all"
+                  className="w-full p-4 bg-white/5 border border-[#B8E62D]/10 rounded-xl text-white text-xl placeholder-soft-white/50 focus:outline-none focus:ring-2 focus:ring-[#B8E62D]/30 focus:border-transparent transition-all"
                   placeholder="e.g. Website, Mobile App, Web Application"
                   autoFocus
                 />
@@ -421,13 +421,13 @@ export default function ContactPage() {
               key="step-3-recruiter"
             >
               <h2 className="text-3xl md:text-4xl font-bold mb-3 text-white">What's your email address?</h2>
-              <p className="text-[#9CA3AF] mb-10">I'll use this to contact you about the position.</p>
+              <p className="text-soft-white/70 mb-10">I'll use this to contact you about the position.</p>
               
               <div className="space-y-2">
                 <input
                   {...register('email')}
                   type="email"
-                  className="w-full p-4 bg-white/5 border border-[#B8E62D]/10 rounded-xl text-white text-xl placeholder-[#9CA3AF]/50 focus:outline-none focus:ring-2 focus:ring-[#B8E62D]/30 focus:border-transparent transition-all"
+                  className="w-full p-4 bg-white/5 border border-[#B8E62D]/10 rounded-xl text-white text-xl placeholder-soft-white/50 focus:outline-none focus:ring-2 focus:ring-[#B8E62D]/30 focus:border-transparent transition-all"
                   placeholder="Your email address"
                   autoFocus
                 />
@@ -457,13 +457,13 @@ export default function ContactPage() {
               key="step-4-client"
             >
               <h2 className="text-3xl md:text-4xl font-bold mb-3 text-white">What's your budget range?</h2>
-              <p className="text-[#9CA3AF] mb-10">This helps me understand the project scope.</p>
+              <p className="text-soft-white/70 mb-10">This helps me understand the project scope.</p>
               
               <div className="space-y-2">
                 <input
                   {...register('budget')}
                   type="text"
-                  className="w-full p-4 bg-white/5 border border-[#B8E62D]/10 rounded-xl text-white text-xl placeholder-[#9CA3AF]/50 focus:outline-none focus:ring-2 focus:ring-[#B8E62D]/30 focus:border-transparent transition-all"
+                  className="w-full p-4 bg-white/5 border border-[#B8E62D]/10 rounded-xl text-white text-xl placeholder-soft-white/50 focus:outline-none focus:ring-2 focus:ring-[#B8E62D]/30 focus:border-transparent transition-all"
                   placeholder="e.g. $5,000 - $10,000 (optional)"
                   autoFocus
                 />
@@ -490,13 +490,13 @@ export default function ContactPage() {
               key="step-4-recruiter"
             >
               <h2 className="text-3xl md:text-4xl font-bold mb-3 text-white">Describe the job requirements</h2>
-              <p className="text-[#9CA3AF] mb-10">What are the key responsibilities and requirements?</p>
+              <p className="text-soft-white/70 mb-10">What are the key responsibilities and requirements?</p>
               
               <div className="space-y-2">
                 <textarea
                   {...register('jobDescription')}
                   rows={5}
-                  className="w-full p-4 bg-white/5 border border-[#B8E62D]/10 rounded-xl text-white text-xl placeholder-[#9CA3AF]/50 focus:outline-none focus:ring-2 focus:ring-[#B8E62D]/30 focus:border-transparent transition-all resize-none"
+                  className="w-full p-4 bg-white/5 border border-[#B8E62D]/10 rounded-xl text-white text-xl placeholder-soft-white/50 focus:outline-none focus:ring-2 focus:ring-[#B8E62D]/30 focus:border-transparent transition-all resize-none"
                   placeholder="Please provide a brief job description"
                   autoFocus
                 />
@@ -526,13 +526,13 @@ export default function ContactPage() {
               key="step-5-client"
             >
               <h2 className="text-3xl md:text-4xl font-bold mb-3 text-white">What's your timeline?</h2>
-              <p className="text-[#9CA3AF] mb-10">When are you looking to complete this project?</p>
+              <p className="text-soft-white/70 mb-10">When are you looking to complete this project?</p>
               
               <div className="space-y-2">
                 <input
                   {...register('timeline')}
                   type="text"
-                  className="w-full p-4 bg-white/5 border border-[#B8E62D]/10 rounded-xl text-white text-xl placeholder-[#9CA3AF]/50 focus:outline-none focus:ring-2 focus:ring-[#B8E62D]/30 focus:border-transparent transition-all"
+                  className="w-full p-4 bg-white/5 border border-[#B8E62D]/10 rounded-xl text-white text-xl placeholder-soft-white/50 focus:outline-none focus:ring-2 focus:ring-[#B8E62D]/30 focus:border-transparent transition-all"
                   placeholder="e.g. 2-3 months (optional)"
                   autoFocus
                 />
@@ -559,7 +559,7 @@ export default function ContactPage() {
               key="step-5-recruiter"
             >
               <h2 className="text-3xl md:text-4xl font-bold mb-3 text-white">What type of employment?</h2>
-              <p className="text-[#9CA3AF] mb-10">Select the employment type for this position.</p>
+              <p className="text-soft-white/70 mb-10">Select the employment type for this position.</p>
               
               <div className="space-y-4">
                 {['Full-time', 'Part-time', 'Contract', 'Freelance'].map((type) => (
@@ -615,13 +615,13 @@ export default function ContactPage() {
               key="step-6-client"
             >
               <h2 className="text-3xl md:text-4xl font-bold mb-3 text-white">Any additional details?</h2>
-              <p className="text-[#9CA3AF] mb-10">Share any other information you'd like me to know.</p>
+              <p className="text-soft-white/70 mb-10">Share any other information you'd like me to know.</p>
               
               <div className="space-y-2">
                 <textarea
                   {...register('message')}
                   rows={6}
-                  className="w-full p-4 bg-white/5 border border-[#B8E62D]/10 rounded-xl text-white text-xl placeholder-[#9CA3AF]/50 focus:outline-none focus:ring-2 focus:ring-[#B8E62D]/30 focus:border-transparent transition-all resize-none"
+                  className="w-full p-4 bg-white/5 border border-[#B8E62D]/10 rounded-xl text-white text-xl placeholder-soft-white/50 focus:outline-none focus:ring-2 focus:ring-[#B8E62D]/30 focus:border-transparent transition-all resize-none"
                   placeholder="Your message..."
                   autoFocus
                 />
@@ -648,7 +648,7 @@ export default function ContactPage() {
               key="step-6-recruiter"
             >
               <h2 className="text-3xl md:text-4xl font-bold mb-3 text-white">Where is the job located?</h2>
-              <p className="text-[#9CA3AF] mb-10">Specify the work location arrangement.</p>
+              <p className="text-soft-white/70 mb-10">Specify the work location arrangement.</p>
               
               <div className="space-y-4">
                 {['Remote', 'On-site', 'Hybrid'].map((type) => (
@@ -687,7 +687,7 @@ export default function ContactPage() {
                     <input
                       type="text"
                       placeholder="Enter location (city, country)"
-                      className="w-full p-4 bg-white/5 border border-[#B8E62D]/10 rounded-xl text-white text-lg placeholder-[#9CA3AF]/50 focus:outline-none focus:ring-2 focus:ring-[#B8E62D]/30 focus:border-transparent transition-all"
+                      className="w-full p-4 bg-white/5 border border-[#B8E62D]/10 rounded-xl text-white text-lg placeholder-soft-white/50 focus:outline-none focus:ring-2 focus:ring-[#B8E62D]/30 focus:border-transparent transition-all"
                       onChange={(e) => setValue('workLocation', `${watch('workLocation')}: ${e.target.value}`, { shouldValidate: true })}
                     />
                   </motion.div>
@@ -718,13 +718,13 @@ export default function ContactPage() {
             key="step-7-recruiter"
           >
             <h2 className="text-3xl md:text-4xl font-bold mb-3 text-white">How should we schedule an interview?</h2>
-            <p className="text-[#9CA3AF] mb-10">Let me know your availability for an interview.</p>
+            <p className="text-soft-white/70 mb-10">Let me know your availability for an interview.</p>
             
             <div className="space-y-2">
               <textarea
                 {...register('interview')}
                 rows={4}
-                className="w-full p-4 bg-white/5 border border-[#B8E62D]/10 rounded-xl text-white text-xl placeholder-[#9CA3AF]/50 focus:outline-none focus:ring-2 focus:ring-[#B8E62D]/30 focus:border-transparent transition-all resize-none"
+                className="w-full p-4 bg-white/5 border border-[#B8E62D]/10 rounded-xl text-white text-xl placeholder-soft-white/50 focus:outline-none focus:ring-2 focus:ring-[#B8E62D]/30 focus:border-transparent transition-all resize-none"
                 placeholder="Provide interview availability or preferred method to schedule"
                 autoFocus
               />
@@ -744,7 +744,7 @@ export default function ContactPage() {
               <textarea
                 {...register('message')}
                 rows={4}
-                className="w-full p-4 bg-white/5 border border-[#B8E62D]/10 rounded-xl text-white text-lg placeholder-[#9CA3AF]/50 focus:outline-none focus:ring-2 focus:ring-[#B8E62D]/30 focus:border-transparent transition-all resize-none"
+                className="w-full p-4 bg-white/5 border border-[#B8E62D]/10 rounded-xl text-white text-lg placeholder-soft-white/50 focus:outline-none focus:ring-2 focus:ring-[#B8E62D]/30 focus:border-transparent transition-all resize-none"
                 placeholder="Any additional information you'd like to share..."
               />
               {errors.message && (
@@ -766,7 +766,7 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#0E0E0E]">
+    <div className="min-h-screen flex flex-col bg-black">
       {/* Form container */}
       <div className="flex-1 flex flex-col items-center justify-center">
         <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-6xl px-4 py-10">
@@ -774,14 +774,14 @@ export default function ContactPage() {
           {userType && (
             <div className="mb-10 max-w-xl mx-auto">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-[#9CA3AF] text-sm">
+                <span className="text-soft-white/70 text-sm">
                   Step {step} of {getTotalSteps() - 1}
                 </span>
                 {step > 0 && (
                   <button 
                     type="button" 
                     onClick={() => setStep(0)}
-                    className="text-[#9CA3AF] text-sm hover:text-[#B8E62D] transition-colors"
+                    className="text-soft-white/70 text-sm hover:text-[#B8E62D] transition-colors"
                   >
                     Start over
                   </button>
@@ -884,7 +884,7 @@ export default function ContactPage() {
                   <h3 className="text-2xl font-bold text-white mb-2">
                     {submitStatus.type === 'success' ? 'Message Sent!' : 'Error'}
                   </h3>
-                  <p className={`mb-6 ${submitStatus.type === 'success' ? 'text-[#9CA3AF]' : 'text-red-400'}`}>
+                  <p className={`mb-6 ${submitStatus.type === 'success' ? 'text-soft-white/70' : 'text-red-400'}`}>
                     {submitStatus.message}
                   </p>
                   
