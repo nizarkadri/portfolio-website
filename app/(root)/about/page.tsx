@@ -1,5 +1,12 @@
+'use client';
+
 import React from 'react';
 import Image from 'next/image';
+import dynamic from 'next/dynamic';
+
+// Dynamically import the components with SSR disabled since they use browser APIs
+const ChessProfile = dynamic(() => import('../../../components/ChessProfile'), { ssr: false });
+const DuolingoProfile = dynamic(() => import('../../../components/DuolingoProfile'), { ssr: false });
 
 export default function AboutPage() {
   return (
@@ -7,7 +14,7 @@ export default function AboutPage() {
       <div className="container mx-auto px-4">
         <h1 className="text-5xl md:text-7xl font-bold mb-10 text-white">About Me</h1>
         
-        <div className="grid md:grid-cols-2 gap-16 items-center">
+        <div className="grid md:grid-cols-2 gap-16 items-center mb-16">
           <div className="bg-gradient-to-b from-soft-black/40 to-soft-black/10 p-8 rounded-2xl backdrop-blur-sm border border-white/5">
             <div className="relative w-full aspect-square">
               <div className="absolute -inset-2 border border-white/5 rounded-full animate-spin-slow"></div>
@@ -60,6 +67,20 @@ export default function AboutPage() {
                 </li>
               </ul>
             </div>
+          </div>
+        </div>
+        
+        {/* Beyond Work Section with Chess.com and Duolingo */}
+        <div className="mt-20">
+          <h2 className="text-4xl font-bold text-white mb-8">Beyond Work</h2>
+          <p className="text-soft-white max-w-3xl mb-12 text-lg">
+            When I'm not coding, I enjoy challenging my mind with chess and expanding my language skills. 
+            Here's a glimpse into my learning journey outside of software development.
+          </p>
+          
+          <div className="grid md:grid-cols-2 gap-8">
+            <ChessProfile />
+            <DuolingoProfile />
           </div>
         </div>
       </div>
