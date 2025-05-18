@@ -128,6 +128,29 @@ body {
   animation: spinSlow 20s linear infinite reverse;
 }
 
+/* Sliding words animation */
+.animate-slide-words {
+  animation: slideWords 9s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@keyframes slideWords {
+  0%, 20% {
+    transform: translateY(0%);
+  }
+  25%, 45% {
+    transform: translateY(-100%);
+  }
+  50%, 70% {
+    transform: translateY(-200%);
+  }
+  75%, 95% {
+    transform: translateY(-300%);
+  }
+  100% {
+    transform: translateY(-400%);
+  }
+}
+
 .perspective {
   perspective: 1000px;
 }
