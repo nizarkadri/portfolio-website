@@ -5,6 +5,7 @@ import NewFooter from '../components/NewFooter';
 import './globals.css';
 import { Inter } from 'next/font/google'; 
 import ThreeScene from '../components/ThreeScene';
+import SmoothScroll from '../components/SmoothScroll'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -36,7 +37,9 @@ export default function RootLayout({
         <main className="container mx-auto px-4 md:px-6 py-8 flex-grow mt-20">
           {/* <ThreeScene /> */}
           <div className="fade-in">
-            {children}
+            <SmoothScroll>
+              {children}
+            </SmoothScroll>
           </div>
         </main>
         <NewFooter />

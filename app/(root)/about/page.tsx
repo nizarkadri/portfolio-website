@@ -7,6 +7,7 @@ import dynamic from 'next/dynamic';
 // Dynamically import the components with SSR disabled since they use browser APIs
 const ChessProfile = dynamic(() => import('../../../components/ChessProfile'), { ssr: false });
 const DuolingoProfile = dynamic(() => import('../../../components/DuolingoProfile'), { ssr: false });
+const LeetCodeProfile = dynamic(() => import('../../../components/LeetCodeProfile'), { ssr: false });
 
 export default function AboutPage() {
   return (
@@ -70,17 +71,18 @@ export default function AboutPage() {
           </div>
         </div>
         
-        {/* Beyond Work Section with Chess.com and Duolingo */}
+        {/* Beyond Work Section with Chess.com, Duolingo, and LeetCode */}
         <div className="mt-20">
           <h2 className="text-4xl font-bold text-white mb-8">Beyond Work</h2>
           <p className="text-soft-white max-w-3xl mb-12 text-lg">
-            When I'm not coding, I enjoy challenging my mind with chess and expanding my language skills. 
+            When I'm not coding, I enjoy challenging my mind with chess, expanding my language skills, and solving coding problems. 
             Here's a glimpse into my learning journey outside of software development.
           </p>
           
-          <div className="grid md:grid-cols-2 gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             <ChessProfile />
             <DuolingoProfile />
+            <LeetCodeProfile />
           </div>
         </div>
       </div>
