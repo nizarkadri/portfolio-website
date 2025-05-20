@@ -588,41 +588,14 @@ export default function ChessProfile() {
 
   return (
     <motion.div 
-      className="bg-gradient-to-b from-soft-black/40 to-soft-black/10 p-6 sm:p-8 rounded-2xl backdrop-blur-sm border border-white/5 overflow-hidden"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
+      className="flex flex-col justify-between bg-gradient-to-b from-soft-black/40 to-soft-black/10 p-6 sm:p-8 rounded-2xl backdrop-blur-sm border border-white/5 overflow-hidden"
+     
       transition={{ duration: 0.6 }}
       onMouseMove={heroParallax.handleMouseMove}
-    >
-      {/* Chess board background */}
-      {/* <motion.div 
-        className="absolute inset-0 pointer-events-none overflow-hidden z-0"
-        style={{
-          x: boardParallax.springX,
-          y: boardParallax.springY
-        }}
-      > */}
-        {/* Fade gradient overlay */}
-        {/* <div className="absolute inset-0 bg-gradient-radial from-soft-black/20 to-soft-black/90"></div>
-        
-        <div className="absolute inset-0 w-[150%] h-[150%] -top-[25%] -left-[25%] grid grid-cols-8 opacity-[0.04]" style={{ transform: "rotate(15deg)" }}>
-          {Array.from({ length: 64 }).map((_, i) => {
-            const row = Math.floor(i / 8);
-            const col = i % 8;
-            const isLight = (row + col) % 2 === 0;
-            return (
-              <div 
-                key={i} 
-                className={`${isLight ? 'bg-white/20' : 'bg-[#121212]/80'}`}
-              />
-            );
-          })}
-        </div> */}
-      {/* </motion.div> */}
-      
+    > 
       {/* Hero Section with 3D Effects */}
       <motion.div 
-        className="relative mb-8 z-10"
+        className="relative mb-8 z-10 container mx-auto"
         style={{ 
           x: heroParallax.springX, 
           y: heroParallax.springY, 
