@@ -1,69 +1,74 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, FieldErrors } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { motion, AnimatePresence } from 'framer-motion';
+import FormFieldError from '../../../components/FormFieldError';
+
 
 // Define user types
 type UserType = 'recruiter' | 'client' | null;
 
-// Extended schema based on user type
-const baseSchema = {
+const recruiterSchema = z.object({
+  userType: z.literal('recruiter'),
   email: z.string().email('Invalid email address'),
-  message: z.string().min(10, 'Message must be at least 10 characters'),
-};
-
-const recruiterSchema = {
-  ...baseSchema,
   company: z.string().min(2, 'Company name must be at least 2 characters'),
   position: z.string().min(2, 'Position must be at least 2 characters'),
   jobDescription: z.string().min(10, 'Job description must be at least 10 characters'),
   employmentType: z.string().min(2, 'Please specify the employment type'),
   interview: z.string().min(2, 'Please provide interview availability'),
   workLocation: z.string().min(2, 'Please specify the work location'),
-};
+  locationDetails: z.string().optional(),
+  message: z.string().min(10, 'Message must be at least 10 characters'),
+});
 
-const clientSchema = {
+const clientSchema = z.object({
+  userType: z.literal('client'),
+  email: z.string().email('Invalid email address'),
   name: z.string().min(2, 'Name must be at least 2 characters'),
-  ...baseSchema,
+  message: z.string().min(10, 'Message must be at least 10 characters'),
   projectType: z.string().min(2, 'Project type must be at least 2 characters'),
   budget: z.string().optional(),
   timeline: z.string().optional(),
-};
+});
+
+type RecruiterErrors = FieldErrors<z.infer<typeof recruiterSchema>>;
+type ClientErrors = FieldErrors<z.infer<typeof clientSchema>>;
 
 // Create schema based on user type
-const contactSchema = z.object({
-  userType: z.enum(['recruiter', 'client']),
-  // Name not required for recruiters, only for clients
-  name: z.string().min(2, 'Name must be at least 2 characters').optional(),
-  email: z.string().email('Invalid email address'),
-  message: z.string().min(10, 'Message must be at least 10 characters'),
-  // Recruiter fields
-  company: z.string().optional(),
-  position: z.string().optional(),
-  jobDescription: z.string().optional(),
-  employmentType: z.string().optional(),
-  interview: z.string().optional(),
-  workLocation: z.string().optional(),
-  // Client fields
-  projectType: z.string().optional(),
-  budget: z.string().optional(),
-  timeline: z.string().optional(),
-}).refine(data => {
-  if (data.userType === 'recruiter') {
-    return !!data.company && !!data.position && !!data.jobDescription && 
-      !!data.employmentType && !!data.interview && !!data.workLocation;
-  }
-  if (data.userType === 'client') {
-    return !!data.name && !!data.projectType;
-  }
-  return true;
-}, {
-  message: "Please fill in the required fields for your user type",
-  path: ["userType"],
-});
+const contactSchema = z.discriminatedUnion('userType', [recruiterSchema, clientSchema]);
+// const contactSchema = z.object({
+//   userType: z.enum(['recruiter', 'client']),
+//   // Name not required for recruiters, only for clients
+//   name: z.string().min(2, 'Name must be at least 2 characters').optional(),
+//   email: z.string().email('Invalid email address'),
+//   message: z.string().min(10, 'Message must be at least 10 characters'),
+//   // Recruiter fields
+//   company: z.string().optional(),
+//   position: z.string().optional(),
+//   jobDescription: z.string().optional(),
+//   employmentType: z.string().optional(),
+//   interview: z.string().optional(),
+//   workLocation: z.string().optional(),
+//   // Client fields
+//   projectType: z.string().optional(),
+//   budget: z.string().optional(),
+//   timeline: z.string().optional(),
+// }).refine(data => {
+//   if (data.userType === 'recruiter') {
+//     return !!data.company && !!data.position && !!data.jobDescription && 
+//       !!data.employmentType && !!data.interview && !!data.workLocation;
+//   }
+//   if (data.userType === 'client') {
+//     return !!data.name && !!data.projectType;
+//   }
+//   return true;
+// }, {
+//   message: "Please fill in the required fields for your user type",
+//   path: ["userType"],
+// });
 
 type ContactFormData = z.infer<typeof contactSchema>;
 
@@ -90,16 +95,7 @@ const staggerContainer = {
 };
 
 export default function ContactPage() {
-  // State for multi-step form
-  const [step, setStep] = useState(0);
-  const [userType, setUserType] = useState<UserType>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState<{
-    type: 'success' | 'error';
-    message: string;
-  } | null>(null);
-  
-  // Form handling
+
   const {
     register,
     handleSubmit,
@@ -111,21 +107,40 @@ export default function ContactPage() {
     resolver: zodResolver(contactSchema),
     mode: 'onChange',
   });
+  // State for multi-step form
+  const [step, setStep] = useState(0);
+  const userType = watch('userType') as 'recruiter' | 'client' | null;
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<{
+    type: 'success' | 'error';
+    message: string;
+  } | null>(null);
+  
+  const recruiterErrors = errors as RecruiterErrors;
+  const clientErrors = errors as ClientErrors;
+  
+  // Form handling
+  useEffect(() => {
+    console.log("Form errors:", errors);
+    console.log("Form is valid:", isValid);
+    console.log('Submitting:', watch('userType'), formValues);
+  }, [errors, isValid]);
 
+  
   // Watch form values for conditional logic
   const formValues = watch();
   
   // Set user type when changed
-  useEffect(() => {
-    if (userType) {
-      setValue('userType', userType as 'recruiter' | 'client');
-    }
-  }, [userType, setValue]);
+  // useEffect(() => {
+  //   if (userType) {
+  //     setValue('userType', userType as 'recruiter' | 'client');
+  //   }
+  // }, [userType, setValue]);
   
   // Total steps based on user type
   const getTotalSteps = (): number => {
     if (!userType) return 1; // Initial step to select user type
-    return userType === 'recruiter' ? 7 : 6; // Different steps for each user type
+    return userType === 'recruiter' ? 8 : 7; // Different steps for each user type
   };
   
   // Handle next step
@@ -144,7 +159,7 @@ export default function ContactPage() {
 
   // Handle user type selection - fix for first click issue
   const handleUserTypeSelection = (type: UserType) => {
-    setUserType(type);
+    // setUserType(type);
     setValue('userType', type as 'recruiter' | 'client');
     setStep(1);
   };
@@ -175,7 +190,7 @@ export default function ContactPage() {
       });
       reset();
       setStep(0);
-      setUserType(null);
+      // setUserType(null);
     } catch (error) {
       setSubmitStatus({
         type: 'error',
@@ -260,14 +275,8 @@ export default function ContactPage() {
                   placeholder="Enter your name"
                   autoFocus
                 />
-                {errors.name && (
-                  <motion.p 
-                    className="text-red-400 mt-2"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                  >
-                    {errors.name.message}
-                  </motion.p>
+                {clientErrors.name && (
+                  <FormFieldError message={`WHats ur name - {clientErrors.name.message}`} />
                 )}
               </div>
             </motion.div>
@@ -293,14 +302,8 @@ export default function ContactPage() {
                   placeholder="Enter company name"
                   autoFocus
                 />
-                {errors.company && (
-                  <motion.p 
-                    className="text-red-400 mt-2"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                  >
-                    {errors.company.message}
-                  </motion.p>
+                {recruiterErrors.company && (
+                  <FormFieldError message={recruiterErrors.company.message} />
                 )}
               </div>
             </motion.div>
@@ -329,14 +332,8 @@ export default function ContactPage() {
                   placeholder="Enter your email"
                   autoFocus
                 />
-                {errors.email && (
-                  <motion.p 
-                    className="text-red-400 mt-2"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                  >
-                    {errors.email.message}
-                  </motion.p>
+                {clientErrors.email && (
+                  <FormFieldError message={clientErrors.email.message} />
                 )}
               </div>
             </motion.div>
@@ -362,14 +359,8 @@ export default function ContactPage() {
                   placeholder="e.g. Frontend Developer, Full Stack Engineer"
                   autoFocus
                 />
-                {errors.position && (
-                  <motion.p 
-                    className="text-red-400 mt-2"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                  >
-                    {errors.position.message}
-                  </motion.p>
+                {recruiterErrors.position && (
+                  <FormFieldError message={recruiterErrors.position.message} />
                 )}
               </div>
             </motion.div>
@@ -398,14 +389,8 @@ export default function ContactPage() {
                   placeholder="e.g. Website, Mobile App, Web Application"
                   autoFocus
                 />
-                {errors.projectType && (
-                  <motion.p 
-                    className="text-red-400 mt-2"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                  >
-                    {errors.projectType.message}
-                  </motion.p>
+                {clientErrors.projectType && (
+                  <FormFieldError message={clientErrors.projectType.message} />
                 )}
               </div>
             </motion.div>
@@ -431,14 +416,8 @@ export default function ContactPage() {
                   placeholder="Your email address"
                   autoFocus
                 />
-                {errors.email && (
-                  <motion.p 
-                    className="text-red-400 mt-2"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                  >
-                    {errors.email.message}
-                  </motion.p>
+                {recruiterErrors.email && (
+                  <FormFieldError message={recruiterErrors.email.message} />
                 )}
               </div>
             </motion.div>
@@ -467,14 +446,8 @@ export default function ContactPage() {
                   placeholder="e.g. $5,000 - $10,000 (optional)"
                   autoFocus
                 />
-                {errors.budget && (
-                  <motion.p 
-                    className="text-red-400 mt-2"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                  >
-                    {errors.budget.message}
-                  </motion.p>
+                {clientErrors.budget && (
+                  <FormFieldError message={clientErrors.budget.message} />
                 )}
               </div>
             </motion.div>
@@ -500,14 +473,8 @@ export default function ContactPage() {
                   placeholder="Please provide a brief job description"
                   autoFocus
                 />
-                {errors.jobDescription && (
-                  <motion.p 
-                    className="text-red-400 mt-2"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                  >
-                    {errors.jobDescription.message}
-                  </motion.p>
+                {recruiterErrors.jobDescription && (
+                  <FormFieldError message={recruiterErrors.jobDescription.message} />
                 )}
               </div>
             </motion.div>
@@ -536,14 +503,8 @@ export default function ContactPage() {
                   placeholder="e.g. 2-3 months (optional)"
                   autoFocus
                 />
-                {errors.timeline && (
-                  <motion.p 
-                    className="text-red-400 mt-2"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                  >
-                    {errors.timeline.message}
-                  </motion.p>
+                {clientErrors.timeline && (
+                  <FormFieldError message={clientErrors.timeline.message} />
                 )}
               </div>
             </motion.div>
@@ -589,14 +550,8 @@ export default function ContactPage() {
                   </motion.div>
                 ))}
                 
-                {errors.employmentType && (
-                  <motion.p 
-                    className="text-red-400 mt-2"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                  >
-                    {errors.employmentType.message}
-                  </motion.p>
+                {recruiterErrors.employmentType && (
+                  <FormFieldError message={recruiterErrors.employmentType.message} />
                 )}
               </div>
             </motion.div>
@@ -625,14 +580,8 @@ export default function ContactPage() {
                   placeholder="Your message..."
                   autoFocus
                 />
-                {errors.message && (
-                  <motion.p 
-                    className="text-red-400 mt-2"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                  >
-                    {errors.message.message}
-                  </motion.p>
+                {clientErrors.message && (
+                  <FormFieldError message={clientErrors.message.message} />
                 )}
               </div>
             </motion.div>
@@ -678,29 +627,23 @@ export default function ContactPage() {
                   </motion.div>
                 ))}
                 
-                {watch('workLocation') === 'On-site' || watch('workLocation') === 'Hybrid' ? (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: 'auto' }}
-                    className="mt-4"
-                  >
-                    <input
-                      type="text"
-                      placeholder="Enter location (city, country)"
-                      className="w-full p-4 bg-white/5 border border-[#B8E62D]/10 rounded-xl text-white text-lg placeholder-soft-white/50 focus:outline-none focus:ring-2 focus:ring-[#B8E62D]/30 focus:border-transparent transition-all"
-                      onChange={(e) => setValue('workLocation', `${watch('workLocation')}: ${e.target.value}`, { shouldValidate: true })}
-                    />
-                  </motion.div>
-                ) : null}
+                {['On-site', 'Hybrid'].includes(watch('workLocation')) && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      className="mt-4"
+                    >
+                      <input
+                        {...register('locationDetails')}
+                        type="text"
+                        placeholder="Enter location (city, country)"
+                        className="w-full p-4 bg-white/5 border border-[#B8E62D]/10 rounded-xl text-white text-lg placeholder-soft-white/50 focus:outline-none focus:ring-2 focus:ring-[#B8E62D]/30 focus:border-transparent transition-all"
+                      />
+                    </motion.div>
+                  )}
                 
-                {errors.workLocation && (
-                  <motion.p 
-                    className="text-red-400 mt-2"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                  >
-                    {errors.workLocation.message}
-                  </motion.p>
+                {recruiterErrors.workLocation && (
+                  <FormFieldError message={recruiterErrors.workLocation.message} />
                 )}
               </div>
             </motion.div>
@@ -728,14 +671,8 @@ export default function ContactPage() {
                 placeholder="Provide interview availability or preferred method to schedule"
                 autoFocus
               />
-              {errors.interview && (
-                <motion.p 
-                  className="text-red-400 mt-2"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                >
-                  {errors.interview.message}
-                </motion.p>
+              {recruiterErrors.interview && (
+                <FormFieldError message={`How should we schedule an interview - {recruiterErrors.interview.message}`} />
               )}
             </div>
             
@@ -747,15 +684,11 @@ export default function ContactPage() {
                 className="w-full p-4 bg-white/5 border border-[#B8E62D]/10 rounded-xl text-white text-lg placeholder-soft-white/50 focus:outline-none focus:ring-2 focus:ring-[#B8E62D]/30 focus:border-transparent transition-all resize-none"
                 placeholder="Any additional information you'd like to share..."
               />
-              {errors.message && (
-                <motion.p 
-                  className="text-red-400 mt-2"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                >
-                  {errors.message.message}
-                </motion.p>
+              {recruiterErrors.message && (
+                <FormFieldError message={`Additional notes or message - {recruiterErrors.message.message}`} />
               )}
+              
+              
             </div>
           </motion.div>
         );
