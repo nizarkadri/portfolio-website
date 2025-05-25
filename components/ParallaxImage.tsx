@@ -31,9 +31,18 @@ export default function ParallaxImage({ image, children}: { image: string ,child
         <Image
           src={image}
           alt="Parallax Background"
-          fill
-          className="object-cover "
+          width={1000}
+          height={1000}
+          className="object-cover"
+          style={{ 
+            WebkitMaskImage: 'radial-gradient(ellipse at center, black 30%, transparent 70%)',
+            maskImage: 'radial-gradient(ellipse at center, black 30%, transparent 70%)',
+            WebkitMaskRepeat: 'no-repeat',
+            maskRepeat: 'no-repeat'
+          }}
         />
+      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm pointer-events-none z-[-1]" />
+
       </motion.div>
 
       <motion.div className="relative h-full left-1/2"

@@ -324,6 +324,24 @@ body {
   @apply bg-gray-700;
 }
 
+/* Custom scrollbar for dropdown */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(184, 230, 45, 0.3);
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(184, 230, 45, 0.5);
+}
+
 /* 3D Icon styling */
 .icon-3d {
   @apply relative transition-all duration-300;

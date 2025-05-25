@@ -21,7 +21,7 @@ const recruiterSchema = z.object({
   interview: z.string().min(2, 'Please provide interview availability'),
   workLocation: z.string().min(2, 'Please specify the work location'),
   locationDetails: z.string().optional(),
-  message: z.string().min(10, 'Message must be at least 10 characters'),
+  message: z.string().optional(),
 });
 
 const clientSchema = z.object({
@@ -116,9 +116,71 @@ export default function ContactPage() {
     message: string;
   } | null>(null);
   
+  // Add state for timeline counter
+  const [timelineDays, setTimelineDays] = useState(30);
+  const [isProjectDropdownOpen, setIsProjectDropdownOpen] = useState(false);
+  
   const recruiterErrors = errors as RecruiterErrors;
   const clientErrors = errors as ClientErrors;
-  
+  // Watch form values for conditional logic
+  const formValues = watch();
+
+  // Helper function to format budget input
+  const formatBudgetInput = (value: string) => {
+    // Remove any characters that aren't numbers, commas, or hyphens
+    return value.replace(/[^0-9,-]/g, '');
+  };
+
+  // Helper function to handle budget input change
+  const handleBudgetChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatBudgetInput(e.target.value);
+    setValue('budget', formatted, { shouldValidate: true });
+  };
+
+  // Helper function to update timeline
+  const updateTimeline = (days: number) => {
+    const newDays = Math.max(1, Math.min(365, days)); // Limit between 1 and 365 days
+    setTimelineDays(newDays);
+    setValue('timeline', `${newDays} days`, { shouldValidate: true });
+  };
+
+  // Helper function to handle project type selection
+  const handleProjectTypeSelect = (projectType: string) => {
+    setValue('projectType', projectType, { shouldValidate: true });
+    setIsProjectDropdownOpen(false);
+  };
+
+  // Predefined project types
+  const projectTypes = [
+    'Website',
+    'Web Application',
+    'Mobile App (iOS)',
+    'Mobile App (Android)',
+    'Mobile App (Cross-platform)',
+    'E-commerce Platform',
+    'Portfolio Website',
+    'Landing Page',
+    'Dashboard/Admin Panel',
+    'API Development',
+    'Database Design',
+    'UI/UX Design',
+    'WordPress Site',
+    'Custom Software',
+    'SaaS Platform',
+    'Progressive Web App (PWA)',
+    'Chrome Extension',
+    'Desktop Application',
+    'Game Development',
+    'Blockchain/Web3 Project',
+    'AI/ML Integration',
+    'Data Visualization',
+    'CRM System',
+    'Booking/Reservation System',
+    'Educational Platform',
+    'Social Media Platform',
+    'Other'
+  ];
+
   // Form handling
   useEffect(() => {
     console.log("Form errors:", errors);
@@ -126,9 +188,21 @@ export default function ContactPage() {
     console.log('Submitting:', watch('userType'), formValues);
   }, [errors, isValid]);
 
+  // Handle clicking outside dropdown to close it
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Element;
+      if (isProjectDropdownOpen && !target.closest('.dropdown-container')) {
+        setIsProjectDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isProjectDropdownOpen]);
   
-  // Watch form values for conditional logic
-  const formValues = watch();
+  
+  
   
   // Set user type when changed
   // useEffect(() => {
@@ -166,6 +240,7 @@ export default function ContactPage() {
   
   // Form submission handler
   const onSubmit = async (data: ContactFormData) => {
+    console.log("Submitting:", data.userType, data);
     try {
       setIsSubmitting(true);
       setSubmitStatus(null);
@@ -276,7 +351,7 @@ export default function ContactPage() {
                   autoFocus
                 />
                 {clientErrors.name && (
-                  <FormFieldError message={`WHats ur name - {clientErrors.name.message}`} />
+                  <FormFieldError message={clientErrors.name.message} />
                 )}
               </div>
             </motion.div>
@@ -382,13 +457,86 @@ export default function ContactPage() {
               <p className="text-soft-white/70 mb-10">Tell me about your project needs.</p>
               
               <div className="space-y-2">
-                <input
-                  {...register('projectType')}
-                  type="text"
-                  className="w-full p-4 bg-white/5 border border-[#B8E62D]/10 rounded-xl text-white text-xl placeholder-soft-white/50 focus:outline-none focus:ring-2 focus:ring-[#B8E62D]/30 focus:border-transparent transition-all"
-                  placeholder="e.g. Website, Mobile App, Web Application"
-                  autoFocus
-                />
+                <div className="relative dropdown-container">
+                  <motion.div
+                    className={`w-full p-4 bg-white/5 border rounded-xl text-white text-xl focus:outline-none transition-all cursor-pointer ${
+                      isProjectDropdownOpen 
+                        ? 'border-[#B8E62D] ring-2 ring-[#B8E62D]/30' 
+                        : 'border-[#B8E62D]/10 hover:border-[#B8E62D]/30'
+                    }`}
+                    onClick={() => setIsProjectDropdownOpen(!isProjectDropdownOpen)}
+                    whileHover={{ scale: 1.01 }}
+                    whileTap={{ scale: 0.99 }}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className={watch('projectType') ? 'text-white' : 'text-soft-white/50'}>
+                        {watch('projectType') || 'Select project type'}
+                      </span>
+                      <motion.div
+                        animate={{ rotate: isProjectDropdownOpen ? 180 : 0 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        <svg className="w-5 h-5 text-[#B8E62D]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </motion.div>
+                    </div>
+                  </motion.div>
+
+                  <AnimatePresence>
+                    {isProjectDropdownOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                        transition={{ duration: 0.2 }}
+                        className="absolute top-full left-0 right-0 mt-2 bg-[#0E0E0E] border border-[#B8E62D]/20 rounded-xl shadow-2xl z-50"
+                      >
+                        <div 
+                          className="max-h-60 overflow-y-auto custom-scrollbar"
+                          style={{
+                            scrollbarWidth: 'thin',
+                            scrollbarColor: 'rgba(184, 230, 45, 0.3) transparent',
+                          }}
+                          onScroll={(e) => e.stopPropagation()}
+                          onWheel={(e) => {
+                            e.stopPropagation();
+                            const container = e.currentTarget;
+                            container.scrollTop += e.deltaY;
+                          }}
+                        >
+                          <div className="p-2">
+                            {projectTypes.map((type, index) => (
+                              <motion.div
+                                key={type}
+                                initial={{ opacity: 0, x: -10 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ delay: index * 0.03 }}
+                                className={`p-3 rounded-lg cursor-pointer transition-all text-lg ${
+                                  watch('projectType') === type
+                                    ? 'bg-[#B8E62D]/20 text-[#B8E62D] border border-[#B8E62D]/30'
+                                    : 'text-white hover:bg-white/5 hover:text-[#B8E62D]'
+                                }`}
+                                onClick={() => handleProjectTypeSelect(type)}
+                                whileHover={{ scale: 1.02, x: 4 }}
+                                whileTap={{ scale: 0.98 }}
+                              >
+                                {type}
+                              </motion.div>
+                            ))}
+                          </div>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
+                  {/* Hidden input for form validation */}
+                  <input
+                    {...register('projectType')}
+                    type="hidden"
+                    value={watch('projectType') || ''}
+                  />
+                </div>
                 {clientErrors.projectType && (
                   <FormFieldError message={clientErrors.projectType.message} />
                 )}
@@ -445,6 +593,8 @@ export default function ContactPage() {
                   className="w-full p-4 bg-white/5 border border-[#B8E62D]/10 rounded-xl text-white text-xl placeholder-soft-white/50 focus:outline-none focus:ring-2 focus:ring-[#B8E62D]/30 focus:border-transparent transition-all"
                   placeholder="e.g. $5,000 - $10,000 (optional)"
                   autoFocus
+                  onChange={handleBudgetChange}
+                  value={watch('budget') || ''}
                 />
                 {clientErrors.budget && (
                   <FormFieldError message={clientErrors.budget.message} />
@@ -496,13 +646,58 @@ export default function ContactPage() {
               <p className="text-soft-white/70 mb-10">When are you looking to complete this project?</p>
               
               <div className="space-y-2">
+                <div className="flex items-center justify-center space-x-4">
+                  <motion.button
+                    type="button"
+                    onClick={() => updateTimeline(timelineDays - 1)}
+                    className="w-12 h-12 bg-white/5 border border-[#B8E62D]/10 rounded-xl text-white text-2xl hover:bg-[#B8E62D]/10 transition-all flex items-center justify-center"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    −
+                  </motion.button>
+                  
+                  <div className="flex-1 text-center">
+                    <div className="text-4xl font-bold text-[#B8E62D] mb-2">{timelineDays}</div>
+                    <div className="text-soft-white/70">{timelineDays === 1 ? 'day' : 'days'}</div>
+                  </div>
+                  
+                  <motion.button
+                    type="button"
+                    onClick={() => updateTimeline(timelineDays + 1)}
+                    className="w-12 h-12 bg-white/5 border border-[#B8E62D]/10 rounded-xl text-white text-2xl hover:bg-[#B8E62D]/10 transition-all flex items-center justify-center"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    +
+                  </motion.button>
+                </div>
+                
+                <div className="grid grid-cols-4 gap-2 mt-4">
+                  {[7, 14, 30, 60].map((days) => (
+                    <motion.button
+                      key={days}
+                      type="button"
+                      onClick={() => updateTimeline(days)}
+                      className={`p-2 rounded-lg border text-sm transition-all ${
+                        timelineDays === days
+                          ? 'border-[#B8E62D] bg-[#B8E62D]/10 text-[#B8E62D]'
+                          : 'border-white/10 text-soft-white/70 hover:border-[#B8E62D]/50'
+                      }`}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      {days}d
+                    </motion.button>
+                  ))}
+                </div>
+                
                 <input
                   {...register('timeline')}
-                  type="text"
-                  className="w-full p-4 bg-white/5 border border-[#B8E62D]/10 rounded-xl text-white text-xl placeholder-soft-white/50 focus:outline-none focus:ring-2 focus:ring-[#B8E62D]/30 focus:border-transparent transition-all"
-                  placeholder="e.g. 2-3 months (optional)"
-                  autoFocus
+                  type="hidden"
+                  value={`${timelineDays} days`}
                 />
+                
                 {clientErrors.timeline && (
                   <FormFieldError message={clientErrors.timeline.message} />
                 )}
@@ -672,7 +867,7 @@ export default function ContactPage() {
                 autoFocus
               />
               {recruiterErrors.interview && (
-                <FormFieldError message={`How should we schedule an interview - {recruiterErrors.interview.message}`} />
+                <FormFieldError message={recruiterErrors.interview.message} />
               )}
             </div>
             
@@ -685,7 +880,7 @@ export default function ContactPage() {
                 placeholder="Any additional information you'd like to share..."
               />
               {recruiterErrors.message && (
-                <FormFieldError message={`Additional notes or message - {recruiterErrors.message.message}`} />
+                <FormFieldError message={recruiterErrors.message.message} />
               )}
               
               
