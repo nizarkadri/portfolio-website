@@ -10,17 +10,34 @@
   --mid-gray: #a0a0a0;
   --dark-gray: #333333;
   --off-black: #1a1a1a;
-  --deep-black: #080808;
+  --deep-black: #000000;
   --transition-speed: 0.3s;
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+  }
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(
+      to bottom,
+      transparent,
+      rgb(var(--background-end-rgb))
+    )
+    rgb(var(--background-start-rgb));
+  @apply antialiased;
+  font-feature-settings: "ss01", "ss02", "cv01", "cv02";
 }
 
 @layer base {
-  body {
-    @apply antialiased;
-    font-feature-settings: "ss01", "ss02", "cv01", "cv02";
-    background-color: var(--deep-black);
-  }
-  
   h1, h2, h3, h4, h5, h6 {
     @apply tracking-tight;
   }
@@ -109,6 +126,29 @@
 
 .animate-reverse-spin-slow {
   animation: spinSlow 20s linear infinite reverse;
+}
+
+/* Sliding words animation */
+.animate-slide-words {
+  animation: slideWords 9s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@keyframes slideWords {
+  0%, 20% {
+    transform: translateY(0%);
+  }
+  25%, 45% {
+    transform: translateY(-100%);
+  }
+  50%, 70% {
+    transform: translateY(-200%);
+  }
+  75%, 95% {
+    transform: translateY(-300%);
+  }
+  100% {
+    transform: translateY(-400%);
+  }
 }
 
 .perspective {
@@ -284,6 +324,24 @@
   @apply bg-gray-700;
 }
 
+/* Custom scrollbar for dropdown */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(184, 230, 45, 0.3);
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(184, 230, 45, 0.5);
+}
+
 /* 3D Icon styling */
 .icon-3d {
   @apply relative transition-all duration-300;
@@ -347,7 +405,7 @@ img[src$=".svg"] {
 /* Huge text for sections */
 .huge-text {
   @apply text-8xl md:text-9xl font-black text-transparent opacity-5;
-  -webkit-text-stroke: 1px rgba(255,255,255,0.1);
+  -webkit-text-stroke: 1px rgba(205, 255, 144, 0.142);
 }
 
 /* Skill icons with embossed effect */
@@ -610,4 +668,25 @@ img[src$=".svg"] {
   0% { transform: translateZ(0px) rotateX(0deg) rotateY(0deg); }
   50% { transform: translateZ(20px) rotateX(5deg) rotateY(5deg); }
   100% { transform: translateZ(0px) rotateX(0deg) rotateY(0deg); }
+}
+
+/* Lenis recommended CSS */
+html.lenis, html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
 }

@@ -1,69 +1,74 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, FieldErrors } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { motion, AnimatePresence } from 'framer-motion';
+import FormFieldError from '../../../components/FormFieldError';
+
 
 // Define user types
 type UserType = 'recruiter' | 'client' | null;
 
-// Extended schema based on user type
-const baseSchema = {
+const recruiterSchema = z.object({
+  userType: z.literal('recruiter'),
   email: z.string().email('Invalid email address'),
-  message: z.string().min(10, 'Message must be at least 10 characters'),
-};
-
-const recruiterSchema = {
-  ...baseSchema,
   company: z.string().min(2, 'Company name must be at least 2 characters'),
   position: z.string().min(2, 'Position must be at least 2 characters'),
   jobDescription: z.string().min(10, 'Job description must be at least 10 characters'),
   employmentType: z.string().min(2, 'Please specify the employment type'),
   interview: z.string().min(2, 'Please provide interview availability'),
   workLocation: z.string().min(2, 'Please specify the work location'),
-};
+  locationDetails: z.string().optional(),
+  message: z.string().optional(),
+});
 
-const clientSchema = {
+const clientSchema = z.object({
+  userType: z.literal('client'),
+  email: z.string().email('Invalid email address'),
   name: z.string().min(2, 'Name must be at least 2 characters'),
-  ...baseSchema,
+  message: z.string().min(10, 'Message must be at least 10 characters'),
   projectType: z.string().min(2, 'Project type must be at least 2 characters'),
   budget: z.string().optional(),
   timeline: z.string().optional(),
-};
+});
+
+type RecruiterErrors = FieldErrors<z.infer<typeof recruiterSchema>>;
+type ClientErrors = FieldErrors<z.infer<typeof clientSchema>>;
 
 // Create schema based on user type
-const contactSchema = z.object({
-  userType: z.enum(['recruiter', 'client']),
-  // Name not required for recruiters, only for clients
-  name: z.string().min(2, 'Name must be at least 2 characters').optional(),
-  email: z.string().email('Invalid email address'),
-  message: z.string().min(10, 'Message must be at least 10 characters'),
-  // Recruiter fields
-  company: z.string().optional(),
-  position: z.string().optional(),
-  jobDescription: z.string().optional(),
-  employmentType: z.string().optional(),
-  interview: z.string().optional(),
-  workLocation: z.string().optional(),
-  // Client fields
-  projectType: z.string().optional(),
-  budget: z.string().optional(),
-  timeline: z.string().optional(),
-}).refine(data => {
-  if (data.userType === 'recruiter') {
-    return !!data.company && !!data.position && !!data.jobDescription && 
-      !!data.employmentType && !!data.interview && !!data.workLocation;
-  }
-  if (data.userType === 'client') {
-    return !!data.name && !!data.projectType;
-  }
-  return true;
-}, {
-  message: "Please fill in the required fields for your user type",
-  path: ["userType"],
-});
+const contactSchema = z.discriminatedUnion('userType', [recruiterSchema, clientSchema]);
+// const contactSchema = z.object({
+//   userType: z.enum(['recruiter', 'client']),
+//   // Name not required for recruiters, only for clients
+//   name: z.string().min(2, 'Name must be at least 2 characters').optional(),
+//   email: z.string().email('Invalid email address'),
+//   message: z.string().min(10, 'Message must be at least 10 characters'),
+//   // Recruiter fields
+//   company: z.string().optional(),
+//   position: z.string().optional(),
+//   jobDescription: z.string().optional(),
+//   employmentType: z.string().optional(),
+//   interview: z.string().optional(),
+//   workLocation: z.string().optional(),
+//   // Client fields
+//   projectType: z.string().optional(),
+//   budget: z.string().optional(),
+//   timeline: z.string().optional(),
+// }).refine(data => {
+//   if (data.userType === 'recruiter') {
+//     return !!data.company && !!data.position && !!data.jobDescription && 
+//       !!data.employmentType && !!data.interview && !!data.workLocation;
+//   }
+//   if (data.userType === 'client') {
+//     return !!data.name && !!data.projectType;
+//   }
+//   return true;
+// }, {
+//   message: "Please fill in the required fields for your user type",
+//   path: ["userType"],
+// });
 
 type ContactFormData = z.infer<typeof contactSchema>;
 
@@ -90,16 +95,7 @@ const staggerContainer = {
 };
 
 export default function ContactPage() {
-  // State for multi-step form
-  const [step, setStep] = useState(0);
-  const [userType, setUserType] = useState<UserType>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState<{
-    type: 'success' | 'error';
-    message: string;
-  } | null>(null);
-  
-  // Form handling
+
   const {
     register,
     handleSubmit,
@@ -111,21 +107,114 @@ export default function ContactPage() {
     resolver: zodResolver(contactSchema),
     mode: 'onChange',
   });
-
+  // State for multi-step form
+  const [step, setStep] = useState(0);
+  const userType = watch('userType') as 'recruiter' | 'client' | null;
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<{
+    type: 'success' | 'error';
+    message: string;
+  } | null>(null);
+  
+  // Add state for timeline counter
+  const [timelineDays, setTimelineDays] = useState(30);
+  const [isProjectDropdownOpen, setIsProjectDropdownOpen] = useState(false);
+  
+  const recruiterErrors = errors as RecruiterErrors;
+  const clientErrors = errors as ClientErrors;
   // Watch form values for conditional logic
   const formValues = watch();
+
+  // Helper function to format budget input
+  const formatBudgetInput = (value: string) => {
+    // Remove any characters that aren't numbers, commas, or hyphens
+    return value.replace(/[^0-9,-]/g, '');
+  };
+
+  // Helper function to handle budget input change
+  const handleBudgetChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatBudgetInput(e.target.value);
+    setValue('budget', formatted, { shouldValidate: true });
+  };
+
+  // Helper function to update timeline
+  const updateTimeline = (days: number) => {
+    const newDays = Math.max(1, Math.min(365, days)); // Limit between 1 and 365 days
+    setTimelineDays(newDays);
+    setValue('timeline', `${newDays} days`, { shouldValidate: true });
+  };
+
+  // Helper function to handle project type selection
+  const handleProjectTypeSelect = (projectType: string) => {
+    setValue('projectType', projectType, { shouldValidate: true });
+    setIsProjectDropdownOpen(false);
+  };
+
+  // Predefined project types
+  const projectTypes = [
+    'Website',
+    'Web Application',
+    'Mobile App (iOS)',
+    'Mobile App (Android)',
+    'Mobile App (Cross-platform)',
+    'E-commerce Platform',
+    'Portfolio Website',
+    'Landing Page',
+    'Dashboard/Admin Panel',
+    'API Development',
+    'Database Design',
+    'UI/UX Design',
+    'WordPress Site',
+    'Custom Software',
+    'SaaS Platform',
+    'Progressive Web App (PWA)',
+    'Chrome Extension',
+    'Desktop Application',
+    'Game Development',
+    'Blockchain/Web3 Project',
+    'AI/ML Integration',
+    'Data Visualization',
+    'CRM System',
+    'Booking/Reservation System',
+    'Educational Platform',
+    'Social Media Platform',
+    'Other'
+  ];
+
+  // Form handling
+  useEffect(() => {
+    console.log("Form errors:", errors);
+    console.log("Form is valid:", isValid);
+    console.log('Submitting:', watch('userType'), formValues);
+  }, [errors, isValid]);
+
+  // Handle clicking outside dropdown to close it
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Element;
+      if (isProjectDropdownOpen && !target.closest('.dropdown-container')) {
+        setIsProjectDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isProjectDropdownOpen]);
+  
+  
+  
   
   // Set user type when changed
-  useEffect(() => {
-    if (userType) {
-      setValue('userType', userType as 'recruiter' | 'client');
-    }
-  }, [userType, setValue]);
+  // useEffect(() => {
+  //   if (userType) {
+  //     setValue('userType', userType as 'recruiter' | 'client');
+  //   }
+  // }, [userType, setValue]);
   
   // Total steps based on user type
   const getTotalSteps = (): number => {
     if (!userType) return 1; // Initial step to select user type
-    return userType === 'recruiter' ? 7 : 6; // Different steps for each user type
+    return userType === 'recruiter' ? 8 : 7; // Different steps for each user type
   };
   
   // Handle next step
@@ -144,13 +233,14 @@ export default function ContactPage() {
 
   // Handle user type selection - fix for first click issue
   const handleUserTypeSelection = (type: UserType) => {
-    setUserType(type);
+    // setUserType(type);
     setValue('userType', type as 'recruiter' | 'client');
     setStep(1);
   };
   
   // Form submission handler
   const onSubmit = async (data: ContactFormData) => {
+    console.log("Submitting:", data.userType, data);
     try {
       setIsSubmitting(true);
       setSubmitStatus(null);
@@ -175,7 +265,7 @@ export default function ContactPage() {
       });
       reset();
       setStep(0);
-      setUserType(null);
+      // setUserType(null);
     } catch (error) {
       setSubmitStatus({
         type: 'error',
@@ -200,7 +290,7 @@ export default function ContactPage() {
             key="step-0"
           >
             <h2 className="text-3xl md:text-4xl font-bold mb-8 text-white">Who are you?</h2>
-            <p className="text-[#9CA3AF] mb-10">I'll tailor our conversation based on your needs.</p>
+            <p className="text-soft-white/70 mb-10">I'll tailor our conversation based on your needs.</p>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <motion.button
@@ -216,7 +306,7 @@ export default function ContactPage() {
                   </svg>
                 </div>
                 <h3 className="text-xl font-semibold text-white mb-2">Recruiter / Hiring Manager</h3>
-                <p className="text-[#9CA3AF] text-sm">Looking to hire me for a position</p>
+                <p className="text-soft-white/70 text-sm">Looking to hire me for a position</p>
               </motion.button>
               
               <motion.button
@@ -232,7 +322,7 @@ export default function ContactPage() {
                   </svg>
                 </div>
                 <h3 className="text-xl font-semibold text-white mb-2">Client</h3>
-                <p className="text-[#9CA3AF] text-sm">Looking for development services</p>
+                <p className="text-soft-white/70 text-sm">Looking for development services</p>
               </motion.button>
             </div>
           </motion.div>
@@ -250,24 +340,18 @@ export default function ContactPage() {
               key="step-1-client"
             >
               <h2 className="text-3xl md:text-4xl font-bold mb-3 text-white">What's your name?</h2>
-              <p className="text-[#9CA3AF] mb-10">Let's start with an introduction.</p>
+              <p className="text-soft-white/70 mb-10">Let's start with an introduction.</p>
               
               <div className="space-y-2">
                 <input
                   {...register('name')}
                   type="text"
-                  className="w-full p-4 bg-white/5 border border-[#B8E62D]/10 rounded-xl text-white text-xl placeholder-[#9CA3AF]/50 focus:outline-none focus:ring-2 focus:ring-[#B8E62D]/30 focus:border-transparent transition-all"
+                  className="w-full p-4 bg-white/5 border border-[#B8E62D]/10 rounded-xl text-white text-xl placeholder-soft-white/50 focus:outline-none focus:ring-2 focus:ring-[#B8E62D]/30 focus:border-transparent transition-all"
                   placeholder="Enter your name"
                   autoFocus
                 />
-                {errors.name && (
-                  <motion.p 
-                    className="text-red-400 mt-2"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                  >
-                    {errors.name.message}
-                  </motion.p>
+                {clientErrors.name && (
+                  <FormFieldError message={clientErrors.name.message} />
                 )}
               </div>
             </motion.div>
@@ -283,24 +367,18 @@ export default function ContactPage() {
               key="step-1-recruiter"
             >
               <h2 className="text-3xl md:text-4xl font-bold mb-3 text-white">Which company do you represent?</h2>
-              <p className="text-[#9CA3AF] mb-10">Let me know where you work.</p>
+              <p className="text-soft-white/70 mb-10">Let me know where you work.</p>
               
               <div className="space-y-2">
                 <input
                   {...register('company')}
                   type="text"
-                  className="w-full p-4 bg-white/5 border border-[#B8E62D]/10 rounded-xl text-white text-xl placeholder-[#9CA3AF]/50 focus:outline-none focus:ring-2 focus:ring-[#B8E62D]/30 focus:border-transparent transition-all"
+                  className="w-full p-4 bg-white/5 border border-[#B8E62D]/10 rounded-xl text-white text-xl placeholder-soft-white/50 focus:outline-none focus:ring-2 focus:ring-[#B8E62D]/30 focus:border-transparent transition-all"
                   placeholder="Enter company name"
                   autoFocus
                 />
-                {errors.company && (
-                  <motion.p 
-                    className="text-red-400 mt-2"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                  >
-                    {errors.company.message}
-                  </motion.p>
+                {recruiterErrors.company && (
+                  <FormFieldError message={recruiterErrors.company.message} />
                 )}
               </div>
             </motion.div>
@@ -319,24 +397,18 @@ export default function ContactPage() {
               key="step-2-client"
             >
               <h2 className="text-3xl md:text-4xl font-bold mb-3 text-white">What's your email?</h2>
-              <p className="text-[#9CA3AF] mb-10">I'll use this to get back to you.</p>
+              <p className="text-soft-white/70 mb-10">I'll use this to get back to you.</p>
               
               <div className="space-y-2">
                 <input
                   {...register('email')}
                   type="email"
-                  className="w-full p-4 bg-white/5 border border-[#B8E62D]/10 rounded-xl text-white text-xl placeholder-[#9CA3AF]/50 focus:outline-none focus:ring-2 focus:ring-[#B8E62D]/30 focus:border-transparent transition-all"
+                  className="w-full p-4 bg-white/5 border border-[#B8E62D]/10 rounded-xl text-white text-xl placeholder-soft-white/50 focus:outline-none focus:ring-2 focus:ring-[#B8E62D]/30 focus:border-transparent transition-all"
                   placeholder="Enter your email"
                   autoFocus
                 />
-                {errors.email && (
-                  <motion.p 
-                    className="text-red-400 mt-2"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                  >
-                    {errors.email.message}
-                  </motion.p>
+                {clientErrors.email && (
+                  <FormFieldError message={clientErrors.email.message} />
                 )}
               </div>
             </motion.div>
@@ -352,24 +424,18 @@ export default function ContactPage() {
               key="step-2-recruiter"
             >
               <h2 className="text-3xl md:text-4xl font-bold mb-3 text-white">What position are you hiring for?</h2>
-              <p className="text-[#9CA3AF] mb-10">What role are you looking to fill?</p>
+              <p className="text-soft-white/70 mb-10">What role are you looking to fill?</p>
               
               <div className="space-y-2">
                 <input
                   {...register('position')}
                   type="text"
-                  className="w-full p-4 bg-white/5 border border-[#B8E62D]/10 rounded-xl text-white text-xl placeholder-[#9CA3AF]/50 focus:outline-none focus:ring-2 focus:ring-[#B8E62D]/30 focus:border-transparent transition-all"
+                  className="w-full p-4 bg-white/5 border border-[#B8E62D]/10 rounded-xl text-white text-xl placeholder-soft-white/50 focus:outline-none focus:ring-2 focus:ring-[#B8E62D]/30 focus:border-transparent transition-all"
                   placeholder="e.g. Frontend Developer, Full Stack Engineer"
                   autoFocus
                 />
-                {errors.position && (
-                  <motion.p 
-                    className="text-red-400 mt-2"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                  >
-                    {errors.position.message}
-                  </motion.p>
+                {recruiterErrors.position && (
+                  <FormFieldError message={recruiterErrors.position.message} />
                 )}
               </div>
             </motion.div>
@@ -388,24 +454,91 @@ export default function ContactPage() {
               key="step-3-client"
             >
               <h2 className="text-3xl md:text-4xl font-bold mb-3 text-white">What type of project are you looking for?</h2>
-              <p className="text-[#9CA3AF] mb-10">Tell me about your project needs.</p>
+              <p className="text-soft-white/70 mb-10">Tell me about your project needs.</p>
               
               <div className="space-y-2">
-                <input
-                  {...register('projectType')}
-                  type="text"
-                  className="w-full p-4 bg-white/5 border border-[#B8E62D]/10 rounded-xl text-white text-xl placeholder-[#9CA3AF]/50 focus:outline-none focus:ring-2 focus:ring-[#B8E62D]/30 focus:border-transparent transition-all"
-                  placeholder="e.g. Website, Mobile App, Web Application"
-                  autoFocus
-                />
-                {errors.projectType && (
-                  <motion.p 
-                    className="text-red-400 mt-2"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
+                <div className="relative dropdown-container">
+                  <motion.div
+                    className={`w-full p-4 bg-white/5 border rounded-xl text-white text-xl focus:outline-none transition-all cursor-pointer ${
+                      isProjectDropdownOpen 
+                        ? 'border-[#B8E62D] ring-2 ring-[#B8E62D]/30' 
+                        : 'border-[#B8E62D]/10 hover:border-[#B8E62D]/30'
+                    }`}
+                    onClick={() => setIsProjectDropdownOpen(!isProjectDropdownOpen)}
+                    whileHover={{ scale: 1.01 }}
+                    whileTap={{ scale: 0.99 }}
                   >
-                    {errors.projectType.message}
-                  </motion.p>
+                    <div className="flex items-center justify-between">
+                      <span className={watch('projectType') ? 'text-white' : 'text-soft-white/50'}>
+                        {watch('projectType') || 'Select project type'}
+                      </span>
+                      <motion.div
+                        animate={{ rotate: isProjectDropdownOpen ? 180 : 0 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        <svg className="w-5 h-5 text-[#B8E62D]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </motion.div>
+                    </div>
+                  </motion.div>
+
+                  <AnimatePresence>
+                    {isProjectDropdownOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                        transition={{ duration: 0.2 }}
+                        className="absolute top-full left-0 right-0 mt-2 bg-[#0E0E0E] border border-[#B8E62D]/20 rounded-xl shadow-2xl z-50"
+                      >
+                        <div 
+                          className="max-h-60 overflow-y-auto custom-scrollbar"
+                          style={{
+                            scrollbarWidth: 'thin',
+                            scrollbarColor: 'rgba(184, 230, 45, 0.3) transparent',
+                          }}
+                          onScroll={(e) => e.stopPropagation()}
+                          onWheel={(e) => {
+                            e.stopPropagation();
+                            const container = e.currentTarget;
+                            container.scrollTop += e.deltaY;
+                          }}
+                        >
+                          <div className="p-2">
+                            {projectTypes.map((type, index) => (
+                              <motion.div
+                                key={type}
+                                initial={{ opacity: 0, x: -10 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ delay: index * 0.03 }}
+                                className={`p-3 rounded-lg cursor-pointer transition-all text-lg ${
+                                  watch('projectType') === type
+                                    ? 'bg-[#B8E62D]/20 text-[#B8E62D] border border-[#B8E62D]/30'
+                                    : 'text-white hover:bg-white/5 hover:text-[#B8E62D]'
+                                }`}
+                                onClick={() => handleProjectTypeSelect(type)}
+                                whileHover={{ scale: 1.02, x: 4 }}
+                                whileTap={{ scale: 0.98 }}
+                              >
+                                {type}
+                              </motion.div>
+                            ))}
+                          </div>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
+                  {/* Hidden input for form validation */}
+                  <input
+                    {...register('projectType')}
+                    type="hidden"
+                    value={watch('projectType') || ''}
+                  />
+                </div>
+                {clientErrors.projectType && (
+                  <FormFieldError message={clientErrors.projectType.message} />
                 )}
               </div>
             </motion.div>
@@ -421,24 +554,18 @@ export default function ContactPage() {
               key="step-3-recruiter"
             >
               <h2 className="text-3xl md:text-4xl font-bold mb-3 text-white">What's your email address?</h2>
-              <p className="text-[#9CA3AF] mb-10">I'll use this to contact you about the position.</p>
+              <p className="text-soft-white/70 mb-10">I'll use this to contact you about the position.</p>
               
               <div className="space-y-2">
                 <input
                   {...register('email')}
                   type="email"
-                  className="w-full p-4 bg-white/5 border border-[#B8E62D]/10 rounded-xl text-white text-xl placeholder-[#9CA3AF]/50 focus:outline-none focus:ring-2 focus:ring-[#B8E62D]/30 focus:border-transparent transition-all"
+                  className="w-full p-4 bg-white/5 border border-[#B8E62D]/10 rounded-xl text-white text-xl placeholder-soft-white/50 focus:outline-none focus:ring-2 focus:ring-[#B8E62D]/30 focus:border-transparent transition-all"
                   placeholder="Your email address"
                   autoFocus
                 />
-                {errors.email && (
-                  <motion.p 
-                    className="text-red-400 mt-2"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                  >
-                    {errors.email.message}
-                  </motion.p>
+                {recruiterErrors.email && (
+                  <FormFieldError message={recruiterErrors.email.message} />
                 )}
               </div>
             </motion.div>
@@ -457,24 +584,20 @@ export default function ContactPage() {
               key="step-4-client"
             >
               <h2 className="text-3xl md:text-4xl font-bold mb-3 text-white">What's your budget range?</h2>
-              <p className="text-[#9CA3AF] mb-10">This helps me understand the project scope.</p>
+              <p className="text-soft-white/70 mb-10">This helps me understand the project scope.</p>
               
               <div className="space-y-2">
                 <input
                   {...register('budget')}
                   type="text"
-                  className="w-full p-4 bg-white/5 border border-[#B8E62D]/10 rounded-xl text-white text-xl placeholder-[#9CA3AF]/50 focus:outline-none focus:ring-2 focus:ring-[#B8E62D]/30 focus:border-transparent transition-all"
+                  className="w-full p-4 bg-white/5 border border-[#B8E62D]/10 rounded-xl text-white text-xl placeholder-soft-white/50 focus:outline-none focus:ring-2 focus:ring-[#B8E62D]/30 focus:border-transparent transition-all"
                   placeholder="e.g. $5,000 - $10,000 (optional)"
                   autoFocus
+                  onChange={handleBudgetChange}
+                  value={watch('budget') || ''}
                 />
-                {errors.budget && (
-                  <motion.p 
-                    className="text-red-400 mt-2"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                  >
-                    {errors.budget.message}
-                  </motion.p>
+                {clientErrors.budget && (
+                  <FormFieldError message={clientErrors.budget.message} />
                 )}
               </div>
             </motion.div>
@@ -490,24 +613,18 @@ export default function ContactPage() {
               key="step-4-recruiter"
             >
               <h2 className="text-3xl md:text-4xl font-bold mb-3 text-white">Describe the job requirements</h2>
-              <p className="text-[#9CA3AF] mb-10">What are the key responsibilities and requirements?</p>
+              <p className="text-soft-white/70 mb-10">What are the key responsibilities and requirements?</p>
               
               <div className="space-y-2">
                 <textarea
                   {...register('jobDescription')}
                   rows={5}
-                  className="w-full p-4 bg-white/5 border border-[#B8E62D]/10 rounded-xl text-white text-xl placeholder-[#9CA3AF]/50 focus:outline-none focus:ring-2 focus:ring-[#B8E62D]/30 focus:border-transparent transition-all resize-none"
+                  className="w-full p-4 bg-white/5 border border-[#B8E62D]/10 rounded-xl text-white text-xl placeholder-soft-white/50 focus:outline-none focus:ring-2 focus:ring-[#B8E62D]/30 focus:border-transparent transition-all resize-none"
                   placeholder="Please provide a brief job description"
                   autoFocus
                 />
-                {errors.jobDescription && (
-                  <motion.p 
-                    className="text-red-400 mt-2"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                  >
-                    {errors.jobDescription.message}
-                  </motion.p>
+                {recruiterErrors.jobDescription && (
+                  <FormFieldError message={recruiterErrors.jobDescription.message} />
                 )}
               </div>
             </motion.div>
@@ -526,24 +643,63 @@ export default function ContactPage() {
               key="step-5-client"
             >
               <h2 className="text-3xl md:text-4xl font-bold mb-3 text-white">What's your timeline?</h2>
-              <p className="text-[#9CA3AF] mb-10">When are you looking to complete this project?</p>
+              <p className="text-soft-white/70 mb-10">When are you looking to complete this project?</p>
               
               <div className="space-y-2">
+                <div className="flex items-center justify-center space-x-4">
+                  <motion.button
+                    type="button"
+                    onClick={() => updateTimeline(timelineDays - 1)}
+                    className="w-12 h-12 bg-white/5 border border-[#B8E62D]/10 rounded-xl text-white text-2xl hover:bg-[#B8E62D]/10 transition-all flex items-center justify-center"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    −
+                  </motion.button>
+                  
+                  <div className="flex-1 text-center">
+                    <div className="text-4xl font-bold text-[#B8E62D] mb-2">{timelineDays}</div>
+                    <div className="text-soft-white/70">{timelineDays === 1 ? 'day' : 'days'}</div>
+                  </div>
+                  
+                  <motion.button
+                    type="button"
+                    onClick={() => updateTimeline(timelineDays + 1)}
+                    className="w-12 h-12 bg-white/5 border border-[#B8E62D]/10 rounded-xl text-white text-2xl hover:bg-[#B8E62D]/10 transition-all flex items-center justify-center"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    +
+                  </motion.button>
+                </div>
+                
+                <div className="grid grid-cols-4 gap-2 mt-4">
+                  {[7, 14, 30, 60].map((days) => (
+                    <motion.button
+                      key={days}
+                      type="button"
+                      onClick={() => updateTimeline(days)}
+                      className={`p-2 rounded-lg border text-sm transition-all ${
+                        timelineDays === days
+                          ? 'border-[#B8E62D] bg-[#B8E62D]/10 text-[#B8E62D]'
+                          : 'border-white/10 text-soft-white/70 hover:border-[#B8E62D]/50'
+                      }`}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      {days}d
+                    </motion.button>
+                  ))}
+                </div>
+                
                 <input
                   {...register('timeline')}
-                  type="text"
-                  className="w-full p-4 bg-white/5 border border-[#B8E62D]/10 rounded-xl text-white text-xl placeholder-[#9CA3AF]/50 focus:outline-none focus:ring-2 focus:ring-[#B8E62D]/30 focus:border-transparent transition-all"
-                  placeholder="e.g. 2-3 months (optional)"
-                  autoFocus
+                  type="hidden"
+                  value={`${timelineDays} days`}
                 />
-                {errors.timeline && (
-                  <motion.p 
-                    className="text-red-400 mt-2"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                  >
-                    {errors.timeline.message}
-                  </motion.p>
+                
+                {clientErrors.timeline && (
+                  <FormFieldError message={clientErrors.timeline.message} />
                 )}
               </div>
             </motion.div>
@@ -559,7 +715,7 @@ export default function ContactPage() {
               key="step-5-recruiter"
             >
               <h2 className="text-3xl md:text-4xl font-bold mb-3 text-white">What type of employment?</h2>
-              <p className="text-[#9CA3AF] mb-10">Select the employment type for this position.</p>
+              <p className="text-soft-white/70 mb-10">Select the employment type for this position.</p>
               
               <div className="space-y-4">
                 {['Full-time', 'Part-time', 'Contract', 'Freelance'].map((type) => (
@@ -589,14 +745,8 @@ export default function ContactPage() {
                   </motion.div>
                 ))}
                 
-                {errors.employmentType && (
-                  <motion.p 
-                    className="text-red-400 mt-2"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                  >
-                    {errors.employmentType.message}
-                  </motion.p>
+                {recruiterErrors.employmentType && (
+                  <FormFieldError message={recruiterErrors.employmentType.message} />
                 )}
               </div>
             </motion.div>
@@ -615,24 +765,18 @@ export default function ContactPage() {
               key="step-6-client"
             >
               <h2 className="text-3xl md:text-4xl font-bold mb-3 text-white">Any additional details?</h2>
-              <p className="text-[#9CA3AF] mb-10">Share any other information you'd like me to know.</p>
+              <p className="text-soft-white/70 mb-10">Share any other information you'd like me to know.</p>
               
               <div className="space-y-2">
                 <textarea
                   {...register('message')}
                   rows={6}
-                  className="w-full p-4 bg-white/5 border border-[#B8E62D]/10 rounded-xl text-white text-xl placeholder-[#9CA3AF]/50 focus:outline-none focus:ring-2 focus:ring-[#B8E62D]/30 focus:border-transparent transition-all resize-none"
+                  className="w-full p-4 bg-white/5 border border-[#B8E62D]/10 rounded-xl text-white text-xl placeholder-soft-white/50 focus:outline-none focus:ring-2 focus:ring-[#B8E62D]/30 focus:border-transparent transition-all resize-none"
                   placeholder="Your message..."
                   autoFocus
                 />
-                {errors.message && (
-                  <motion.p 
-                    className="text-red-400 mt-2"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                  >
-                    {errors.message.message}
-                  </motion.p>
+                {clientErrors.message && (
+                  <FormFieldError message={clientErrors.message.message} />
                 )}
               </div>
             </motion.div>
@@ -648,7 +792,7 @@ export default function ContactPage() {
               key="step-6-recruiter"
             >
               <h2 className="text-3xl md:text-4xl font-bold mb-3 text-white">Where is the job located?</h2>
-              <p className="text-[#9CA3AF] mb-10">Specify the work location arrangement.</p>
+              <p className="text-soft-white/70 mb-10">Specify the work location arrangement.</p>
               
               <div className="space-y-4">
                 {['Remote', 'On-site', 'Hybrid'].map((type) => (
@@ -678,29 +822,23 @@ export default function ContactPage() {
                   </motion.div>
                 ))}
                 
-                {watch('workLocation') === 'On-site' || watch('workLocation') === 'Hybrid' ? (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: 'auto' }}
-                    className="mt-4"
-                  >
-                    <input
-                      type="text"
-                      placeholder="Enter location (city, country)"
-                      className="w-full p-4 bg-white/5 border border-[#B8E62D]/10 rounded-xl text-white text-lg placeholder-[#9CA3AF]/50 focus:outline-none focus:ring-2 focus:ring-[#B8E62D]/30 focus:border-transparent transition-all"
-                      onChange={(e) => setValue('workLocation', `${watch('workLocation')}: ${e.target.value}`, { shouldValidate: true })}
-                    />
-                  </motion.div>
-                ) : null}
+                {['On-site', 'Hybrid'].includes(watch('workLocation')) && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      className="mt-4"
+                    >
+                      <input
+                        {...register('locationDetails')}
+                        type="text"
+                        placeholder="Enter location (city, country)"
+                        className="w-full p-4 bg-white/5 border border-[#B8E62D]/10 rounded-xl text-white text-lg placeholder-soft-white/50 focus:outline-none focus:ring-2 focus:ring-[#B8E62D]/30 focus:border-transparent transition-all"
+                      />
+                    </motion.div>
+                  )}
                 
-                {errors.workLocation && (
-                  <motion.p 
-                    className="text-red-400 mt-2"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                  >
-                    {errors.workLocation.message}
-                  </motion.p>
+                {recruiterErrors.workLocation && (
+                  <FormFieldError message={recruiterErrors.workLocation.message} />
                 )}
               </div>
             </motion.div>
@@ -718,24 +856,18 @@ export default function ContactPage() {
             key="step-7-recruiter"
           >
             <h2 className="text-3xl md:text-4xl font-bold mb-3 text-white">How should we schedule an interview?</h2>
-            <p className="text-[#9CA3AF] mb-10">Let me know your availability for an interview.</p>
+            <p className="text-soft-white/70 mb-10">Let me know your availability for an interview.</p>
             
             <div className="space-y-2">
               <textarea
                 {...register('interview')}
                 rows={4}
-                className="w-full p-4 bg-white/5 border border-[#B8E62D]/10 rounded-xl text-white text-xl placeholder-[#9CA3AF]/50 focus:outline-none focus:ring-2 focus:ring-[#B8E62D]/30 focus:border-transparent transition-all resize-none"
+                className="w-full p-4 bg-white/5 border border-[#B8E62D]/10 rounded-xl text-white text-xl placeholder-soft-white/50 focus:outline-none focus:ring-2 focus:ring-[#B8E62D]/30 focus:border-transparent transition-all resize-none"
                 placeholder="Provide interview availability or preferred method to schedule"
                 autoFocus
               />
-              {errors.interview && (
-                <motion.p 
-                  className="text-red-400 mt-2"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                >
-                  {errors.interview.message}
-                </motion.p>
+              {recruiterErrors.interview && (
+                <FormFieldError message={recruiterErrors.interview.message} />
               )}
             </div>
             
@@ -744,18 +876,14 @@ export default function ContactPage() {
               <textarea
                 {...register('message')}
                 rows={4}
-                className="w-full p-4 bg-white/5 border border-[#B8E62D]/10 rounded-xl text-white text-lg placeholder-[#9CA3AF]/50 focus:outline-none focus:ring-2 focus:ring-[#B8E62D]/30 focus:border-transparent transition-all resize-none"
+                className="w-full p-4 bg-white/5 border border-[#B8E62D]/10 rounded-xl text-white text-lg placeholder-soft-white/50 focus:outline-none focus:ring-2 focus:ring-[#B8E62D]/30 focus:border-transparent transition-all resize-none"
                 placeholder="Any additional information you'd like to share..."
               />
-              {errors.message && (
-                <motion.p 
-                  className="text-red-400 mt-2"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                >
-                  {errors.message.message}
-                </motion.p>
+              {recruiterErrors.message && (
+                <FormFieldError message={recruiterErrors.message.message} />
               )}
+              
+              
             </div>
           </motion.div>
         );
@@ -766,7 +894,7 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#0E0E0E]">
+    <div className="min-h-screen flex flex-col bg-black">
       {/* Form container */}
       <div className="flex-1 flex flex-col items-center justify-center">
         <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-6xl px-4 py-10">
@@ -774,14 +902,14 @@ export default function ContactPage() {
           {userType && (
             <div className="mb-10 max-w-xl mx-auto">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-[#9CA3AF] text-sm">
+                <span className="text-soft-white/70 text-sm">
                   Step {step} of {getTotalSteps() - 1}
                 </span>
                 {step > 0 && (
                   <button 
                     type="button" 
                     onClick={() => setStep(0)}
-                    className="text-[#9CA3AF] text-sm hover:text-[#B8E62D] transition-colors"
+                    className="text-soft-white/70 text-sm hover:text-[#B8E62D] transition-colors"
                   >
                     Start over
                   </button>
@@ -884,7 +1012,7 @@ export default function ContactPage() {
                   <h3 className="text-2xl font-bold text-white mb-2">
                     {submitStatus.type === 'success' ? 'Message Sent!' : 'Error'}
                   </h3>
-                  <p className={`mb-6 ${submitStatus.type === 'success' ? 'text-[#9CA3AF]' : 'text-red-400'}`}>
+                  <p className={`mb-6 ${submitStatus.type === 'success' ? 'text-soft-white/70' : 'text-red-400'}`}>
                     {submitStatus.message}
                   </p>
                   

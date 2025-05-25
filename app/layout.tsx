@@ -1,12 +1,15 @@
 // app/layout.tsx
 import type { Metadata } from 'next'
 import Navbar from '../components/Navbar';
+import NewFooter from '../components/NewFooter';
 import './globals.css';
-import { Inter } from 'next/font/google'; // Import Inter
+import { Inter } from 'next/font/google'; 
+import ThreeScene from '../components/ThreeScene';
+import SmoothScroll from '../components/SmoothScroll'
 
 const inter = Inter({
   subsets: ['latin'],
-  variable: '--font-inter', // Optional: Define a CSS variable
+  variable: '--font-inter', 
 });
 
 export const metadata: Metadata = {
@@ -20,11 +23,8 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={`dark ${inter.variable}`}>
-      <body suppressHydrationWarning className="bg-[#0E0E0E] text-soft-white min-h-screen flex flex-col">
-        {/* Background grid */}
-        <div className="fixed inset-0 bg-[url('/grid-dark.svg')] bg-center opacity-[0.02] pointer-events-none" />
-        
+    <html lang="en" className={inter.variable}>
+      <body suppressHydrationWarning className="bg-black text-soft-white min-h-screen flex flex-col">
         {/* Floating particles */}
         <div className="particle particle-sm top-[15%] left-[10%] animate-float-slow"></div>
         <div className="particle particle-md top-[45%] left-[15%] animate-float"></div>
@@ -35,11 +35,14 @@ export default function RootLayout({
         
         <Navbar />
         <main className="container mx-auto px-4 md:px-6 py-8 flex-grow mt-20">
+          {/* <ThreeScene /> */}
           <div className="fade-in">
-            {children}
+            <SmoothScroll>
+              {children}
+            </SmoothScroll>
           </div>
         </main>
-        {/* <Footer /> */}
+        <NewFooter />
       </body>
     </html>
   );

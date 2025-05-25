@@ -1,34 +1,16 @@
+'use client';
+
+import { useRef, useEffect } from 'react';
+import { motion, useMotionValue, useTransform } from 'framer-motion';
+
 const Logo3D = () => {
     const containerRef = useRef<HTMLDivElement>(null);
-    const rotateX = useMotionValue(0);
-    const rotateY = useMotionValue(0);
+    const rotateX = useMotionValue(15);
+    const rotateY = useMotionValue(15);
   
     // Transform values for 3D effect
     const z = useTransform(rotateX, [-40, 40], [8, -8]);
     
-    useEffect(() => {
-      const handleMouseMove = (e: MouseEvent) => {
-        if (!containerRef.current) return;
-        
-        const rect = containerRef.current.getBoundingClientRect();
-        const centerX = rect.left + rect.width / 2;
-        const centerY = rect.top + rect.height / 2;
-        
-        // Calculate rotation based on mouse position relative to center
-        const rotX = ((e.clientY - centerY) / 10);
-        const rotY = -((e.clientX - centerX) / 10);
-        
-        rotateX.set(rotX);
-        rotateY.set(rotY);
-      };
-      
-      window.addEventListener('mousemove', handleMouseMove);
-      
-      return () => {
-        window.removeEventListener('mousemove', handleMouseMove);
-      };
-    }, [rotateX, rotateY]);
-  
     return (
       <motion.div 
         ref={containerRef}
@@ -41,9 +23,9 @@ const Logo3D = () => {
         <motion.div
           className="w-full h-full absolute transform-style-3d"
           style={{
-            rotateX: rotateX,
-            rotateY: rotateY,
-            z,
+            rotateX: 15,
+            rotateY: 15,
+            z: 0,
             transformStyle: "preserve-3d"
           }}
           animate={{ rotateZ: [0, 360] }}

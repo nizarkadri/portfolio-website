@@ -10,10 +10,13 @@ const projectsDirectory = path.join(process.cwd(), 'data/projects');
 // GET /api/projects/[slug]
 export async function GET(
   request: Request,
-  { params }: { params: { slug: string } }
+  context: { params: { slug: string } }
 ) {
+  // Properly await params before destructuring
+  const params = await Promise.resolve(context.params);
+  const { slug } = params;
+
   try {
-    const slug = params.slug;
     const fullPath = path.join(projectsDirectory, `${slug}.md`);
     
     // Check if file exists
