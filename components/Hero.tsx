@@ -2,6 +2,8 @@
 
 import { useRef, useEffect, useState } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
+import ResumeRequestButton from './ResumeRequestButton';
+import ResumeRequestModal from './ResumeRequestModal';
 
 // Add type declaration for window.lenis
 declare global {
@@ -16,6 +18,9 @@ const Hero = () => {
   const xFirstLine = useTransform(scrollYProgress, [0, 1], ['0%', '90%']);
   const xSecondLine = useTransform(scrollYProgress, [0, 1], ['0%', '-90%']);
   const opacityForBoth = useTransform(scrollYProgress, [0, 1], [1, 0]);
+  
+  // State for popup modal
+  const [isModalOpen, setIsModalOpen] = useState(false);
   
   // Optional: Listen to Lenis scroll events
   useEffect(() => {
@@ -38,6 +43,15 @@ const Hero = () => {
 
   return (
     <div ref={containerRef} className="relative h-[170vh]">
+      {/* Request Resume Button - Top Right */}
+      <ResumeRequestButton onClick={() => setIsModalOpen(true)} />
+
+      {/* Modal Popup */}
+      <ResumeRequestModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+      />
+
       {/* <ThreeScene /> */}
       <div className="sticky top-0 h-screen flex items-center justify-center bg-transparent overflow-hidden">
         <motion.div
