@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useMotionValue, useTransform, useSpring } from 'framer-motion';
+import useIsMobile from '../lib/useIsMobile'; // Import useIsMobile
 
 interface GameTypeStats {
   last: {
@@ -48,9 +49,10 @@ const Card3D = ({ children, depth = 10, className = "" }: { children: React.Reac
   const [rotateY, setRotateY] = useState(0);
   const [scale, setScale] = useState(1);
   const cardRef = useRef<HTMLDivElement>(null);
+  const isMobileHook = useIsMobile(); // Use hook in Card3D
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!cardRef.current) return;
+    if (isMobileHook || !cardRef.current || depth === 0) return; // Disable on mobile or if depth is 0
     
     const rect = cardRef.current.getBoundingClientRect();
     const centerX = rect.left + rect.width / 2;
@@ -68,6 +70,7 @@ const Card3D = ({ children, depth = 10, className = "" }: { children: React.Reac
   };
 
   const handleMouseLeave = () => {
+    if (isMobileHook || depth === 0) return; // Disable on mobile or if depth is 0
     setRotateX(0);
     setRotateY(0);
     setScale(1);
@@ -81,16 +84,18 @@ const Card3D = ({ children, depth = 10, className = "" }: { children: React.Reac
         perspective: "1200px",
         transformStyle: "preserve-3d"
       }}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
+      onMouseMove={!isMobileHook ? handleMouseMove : undefined} // Conditionally attach listeners
+      onMouseLeave={!isMobileHook ? handleMouseLeave : undefined} // Conditionally attach listeners
     >
       <motion.div
-        style={{ 
+        style={!(isMobileHook || depth === 0) ? { 
           rotateX,
           rotateY,
           scale,
           transformStyle: "preserve-3d",
           transition: "all 0.15s ease-out"
+        } : {
+          transformStyle: "preserve-3d", // Keep this for children if needed
         }}
       >
         {children}
@@ -354,12 +359,11 @@ const DonutChart = ({
   color = "#B8E62D",
   label, 
   value,
-  animate = true,
+  animateProp = true, // Renamed 'animate' to avoid conflict
   index = 0,
-  // Allow size to be responsive, though direct Tailwind on child elements is preferred for simplicity here
-  // For this iteration, we'll assume 'size' is a number and apply responsive classes to text inside
+  isMobile = false, // Added isMobile prop
 }: DonutChartProps) => {
-  const chartSize = typeof size === 'number' ? size : size.base; // Fallback if object, but we'll pass number
+  const chartSize = typeof size === 'number' ? size : (size as any).base; 
   const radius = (chartSize - strokeWidth) / 2;
   const circumference = radius * 2 * Math.PI;
   const strokeDashoffset = circumference - (percent / 100) * circumference;
@@ -431,7 +435,8 @@ export default function ChessProfile() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeGameType, setActiveGameType] = useState<string>("Bullet");
-  const [showWinRateGraph, setShowWinRateGraph] = useState(false);
+  // const [showWinRateGraph, setShowWinRateGraph] = useState(false); // This state seems unused
+  const isMobile = useIsMobile(); // Initialize useIsMobile for ChessProfile
 
   // Define available game modes
   const gameModes = ["Rapid", "Blitz", "Bullet"] as const;

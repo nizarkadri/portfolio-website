@@ -84,7 +84,7 @@ const Hero = () => {
               Technical Reality
             </motion.span>
           </h1>
-          <div className="flex justify-center sm:justify-start">
+          {/* <div className="flex justify-center sm:justify-start">
             <motion.button
               className="bg-white text-black py-2 px-4 rounded mt-8"
               initial={isMobile ? {opacity:1} : { opacity: 0 }}
@@ -93,7 +93,7 @@ const Hero = () => {
             >
               View Resume
             </motion.button>
-          </div>
+          </div> */}
 
           <motion.div
             className="mt-12 text-white/60 text-sm hidden sm:block"
