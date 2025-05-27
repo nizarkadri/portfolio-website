@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState, useRef, useMemo, useCallback, Suspense } from 'react';
 import { motion, useReducedMotion, AnimatePresence, useInView } from 'framer-motion';
+import useIsMobile from '../lib/useIsMobile'; // Import useIsMobile
 import SkillIcon from './SkillIcon';
 import SectionTitle from './SectionTitle';
 import { 
@@ -65,6 +66,7 @@ const Skills = () => {
   const collageRef = useRef<HTMLDivElement>(null);
   const animationFrameRef = useRef<number | undefined>(undefined);
   const prefersReducedMotion = useReducedMotion();
+  const isMobile = useIsMobile(); // Initialize useIsMobile
   const isInView = useInView(containerRef, { once: false, amount: 0.2 });
 
   // Companies data with fallback
@@ -218,6 +220,13 @@ const Skills = () => {
   
   // Optimized mouse auto-rotation with requestAnimationFrame
   useEffect(() => {
+    if (isMobile || prefersReducedMotion) { // Disable auto-rotation on mobile or if reduced motion is preferred
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
+      return;
+    }
+
     const animate = () => {
       setUIState(prev => ({
         ...prev,
@@ -236,7 +245,7 @@ const Skills = () => {
         cancelAnimationFrame(animationFrameRef.current);
       }
     };
-  }, []);
+  }, [isMobile, prefersReducedMotion]); // Add dependencies
 
   // === EVENT HANDLERS ===
   
@@ -262,11 +271,11 @@ const Skills = () => {
         skillId={skillId}
         position={position}
         isHighlighted={isHighlighted}
-        prefersReducedMotion={prefersReducedMotion}
+        prefersReducedMotion={prefersReducedMotion || isMobile} // Pass isMobile to SkillIcon
         iconSize={SKILL_ICON_SIZE}
       />
     );
-  }, [positions, skillsState.highlighted, prefersReducedMotion]);
+  }, [positions, skillsState.highlighted, prefersReducedMotion, isMobile]); // Add isMobile dependency
 
   // Fallback for company data
   const currentCompany = companies[uiState.currentCompanyIndex] || companies[0];
@@ -304,6 +313,7 @@ const Skills = () => {
                   availableSkills={filteredAvailableSkills}
                   mousePosition={uiState.mousePosition}
                   activeSkill={skillsState.active}
+                  isMobile={isMobile} // Pass isMobile to SkillCloud
                   // onSkillClick={handleSkillClick}
                 />
               </Suspense>
@@ -311,12 +321,12 @@ const Skills = () => {
 
             {/* Center overlay for company logos */}
             {/* <div className="pointer-events-none z-30">
-              {uiState.showingOverlay && currentCompany && (
+              {uiState.showingOverlay && currentCompany && !isMobile && ( // Disable overlay on mobile
                 <div className="flex flex-col items-center justify-center max-w-xl">
                   <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: [0, 0.7, 0], y: [10, 0, -5] }}
-                    transition={{ 
+                    initial={isMobile ? {opacity:1, y:0} : { opacity: 0, y: 10 }}
+                    animate={isMobile ? {opacity:1, y:0} : { opacity: [0, 0.7, 0], y: [10, 0, -5] }}
+                    transition={isMobile ? {duration:0} : { 
                       duration: 3, 
                       times: [0, 0.2, 1],
                       ease: [0.33, 1, 0.68, 1]
@@ -327,9 +337,9 @@ const Skills = () => {
                   </motion.div>
 
                   <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: [0, 1, 0], scale: [0.95, 1, 0.98] }}
-                    transition={{ 
+                    initial={isMobile ? {opacity:1, scale:1} : { opacity: 0, scale: 0.95 }}
+                    animate={isMobile ? {opacity:1, scale:1} : { opacity: [0, 1, 0], scale: [0.95, 1, 0.98] }}
+                    transition={isMobile ? {duration:0} : { 
                       duration: 3, 
                       times: [0, 0.2, 1],
                       ease: [0.33, 1, 0.68, 1]

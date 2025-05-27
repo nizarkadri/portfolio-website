@@ -690,3 +690,54 @@ html.lenis, html.lenis body {
 .lenis.lenis-scrolling iframe {
   pointer-events: none;
 }
+
+/* Disable animations on mobile devices (screens less than 640px) */
+@media (max-width: 639.98px) {
+  .fade-in,
+  .slide-up,
+  .float,
+  .float-slow,
+  .float-delayed,
+  .rotate-3d,
+  .pulse-subtle,
+  .glow,
+  .animate-bounce-slow,
+  .animate-spin-slow,
+  .animate-reverse-spin-slow,
+  .animate-slide-words,
+  .cube-3d,
+  .sphere-xs,
+  .sphere-sm,
+  .sphere-md,
+  .sphere-lg,
+  .particle,
+  .skill-item.floating,
+  .skills-marquee-content {
+    animation: none !important;
+  }
+
+  /* For hover-specific animations, we usually want to disable the animation part,
+     not necessarily other hover styles. */
+  .icon-3d:hover svg {
+    /* Disable the transform part of the hover animation, keep filter if desired or disable all */
+    transform: none !important; /* Keep filter for some subtle effect or disable filter too */
+    /* filter: none !important; */ /* Optional: disable filter if it's too much */
+    animation: none !important; /* Ensure any keyframe animation is off */
+  }
+
+  .group:hover .icon-3d {
+    animation: none !important; /* Disables float-icon on hover */
+  }
+
+  .skill-3d:hover {
+    transform: none !important; /* Disable the 3D hover effect */
+    text-shadow: none !important; /* Disable text shadow on hover if it's part of the animation */
+    filter: none !important; /* Disable brightness filter on hover */
+  }
+  
+  /* If there are specific keyframes that need to be effectively nulled,
+     but usually overriding the animation property on the class is enough.
+     For example, if @keyframes float was still somehow being triggered,
+     you might try to redefine it, but it's not standard practice.
+     Setting 'animation: none' on the class is the correct way. */
+}

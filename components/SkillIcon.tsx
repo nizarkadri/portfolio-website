@@ -58,19 +58,25 @@ const SkillIcon: React.FC<SkillIconProps> = ({
         height: iconSize,
         transform: `translateX(${position.translateX}px) translateY(${position.translateY}px)`
       }}
-      initial={{ opacity: 0, y: 20 }}
-      animate={{
-        opacity: isHighlighted ? 1 : 0.95,
-        scale: isHighlighted ? 1.03 : 1,
-        y: 0,
-        zIndex: isHighlighted ? 50 : isWordPress ? 30 : 'auto',
-      }}
-      exit={{ opacity: 0, y: -10, transition: { duration: 0.4 } }}
-      transition={{
-        duration: 0.6,
-        delay: index * 0.05,
-        ease: [0.33, 1, 0.68, 1], // Mobbin-like easing
-      }}
+      initial={prefersReducedMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+      animate={prefersReducedMotion 
+        ? { opacity: isHighlighted ? 1 : 0.95, scale: isHighlighted ? 1.03 : 1, y: 0, zIndex: isHighlighted ? 50 : isWordPress ? 30 : 'auto' } 
+        : {
+            opacity: isHighlighted ? 1 : 0.95,
+            scale: isHighlighted ? 1.03 : 1,
+            y: 0,
+            zIndex: isHighlighted ? 50 : isWordPress ? 30 : 'auto',
+          }
+      }
+      exit={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: -10, transition: { duration: 0.4 } }}
+      transition={prefersReducedMotion 
+        ? { duration: 0 } 
+        : {
+            duration: 0.6,
+            delay: index * 0.05,
+            ease: [0.33, 1, 0.68, 1], // Mobbin-like easing
+          }
+      }
       onHoverStart={() => setIsHovered(true)}
       onHoverEnd={() => setIsHovered(false)}
       whileTap={{ scale: 0.98 }}
@@ -127,13 +133,16 @@ const SkillIcon: React.FC<SkillIconProps> = ({
 
       <div className="mt-2 absolute -bottom-6">
         <motion.span
-          initial={{ opacity: 0, y: 5 }}
-          animate={{ 
-            opacity: isHovered ? 1 : 0,
-            y: isHovered ? 0 : 5,
-            scale: isHovered ? 1 : 0.95
-          }}
-          transition={{
+          initial={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: 5 }} // Keep opacity 0 if hovered to show, or always visible if reduced motion
+          animate={prefersReducedMotion 
+            ? { opacity: isHovered ? 1 : 0 } // Simple toggle for reduced motion
+            : { 
+                opacity: isHovered ? 1 : 0,
+                y: isHovered ? 0 : 5,
+                scale: isHovered ? 1 : 0.95
+              }
+          }
+          transition={prefersReducedMotion ? { duration: 0 } : {
             duration: 0.2,
             ease: [0.33, 1, 0.68, 1]
           }}

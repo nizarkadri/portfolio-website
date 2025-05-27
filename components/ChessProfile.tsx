@@ -355,9 +355,12 @@ const DonutChart = ({
   label, 
   value,
   animate = true,
-  index = 0
+  index = 0,
+  // Allow size to be responsive, though direct Tailwind on child elements is preferred for simplicity here
+  // For this iteration, we'll assume 'size' is a number and apply responsive classes to text inside
 }: DonutChartProps) => {
-  const radius = (size - strokeWidth) / 2;
+  const chartSize = typeof size === 'number' ? size : size.base; // Fallback if object, but we'll pass number
+  const radius = (chartSize - strokeWidth) / 2;
   const circumference = radius * 2 * Math.PI;
   const strokeDashoffset = circumference - (percent / 100) * circumference;
   
@@ -400,7 +403,7 @@ const DonutChart = ({
           {/* Inner content */}
           <div className="max-w-full absolute inset-0 flex flex-col items-center justify-center">
             <motion.p 
-              className={`text-3xl font-bold ${getRatingColor(value)}`}
+              className={`font-bold ${getRatingColor(value)} text-xl sm:text-2xl md:text-3xl`}
               initial={{ scale: 0.5, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.3 + index * 0.2 }}
@@ -411,7 +414,7 @@ const DonutChart = ({
         </div>
         
         <motion.p 
-          className="text-sm text-white/80 text-center mt-2"
+          className="text-xs sm:text-sm text-white/80 text-center mt-1 sm:mt-2"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.5 + index * 0.2 }}
@@ -588,14 +591,14 @@ export default function ChessProfile() {
 
   return (
     <motion.div 
-      className="flex flex-col justify-between bg-gradient-to-b from-soft-black/40 to-soft-black/10 p-6 sm:p-8 rounded-2xl backdrop-blur-sm border border-white/5 overflow-hidden"
+      className="flex flex-col justify-between bg-gradient-to-b from-soft-black/40 to-soft-black/10 p-4 sm:p-6 md:p-8 rounded-2xl backdrop-blur-sm border border-white/5 overflow-hidden"
      
       transition={{ duration: 0.6 }}
       onMouseMove={heroParallax.handleMouseMove}
     > 
       {/* Hero Section with 3D Effects */}
       <motion.div 
-        className="relative mb-8 z-10 container mx-auto"
+        className="relative mb-6 sm:mb-8 z-10 container mx-auto"
         style={{ 
           x: heroParallax.springX, 
           y: heroParallax.springY, 
@@ -605,9 +608,9 @@ export default function ChessProfile() {
           transformPerspective: 1000
         }}
       >
-        <div className="flex flex-col items-center gap-4 mb-6 relative">
+        <div className="flex flex-col items-center gap-2 sm:gap-4 mb-6 relative">
           <motion.div 
-            className="relative w-16 h-16 rounded-full overflow-hidden border border-white/10"
+            className="relative w-12 h-12 sm:w-16 sm:h-16 rounded-full overflow-hidden border border-white/10"
             whileHover={{ scale: 1.1, rotate: 5 }}
             whileTap={{ scale: 0.95 }}
             transition={{ type: "spring", stiffness: 300, damping: 15 }}
@@ -647,12 +650,12 @@ export default function ChessProfile() {
             </div>
           </motion.div>
           <div className="text-center">
-            <h3 className="text-xl font-bold text-white">Chess</h3>
+            <h3 className="text-lg sm:text-xl font-bold text-white">Chess</h3>
             <a 
               href={`https://www.chess.com/member/${stats.username}`} 
               target="_blank" 
               rel="noopener noreferrer"
-              className="text-xs text-white/60 hover:text-[#B8E62D] transition-colors flex items-center justify-center gap-1 mt-1"
+              className="text-[10px] sm:text-xs text-white/60 hover:text-[#B8E62D] transition-colors flex items-center justify-center gap-1 mt-1"
             >
               <span>View on Chess.com</span>
               <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -696,13 +699,14 @@ export default function ChessProfile() {
       </motion.div>
       
       {/* Stats Grid with 3D Cards */}
-      <div  className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-10 relative z-10 max-w-2xl mx-auto">
+      <div  className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-8 sm:mb-10 relative z-10 max-w-2xl mx-auto">
         <DonutChart 
           label="Overall Rating" 
           value={calculateOverallRating()}
           percent={Math.min(Math.round(Number(calculateOverallRating()) / 2000 * 100), 100)}
           color="#4287f5"
-          size={120}
+          size={100}
+          // smSize={120} // Custom prop, would need to implement in DonutChart
           index={0}
         />
         <DonutChart 
@@ -710,14 +714,15 @@ export default function ChessProfile() {
           value={getBestRating()}
           percent={Math.min(Math.round(Number(getBestRating()) / 2000 * 100), 100)}
           color="#f59e0b"
-          size={120}
+          size={100}
+          // smSize={120} // Custom prop
           index={1}
         />
       </div>
       
-      <h4 className="text-lg font-medium text-white mb-5 border-b border-white/10 pb-2 z-10 relative">Game Mode Statistics</h4>
+      <h4 className="text-base sm:text-lg font-medium text-white mb-3 sm:mb-5 border-b border-white/10 pb-2 z-10 relative">Game Mode Statistics</h4>
       
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-10 relative z-10">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mb-8 sm:mb-10 relative z-10">
         {gameModes.map((mode, index) => {
           const modeStats = stats[mode.toLowerCase() as keyof typeof stats] as GameTypeStats | undefined;
           if (!modeStats) return null;
@@ -738,23 +743,23 @@ export default function ChessProfile() {
             <motion.div 
               key={mode}
               onHoverStart={() => setActiveGameType(mode)}
-              className="bg-gradient-to-b from-black/60 to-black/30 p-5 rounded-xl backdrop-blur-sm border border-white/5 hover:border-[#B8E62D]/20 transition-all duration-500 overflow-hidden"
+              className="bg-gradient-to-b from-black/60 to-black/30 p-3 sm:p-4 md:p-5 rounded-xl backdrop-blur-sm border border-white/5 hover:border-[#B8E62D]/20 transition-all duration-500 overflow-hidden"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
               whileHover={{ y: -5, boxShadow: "0 10px 30px -10px rgba(184, 230, 45, 0.1)" }}
             >
-              <div className="flex flex-col items-center mb-4">
+              <div className="flex flex-col items-center mb-3 sm:mb-4">
                 <div className="flex flex-col">
                   <div className="flex items-center gap-2">
                     {/* <div className="w-6 h-6 flex items-center justify-center rounded-full flex-shrink-0" style={{ backgroundColor: `${modeColor}20` }}>
                       {icon}
                     </div> */}
-                    <h4 className="text-white font-medium">{mode}</h4>
+                    <h4 className="text-sm sm:text-base text-white font-medium">{mode}</h4>
                   </div>
-                  <p className="text-sm text-white/60 mt-1">{modeStats.last.rating}</p>
+                  <p className="text-xs sm:text-sm text-white/60 mt-0.5 sm:mt-1">{modeStats.last.rating}</p>
                 </div>
-                <div className="px-2 py-1 rounded text-sm flex-shrink-0" style={{ backgroundColor: `${modeColor}20` }}>
+                <div className="px-2 py-1 rounded text-xs sm:text-sm flex-shrink-0" style={{ backgroundColor: `${modeColor}20` }}>
                   <span className="text-white font-bold">
                     {modeStats.best.rating}
                   </span>
@@ -762,9 +767,9 @@ export default function ChessProfile() {
                 </div>
               </div>
               
-              <div className="flex flex-col justify-between gap-4 mb-4 overflow-hidden">
+              <div className="flex flex-col justify-between gap-3 sm:gap-4 mb-3 sm:mb-4 overflow-hidden">
                 <div className="text-center flex-1 min-w-0">
-                  <div className="relative w-16 sm:w-20 h-16 sm:h-20 mx-auto mb-1">
+                  <div className="relative w-14 h-14 sm:w-16 sm:h-16 mx-auto mb-1">
                     <svg width="100%" height="100%" viewBox="0 0 100 100" className="transform -rotate-90">
                       <circle cx="50" cy="50" r="40" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="12" />
                       <motion.circle
@@ -783,14 +788,14 @@ export default function ChessProfile() {
                       />
                     </svg>
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <p className="text-lg font-bold text-[#B8E62D]">{modeStats.record.win}</p>
+                      <p className="text-base sm:text-lg font-bold text-[#B8E62D]">{modeStats.record.win}</p>
                     </div>
                   </div>
                   <p className="text-xs text-white/70">Wins</p>
                 </div>
                 
                 {/* <div className="text-center flex-1 min-w-0">
-                  <div className="relative w-16 sm:w-20 h-16 sm:h-20 mx-auto mb-1">
+                  <div className="relative w-14 h-14 sm:w-16 sm:h-16 mx-auto mb-1">
                     <svg width="100%" height="100%" viewBox="0 0 100 100" className="transform -rotate-90">
                       <circle cx="50" cy="50" r="40" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="12" />
                       <motion.circle
@@ -809,14 +814,14 @@ export default function ChessProfile() {
                       />
                     </svg>
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <p className="text-lg font-bold text-red-400">{modeStats.record.loss}</p>
+                      <p className="text-base sm:text-lg font-bold text-red-400">{modeStats.record.loss}</p>
                     </div>
                   </div>
                   <p className="text-xs text-white/70">Losses</p>
                 </div> */}
               </div>
               
-              <div className="mt-2">
+              <div className="mt-1 sm:mt-2">
                 <div className="flex justify-between mb-1">
                   <p className="text-xs text-white/70">Win Rate</p>
                   <p className="text-xs text-white font-medium">{winRate}%</p>
@@ -838,27 +843,27 @@ export default function ChessProfile() {
       <div className="space-y-3 relative z-10">
         {/* Performance Graph with 3D effect */}
         {winLossDrawData && (
-          <Card3D depth={8} className="mt-5 overflow-hidden">
+          <Card3D depth={8} className="mt-3 sm:mt-5 overflow-hidden">
             <motion.div 
-              className="p-4 sm:p-6 bg-gradient-to-b from-soft-black/40 to-soft-black/10 rounded-xl backdrop-blur-sm border border-white/5 overflow-hidden"
+              className="p-3 sm:p-4 md:p-6 bg-gradient-to-b from-soft-black/40 to-soft-black/10 rounded-xl backdrop-blur-sm border border-white/5 overflow-hidden"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.2 }}
             >
-              <div className="flex justify-between items-center mb-5">
-                <h4 className="text-lg font-medium text-white">{activeGameType} Performance</h4>
-                <div className="text-xs text-white/60 bg-[#B8E62D]/10 px-3 py-1 rounded-full">
+              <div className="flex flex-col sm:flex-row justify-between items-center mb-3 sm:mb-5">
+                <h4 className="text-base sm:text-lg font-medium text-white mb-2 sm:mb-0">{activeGameType} Performance</h4>
+                <div className="text-xs text-white/60 bg-[#B8E62D]/10 px-2 sm:px-3 py-1 rounded-full">
                   {winLossDrawData.wins + winLossDrawData.losses + winLossDrawData.draws} games
                 </div>
               </div>
               
-              <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8">
+              <div className="flex flex-col md:flex-row items-center gap-3 sm:gap-4 md:gap-8">
                 {/* Large donut chart */}
                 <div className="w-full md:w-1/2 flex justify-center overflow-hidden">
-                  <div className="relative w-40 h-40 sm:w-48 sm:h-48">
+                  <div className="relative w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48">
                     <svg width="100%" height="100%" viewBox="0 0 100 100" className="transform -rotate-90">
                       {/* Background circle */}
-                      <circle cx="50" cy="50" r="40" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="10" />
+                      <circle cx="50" cy="50" r="40" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="8" /> {/* Reduced strokeWidth */}
                       
                       {/* Win segment */}
                       <motion.circle
@@ -867,7 +872,7 @@ export default function ChessProfile() {
                         r="40"
                         fill="none"
                         stroke="#B8E62D"
-                        strokeWidth="10"
+                        strokeWidth="8" // Reduced strokeWidth
                         strokeDasharray={2 * Math.PI * 40}
                         strokeDashoffset={2 * Math.PI * 40 * (1 - winLossDrawData.winPercent / 100)}
                         initial={{ opacity: 0 }}
@@ -882,7 +887,7 @@ export default function ChessProfile() {
                         r="40"
                         fill="none"
                         stroke="#EF4444"
-                        strokeWidth="10"
+                        strokeWidth="8" // Reduced strokeWidth
                         strokeDasharray={2 * Math.PI * 40}
                         strokeDashoffset={2 * Math.PI * 40 * (1 - winLossDrawData.lossPercent / 100)}
                         initial={{ opacity: 0 }}
@@ -901,7 +906,7 @@ export default function ChessProfile() {
                         r="40"
                         fill="none"
                         stroke="#FBBF24"
-                        strokeWidth="10"
+                        strokeWidth="8" // Reduced strokeWidth
                         strokeDasharray={2 * Math.PI * 40}
                         strokeDashoffset={2 * Math.PI * 40 * (1 - winLossDrawData.drawPercent / 100)}
                         initial={{ opacity: 0 }}
@@ -915,9 +920,9 @@ export default function ChessProfile() {
                     </svg>
                     
                     {/* Inner circle with total games */}
-                    <div className="absolute inset-0 flex flex-col items-center justify-center rounded-full bg-soft-black/40 m-10">
+                    <div className="absolute inset-0 flex flex-col items-center justify-center rounded-full bg-soft-black/40 m-8 sm:m-10"> {/* Adjusted margin for smaller donut */}
                       <motion.p 
-                        className="text-2xl font-bold text-white" 
+                        className="text-xl sm:text-2xl font-bold text-white" 
                         initial={{ scale: 0.8, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
                         transition={{ duration: 0.4, delay: 0.6 }}
@@ -925,7 +930,7 @@ export default function ChessProfile() {
                         {winLossDrawData.wins + winLossDrawData.losses + winLossDrawData.draws}
                       </motion.p>
                       <motion.p 
-                        className="text-xs text-white/60"
+                        className="text-[10px] sm:text-xs text-white/60"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ duration: 0.4, delay: 0.7 }}
@@ -937,19 +942,19 @@ export default function ChessProfile() {
                 </div>
                 
                 {/* Stats breakdown */}
-                <div className="w-full md:w-1/2 space-y-6 min-w-0">
+                <div className="w-full md:w-1/2 space-y-3 sm:space-y-4 min-w-0">
                   <div>
-                    <div className="flex justify-between items-center mb-2">
-                      <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 rounded-full bg-[#B8E62D] flex-shrink-0"></div>
-                        <span className="text-white">Wins</span>
+                    <div className="flex justify-between items-center mb-1 sm:mb-2">
+                      <div className="flex items-center gap-1.5 sm:gap-2">
+                        <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-[#B8E62D] flex-shrink-0"></div>
+                        <span className="text-xs sm:text-sm text-white">Wins</span>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-[#B8E62D] font-bold">{winLossDrawData.wins}</span>
-                        <span className="text-white/60">({winLossDrawData.winPercent}%)</span>
+                      <div className="flex items-center gap-1.5 sm:gap-2">
+                        <span className="text-xs sm:text-sm text-[#B8E62D] font-bold">{winLossDrawData.wins}</span>
+                        <span className="text-xs sm:text-sm text-white/60">({winLossDrawData.winPercent}%)</span>
                       </div>
                     </div>
-                    <div className="h-2 bg-black/30 rounded-full overflow-hidden">
+                    <div className="h-1.5 sm:h-2 bg-black/30 rounded-full overflow-hidden">
                       <motion.div 
                         className="h-full bg-[#B8E62D] rounded-full"
                         initial={{ width: 0 }}
@@ -960,17 +965,17 @@ export default function ChessProfile() {
                   </div>
                   
                   <div>
-                    <div className="flex justify-between items-center mb-2">
-                      <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 rounded-full bg-[#EF4444] flex-shrink-0"></div>
-                        <span className="text-white">Losses</span>
+                    <div className="flex justify-between items-center mb-1 sm:mb-2">
+                      <div className="flex items-center gap-1.5 sm:gap-2">
+                        <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-[#EF4444] flex-shrink-0"></div>
+                        <span className="text-xs sm:text-sm text-white">Losses</span>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-red-400 font-bold">{winLossDrawData.losses}</span>
-                        <span className="text-white/60">({winLossDrawData.lossPercent}%)</span>
+                      <div className="flex items-center gap-1.5 sm:gap-2">
+                        <span className="text-xs sm:text-sm text-red-400 font-bold">{winLossDrawData.losses}</span>
+                        <span className="text-xs sm:text-sm text-white/60">({winLossDrawData.lossPercent}%)</span>
                       </div>
                     </div>
-                    <div className="h-2 bg-black/30 rounded-full overflow-hidden">
+                    <div className="h-1.5 sm:h-2 bg-black/30 rounded-full overflow-hidden">
                       <motion.div 
                         className="h-full bg-[#EF4444] rounded-full"
                         initial={{ width: 0 }}
@@ -981,17 +986,17 @@ export default function ChessProfile() {
                   </div>
                   
                   <div>
-                    <div className="flex justify-between items-center mb-2">
-                      <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 rounded-full bg-[#FBBF24] flex-shrink-0"></div>
-                        <span className="text-white">Draws</span>
+                    <div className="flex justify-between items-center mb-1 sm:mb-2">
+                      <div className="flex items-center gap-1.5 sm:gap-2">
+                        <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-[#FBBF24] flex-shrink-0"></div>
+                        <span className="text-xs sm:text-sm text-white">Draws</span>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-yellow-400 font-bold">{winLossDrawData.draws}</span>
-                        <span className="text-white/60">({winLossDrawData.drawPercent}%)</span>
+                      <div className="flex items-center gap-1.5 sm:gap-2">
+                        <span className="text-xs sm:text-sm text-yellow-400 font-bold">{winLossDrawData.draws}</span>
+                        <span className="text-xs sm:text-sm text-white/60">({winLossDrawData.drawPercent}%)</span>
                       </div>
                     </div>
-                    <div className="h-2 bg-black/30 rounded-full overflow-hidden">
+                    <div className="h-1.5 sm:h-2 bg-black/30 rounded-full overflow-hidden">
                       <motion.div 
                         className="h-full bg-[#FBBF24] rounded-full"
                         initial={{ width: 0 }}

@@ -8,7 +8,10 @@ import Skills from '../../components/Skills';
 import Hero from '../../components/Hero';
 import Projects from '../../components/Projects';
 import Experience from '../../components/Experience';
-import Test from '../../components/Test';
+// import Test from '../../components/Test'; // Assuming Test component is not needed for this section
+import ChessProfile from '../../components/ChessProfile';
+import DuolingoProfile from '../../components/DuolingoProfile';
+import LeetCodeProfile from '../../components/LeetCodeProfile';
 
 const Home = () => {
   useEffect(() => {
@@ -59,13 +62,39 @@ const Home = () => {
       <Hero />
 
       {/* Skills Section - Inspired by uxdesignerstockholm.se */}
-      <Skills />
+      <div className="hidden md:block">
+        <Skills />
+      </div>
 
       {/* Experience Preview Section */}
       <Experience />
       
       {/* Projects Preview Section */}
       <Projects />
+
+      {/* New "Beyond Work" Section */}
+      <section id="beyond-work">
+        {/* Full-screen image for mobile, specific height for desktop */}
+        <div className="relative w-full h-screen md:h-[60vh] bg-cover bg-center" style={{ backgroundImage: "url('/images/tech-background.jpg')" }}>
+          <div className="absolute inset-0 flex items-center justify-center bg-black/50"> {/* Overlay for text readability */}
+            <h2 className="text-white text-5xl md:text-7xl font-bold text-center">
+              Beyond Work
+            </h2>
+          </div>
+        </div>
+
+        {/* Profile Cards */}
+        <div className="container mx-auto px-4 py-16 sm:py-24">
+          <h3 className="text-3xl sm:text-4xl font-bold text-white text-center mb-12 sm:mb-16">
+            Interests & Activities
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <ChessProfile />
+            <DuolingoProfile />
+            <LeetCodeProfile />
+          </div>
+        </div>
+      </section>
     </div>
   );
 };

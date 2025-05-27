@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { motion, useMotionValue, useTransform, useSpring, MotionValue } from 'framer-motion';
+import useIsMobile from '../lib/useIsMobile'; // Import useIsMobile
 
 interface DuolingoStats {
   username: string;
@@ -34,9 +35,10 @@ const Card3D = ({
   const [scale, setScale] = useState(1);
   const [glarePosition, setGlarePosition] = useState({ x: 0, y: 0 });
   const cardRef = useRef<HTMLDivElement>(null);
+  const isMobile = useIsMobile(); // Use hook
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!cardRef.current) return;
+    if (isMobile || !cardRef.current || depth === 0) return; // Disable on mobile or if depth is 0
     
     const rect = cardRef.current.getBoundingClientRect();
     const centerX = rect.left + rect.width / 2;
@@ -59,6 +61,7 @@ const Card3D = ({
   };
 
   const handleMouseLeave = () => {
+    if (isMobile || depth === 0) return; // Disable on mobile or if depth is 0
     setRotateX(0);
     setRotateY(0);
     setScale(1);
@@ -76,24 +79,26 @@ const Card3D = ({
       onMouseLeave={handleMouseLeave}
     >
       <motion.div
-        style={{ 
+        style={!(isMobile || depth === 0) ? { 
           rotateX,
           rotateY,
           scale,
           transformStyle: "preserve-3d",
           transition: "all 0.15s ease-out"
+        } : {
+          transformStyle: "preserve-3d",
         }}
         className="w-full h-full"
       >
         {children}
         
         {/* Glare effect */}
-        {glare && (
+        {glare && !isMobile && ( // Disable glare on mobile
           <motion.div 
             className="absolute inset-0 w-full h-full rounded-lg opacity-0 pointer-events-none"
             style={{ 
               background: `radial-gradient(circle at ${glarePosition.x}% ${glarePosition.y}%, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 60%)`,
-              opacity: scale > 1 ? 0.7 : 0,
+              opacity: scale > 1 ? 0.7 : 0, // This opacity might need to be 0 if scale is always 1 on mobile
               transition: 'opacity 0.2s ease-out'
             }} 
           />
@@ -110,7 +115,8 @@ const LanguageBar = ({
   xp, 
   progress = 0, 
   color, 
-  index 
+  index,
+  isMobile // Added isMobile prop
 }: { 
   language: string; 
   level: number; 
@@ -118,33 +124,34 @@ const LanguageBar = ({
   progress?: number; 
   color: string; 
   index: number;
+  isMobile?: boolean;
 }) => {
   return (
-    <Card3D depth={5} glare={true}>
+    <Card3D depth={isMobile ? 0 : 5} glare={!isMobile}>
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={isMobile ? {opacity: 1, y: 0} : { opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ 
+        transition={isMobile ? {duration: 0} :{ 
           duration: 0.5, 
           delay: 0.1 * index,
           ease: [0.23, 1, 0.32, 1]
         }}
-        className="bg-white/5 rounded-lg p-4 backdrop-blur-sm"
+        className="bg-white/5 rounded-lg p-3 sm:p-4 backdrop-blur-sm"
       >
-        <div className="flex justify-between items-center mb-2">
-          <div className="flex items-center gap-2">
+        <div className="flex justify-between items-center mb-1.5 sm:mb-2">
+          <div className="flex items-center gap-1.5 sm:gap-2">
             <motion.div 
-              className="w-3 h-3 rounded-full" 
+              className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full" 
               style={{ backgroundColor: color }}
-              animate={{ scale: [1, 1.2, 1] }}
-              transition={{ duration: 2, repeat: Infinity, delay: index * 0.3 }}
+              animate={!isMobile ? { scale: [1, 1.2, 1] } : {}}
+              transition={!isMobile ? { duration: 2, repeat: Infinity, delay: index * 0.3 } : {duration:0}}
             />
-            <p className="text-white font-medium">{language}</p>
+            <p className="text-sm sm:text-base text-white font-medium">{language}</p>
           </div>
-          <div className="text-white/70 text-sm flex items-center gap-1">
+          <div className="text-white/70 text-xs sm:text-sm flex items-center gap-1">
             <motion.div
-              className="w-5 h-5 flex items-center justify-center bg-white/10 rounded-full"
-              whileHover={{ scale: 1.2, backgroundColor: `${color}30` }}
+              className="w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center bg-white/10 rounded-full"
+              whileHover={!isMobile ? { scale: 1.2, backgroundColor: `${color}30` } : {}}
             >
               <svg width="10" height="10" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" fill={color} />
@@ -154,40 +161,42 @@ const LanguageBar = ({
           </div>
         </div>
         
-        <div className="w-full bg-black/30 rounded-full h-2.5 mb-1 overflow-hidden">
+        <div className="w-full bg-black/30 rounded-full h-2 sm:h-2.5 mb-1 overflow-hidden">
           <motion.div 
-            className="h-2.5 rounded-full relative" 
+            className="h-2 sm:h-2.5 rounded-full relative" 
             style={{ backgroundColor: color }}
-            initial={{ width: 0 }}
+            initial={{ width: isMobile ? `${progress}%` : 0 }}
             animate={{ width: `${progress}%` }}
-            transition={{ 
+            transition={isMobile ? {duration:0} : { 
               duration: 1.5, 
               ease: "easeOut", 
               delay: 0.2 + index * 0.1 
             }}
           >
             {/* Animated shine effect */}
-            <motion.div 
-              className="absolute inset-0 h-full w-20"
-              style={{ 
-                background: `linear-gradient(90deg, ${color}00 0%, ${color}60 50%, ${color}00 100%)`
-              }}
-              initial={{ x: "-100%" }}
-              animate={{ x: "200%" }}
-              transition={{ 
-                duration: 2, 
-                repeat: Infinity, 
-                ease: "easeInOut", 
-                repeatDelay: 1 + index * 0.5
-              }}
-            />
+            {!isMobile && (
+              <motion.div 
+                className="absolute inset-0 h-full w-16 sm:w-20" 
+                style={{ 
+                  background: `linear-gradient(90deg, ${color}00 0%, ${color}60 50%, ${color}00 100%)`
+                }}
+                initial={{ x: "-100%" }}
+                animate={{ x: "200%" }}
+                transition={{ 
+                  duration: 2, 
+                  repeat: Infinity, 
+                  ease: "easeInOut", 
+                  repeatDelay: 1 + index * 0.5
+                }}
+              />
+            )}
           </motion.div>
         </div>
         
-        <div className="text-right text-xs text-white/60 flex justify-between items-center">
+        <div className="text-right text-[10px] sm:text-xs text-white/60 flex justify-between items-center">
           <motion.div 
-            className="bg-white/10 px-2 py-0.5 rounded-full text-white/70 text-xs"
-            whileHover={{ backgroundColor: `${color}20`, color: color }}
+            className="bg-white/10 px-1.5 sm:px-2 py-0.5 rounded-full text-white/70 text-[10px] sm:text-xs"
+            whileHover={!isMobile ? { backgroundColor: `${color}20`, color: color } : {}}
           >
             {Math.round(progress)}% complete
           </motion.div>
@@ -204,42 +213,44 @@ const StatCard = ({
   label, 
   value, 
   color, 
-  delay = 0 
+  delay = 0,
+  isMobile // Added isMobile prop
 }: { 
   icon: React.ReactNode; 
   label: string; 
   value: string | number; 
   color: string; 
   delay?: number;
+  isMobile?: boolean;
 }) => {
   return (
-    <Card3D depth={7} glare={true}>
+    <Card3D depth={isMobile ? 0 : 7} glare={!isMobile}>
       <motion.div 
-        className="bg-white/5 rounded-lg p-4 backdrop-blur-sm flex items-center gap-3"
-        initial={{ opacity: 0, y: 10 }}
+        className="bg-white/5 rounded-lg p-3 sm:p-4 backdrop-blur-sm flex items-center gap-2 sm:gap-3"
+        initial={isMobile ? {opacity:1, y:0} : { opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ 
+        transition={isMobile ? {duration:0} : { 
           duration: 0.6, 
           delay, 
           ease: [0.23, 1, 0.32, 1]
         }}
       >
-        <div className={`w-10 h-10 flex items-center justify-center rounded-full`} style={{ backgroundColor: `${color}20` }}>
+        <div className={`w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-full`} style={{ backgroundColor: `${color}20` }}>
           <motion.div
-            animate={{ scale: [1, 1.1, 1] }}
-            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            animate={!isMobile ? { scale: [1, 1.1, 1] } : {}}
+            transition={!isMobile ? { duration: 2, repeat: Infinity, ease: "easeInOut" } : {duration:0}}
           >
             {icon}
           </motion.div>
         </div>
         <div>
-          <p className="text-sm text-white/60">{label}</p>
+          <p className="text-xs sm:text-sm text-white/60">{label}</p>
           <motion.p 
-            className="text-2xl font-bold"
+            className="text-xl sm:text-2xl font-bold"
             style={{ color }}
-            initial={{ scale: 0.9 }}
+            initial={isMobile ? {scale:1} : { scale: 0.9 }}
             animate={{ scale: 1 }}
-            transition={{ duration: 0.3, delay: delay + 0.2 }}
+            transition={isMobile ? {duration:0} : { duration: 0.3, delay: delay + 0.2 }}
           >
             {value}
           </motion.p>
@@ -253,6 +264,7 @@ export default function DuolingoProfile() {
   const [stats, setStats] = useState<DuolingoStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const isMobile = useIsMobile(); // Initialize useIsMobile
   
   // Mouse motion for parallax effects
   const mouseX = useMotionValue(0);
@@ -284,6 +296,7 @@ export default function DuolingoProfile() {
 
   // Track mouse position
   const handleMouseMove = (e: React.MouseEvent) => {
+    if (isMobile) return; // Disable on mobile
     const rect = e.currentTarget.getBoundingClientRect();
     const centerX = rect.left + rect.width / 2;
     const centerY = rect.top + rect.height / 2;
@@ -323,15 +336,15 @@ export default function DuolingoProfile() {
         <div className="flex flex-col items-center">
           <motion.div 
             className="w-16 h-16 mb-4 flex items-center justify-center"
-            animate={{ 
+            animate={!isMobile ? { 
               rotate: [0, 10, 0, -10, 0],
               y: [0, -5, 0]
-            }}
-            transition={{ 
+            } : {}}
+            transition={!isMobile ? { 
               duration: 2, 
               repeat: Infinity, 
               ease: "easeInOut" 
-            }}
+            } : {duration:0}}
           >
             <svg width="64" height="64" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M60 105C84.8528 105 105 84.8528 105 60C105 35.1472 84.8528 15 60 15C35.1472 15 15 35.1472 15 60C15 84.8528 35.1472 105 60 105Z" fill="#58CC02"/>
@@ -389,42 +402,34 @@ export default function DuolingoProfile() {
 
   return (
     <motion.div 
-      className="bg-gradient-to-b from-soft-black/40 to-soft-black/10 p-8 rounded-2xl backdrop-blur-sm border border-white/5 overflow-hidden relative"
-      initial={{ opacity: 0, y: 20 }}
+      className="bg-gradient-to-b from-soft-black/40 to-soft-black/10 p-4 sm:p-6 md:p-8 rounded-2xl backdrop-blur-sm border border-white/5 overflow-hidden relative"
+      initial={isMobile ? {opacity:1, y:0} : { opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6 }}
-      onMouseMove={handleMouseMove}
+      transition={isMobile ? {duration:0} : { duration: 0.6 }}
+      onMouseMove={!isMobile ? handleMouseMove : undefined}
     >
       {/* Background decoration */}
-      <motion.div 
-        className="absolute -top-20 -right-20 w-64 h-64 rounded-full bg-[#58cc02]/5 filter blur-3xl"
-        style={{ 
-          x: springBgX, 
-          y: springBgY,
-          rotate: 10
-        }}
-      />
-      
-      <motion.div 
-        className="absolute -bottom-20 -left-20 w-64 h-64 rounded-full bg-[#ff9600]/5 filter blur-3xl"
-        style={{ 
-          x: leftBgX, 
-          y: leftBgY,
-          rotate: -10
-        }}
-      />
+      {!isMobile && (
+        <>
+          <motion.div 
+            className="absolute -top-10 sm:-top-20 -right-10 sm:-right-20 w-48 h-48 sm:w-64 sm:h-64 rounded-full bg-[#58cc02]/5 filter blur-2xl sm:blur-3xl"
+            style={{ x: springBgX, y: springBgY, rotate: 10 }}
+          />
+          <motion.div 
+            className="absolute -bottom-10 sm:-bottom-20 -left-10 sm:-left-20 w-48 h-48 sm:w-64 sm:h-64 rounded-full bg-[#ff9600]/5 filter blur-2xl sm:blur-3xl"
+            style={{ x: leftBgX, y: leftBgY, rotate: -10 }}
+          />
+        </>
+      )}
       
       {/* Profile header with 3D effect */}
-      <div className="relative z-10 mb-8">
-        <div className="flex flex-col items-center justify-center mb-6 gap-4">
+      <div className="relative z-10 mb-6 sm:mb-8">
+        <div className="flex flex-col items-center justify-center mb-4 sm:mb-6 gap-3 sm:gap-4">
           <motion.div 
-            className="relative w-20 h-20 rounded-full overflow-hidden shadow-xl"
-            style={{ 
-              x: springOwlX, 
-              y: springOwlY,
-            }}
-            whileHover={{ scale: 1.1, rotate: [0, -5, 5, 0] }}
-            transition={{ rotate: { duration: 0.5 } }}
+            className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden shadow-xl"
+            style={!isMobile ? { x: springOwlX, y: springOwlY } : {}}
+            whileHover={!isMobile ? { scale: 1.1, rotate: [0, -5, 5, 0] } : {}}
+            transition={isMobile ? {duration:0} : { rotate: { duration: 0.5 } }}
           >
             {/* Duolingo Owl with eyes that follow cursor */}
             <div className="w-full h-full relative bg-[#58CC02] flex items-center justify-center">
@@ -438,10 +443,7 @@ export default function DuolingoProfile() {
                   {/* Left pupil - follows cursor */}
                   <motion.div 
                     className="w-[45%] h-[45%] bg-[#4B4B4B] rounded-full"
-                    style={{
-                      x: leftEyeX,
-                      y: leftEyeY
-                    }}
+                    style={!isMobile ? { x: leftEyeX, y: leftEyeY } : {}}
                   />
                 </div>
                 
@@ -450,10 +452,7 @@ export default function DuolingoProfile() {
                   {/* Right pupil - follows cursor */}
                   <motion.div 
                     className="w-[45%] h-[45%] bg-[#4B4B4B] rounded-full"
-                    style={{
-                      x: rightEyeX,
-                      y: rightEyeY
-                    }}
+                    style={!isMobile ? { x: rightEyeX, y: rightEyeY } : {}}
                   />
                 </div>
                 
@@ -467,10 +466,10 @@ export default function DuolingoProfile() {
           
           <div className="text-center">
             <motion.h3 
-              className="text-xl font-bold text-white"
-              initial={{ opacity: 0, y: -10 }}
+              className="text-lg sm:text-xl font-bold text-white"
+              initial={isMobile ? {opacity:1, y:0} : { opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
+              transition={isMobile ? {duration:0} : { duration: 0.5 }}
             >
               Duolingo
             </motion.h3>
@@ -478,10 +477,10 @@ export default function DuolingoProfile() {
               href={`https://www.duolingo.com/profile/${stats.username}`} 
               target="_blank" 
               rel="noopener noreferrer"
-              className="text-xs text-white/60 hover:text-[#58cc02] transition-colors flex items-center justify-center gap-1 mt-1"
-              initial={{ opacity: 0, y: -5 }}
+              className="text-[10px] sm:text-xs text-white/60 hover:text-[#58cc02] transition-colors flex items-center justify-center gap-1 mt-0.5 sm:mt-1"
+              initial={isMobile ? {opacity:1, y:0} : { opacity: 0, y: -5 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.1 }}
+              transition={isMobile ? {duration:0} : { duration: 0.5, delay: 0.1 }}
               whileHover={{ y: -2 }}
             >
               <span>View on Duolingo</span>
@@ -496,10 +495,10 @@ export default function DuolingoProfile() {
       </div>
 
       {/* Stat cards with 3D effects */}
-      <div className="grid grid-cols-2 gap-4 mb-8">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-6 sm:mb-8">
         <StatCard 
           icon={
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M17 3L21 7L17 11V8H10V6H17V3Z" fill="#ff9600" />
               <path d="M7 21L3 17L7 13V16H14V18H7V21Z" fill="#ff9600" />
             </svg>
@@ -508,6 +507,7 @@ export default function DuolingoProfile() {
           value={`${stats.streak} days`}
           color="#ff9600"
           delay={0.1}
+          isMobile={isMobile}
         />
         
         <StatCard 
@@ -520,35 +520,37 @@ export default function DuolingoProfile() {
           value={stats.totalXp.toLocaleString()}
           color="#58cc02"
           delay={0.2}
+          isMobile={isMobile}
         />
       </div>
 
       {/* Languages section with animated title */}
-      <div className="mb-3">
+      <div className="mb-2 sm:mb-3">
         <motion.div 
-          className="flex items-center gap-2"
-          initial={{ opacity: 0, y: 10 }}
+          className="flex items-center gap-1.5 sm:gap-2"
+          initial={isMobile ? {opacity:1, y:0} : { opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.3 }}
+          transition={isMobile ? {duration:0} : { duration: 0.5, delay: 0.3 }}
         >
           <motion.div 
-            className="w-6 h-6 rounded-full bg-[#58cc02]/10 flex items-center justify-center"
-            animate={{ scale: [1, 1.1, 1] }}
-            transition={{ duration: 2, repeat: Infinity }}
+            className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-[#58cc02]/10 flex items-center justify-center"
+            animate={!isMobile ? { scale: [1, 1.1, 1] } : {}}
+            transition={!isMobile ? { duration: 2, repeat: Infinity } : {duration:0}}
           >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"> 
               <path d="M12.87 15.07l-2.54-2.51.03-.03A17.52 17.52 0 0014.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04M18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12m-2.62 7l1.62-4.33L19.12 17h-3.24z" fill="#58cc02"/>
             </svg>
           </motion.div>
-          <h4 className="text-md font-medium text-white">Languages</h4>
+          <h4 className="text-base sm:text-md font-medium text-white">Languages</h4>
         </motion.div>
       </div>
       
       {/* Language bars with 3D effects */}
-      <div className="space-y-3 relative z-10">
+      <div className="space-y-2 sm:space-y-3 relative z-10">
         {sortedLanguages.map((lang, index) => (
           <LanguageBar
             key={lang.language}
+            isMobile={isMobile}
             language={lang.language}
             level={lang.level}
             xp={lang.xp}
@@ -560,9 +562,9 @@ export default function DuolingoProfile() {
       </div>
       
       {/* Achievement animations */}
-      {stats.streak >= 30 && (
+      {stats.streak >= 30 && !isMobile && ( // Disable achievement animation on mobile
         <motion.div 
-          className="absolute bottom-6 right-6 w-16 h-16 flex items-center justify-center"
+          className="absolute bottom-4 right-4 sm:bottom-6 sm:right-6 w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center" 
           initial={{ scale: 0, rotate: -30 }}
           animate={{ 
             scale: [0, 1.2, 1],
@@ -587,11 +589,11 @@ export default function DuolingoProfile() {
             }}
           >
             <div className="absolute -inset-1 bg-[#ff9600]/20 rounded-full blur-md" />
-            <div className="relative z-10 w-12 h-12 bg-gradient-to-br from-[#ff9600] to-[#ffb700] rounded-full flex items-center justify-center shadow-lg shadow-[#ff9600]/20">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <div className="relative z-10 w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-[#ff9600] to-[#ffb700] rounded-full flex items-center justify-center shadow-lg shadow-[#ff9600]/20"> 
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"> 
                 <path d="M20 6h-3V4c0-1.1-.9-2-2-2H9c-1.1 0-2 .9-2 2v2H4c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zM9 4h6v2H9V4zm11 15H4V8h16v11z" fill="white"/>
                 <path d="M12 9.5c-2.48 0-4.5 2.02-4.5 4.5s2.02 4.5 4.5 4.5 4.5-2.02 4.5-4.5-2.02-4.5-4.5-4.5zm0 7c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" fill="white"/>
-                <text x="12" y="15" textAnchor="middle" fontSize="6" fontWeight="bold" fill="white">{stats.streak}</text>
+                <text x="12" y="15" textAnchor="middle" fontSize="5" fontWeight="bold" fill="white">{stats.streak}</text> 
               </svg>
             </div>
           </motion.div>

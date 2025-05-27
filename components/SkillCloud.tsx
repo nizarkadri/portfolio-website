@@ -19,6 +19,7 @@ interface SkillCloudProps {
   availableSkills: string[];
   mousePosition: { x: number; y: number };
   activeSkill: string | null;
+  isMobile?: boolean; // Added isMobile prop
   // onSkillClick: (skill: string) => void;
 }
 
@@ -26,6 +27,7 @@ const SkillCloud: React.FC<SkillCloudProps> = ({
   availableSkills,
   mousePosition,
   activeSkill,
+  isMobile = false, // Default to false
   // onSkillClick
 }) => {
   return (
@@ -38,9 +40,9 @@ const SkillCloud: React.FC<SkillCloudProps> = ({
         perspective: '1200px',
         transformStyle: 'preserve-3d'
       }}
-      initial={{ opacity: 0 }}
+      initial={isMobile ? { opacity: 1 } : { opacity: 0 }}
       animate={{ opacity: 1 }}
-      transition={{ opacity: { duration: 0.5 } }}
+      transition={isMobile ? { duration: 0 } : { opacity: { duration: 0.5 } }}
     >
       {/* Rotating container */}
       <motion.div 
@@ -87,14 +89,14 @@ const SkillCloud: React.FC<SkillCloudProps> = ({
                 willChange: 'transform, opacity',
               }}
               initial={{
-                opacity: 0,
-                x: (Math.random() - 0.5) * 1000,
-                y: (Math.random() - 0.5) * 1000,
-                z: (Math.random() - 0.5) * 1000,
-                rotateX: Math.random() * 360,
-                rotateY: Math.random() * 360,
-                rotateZ: Math.random() * 360,
-                scale: 0
+                opacity: isMobile ? opacity : 0, // If mobile, start with final opacity
+                x: isMobile ? x : (Math.random() - 0.5) * 1000,
+                y: isMobile ? y : (Math.random() - 0.5) * 1000,
+                z: isMobile ? z : (Math.random() - 0.5) * 1000,
+                rotateX: isMobile ? 0 : Math.random() * 360,
+                rotateY: isMobile ? 0 : Math.random() * 360,
+                rotateZ: isMobile ? 0 : Math.random() * 360,
+                scale: isMobile ? 1 : 0
               }}
               
               whileInView={{
@@ -108,19 +110,18 @@ const SkillCloud: React.FC<SkillCloudProps> = ({
                 rotateZ: 0,
                 scale: 1
               }}
-              transition={{
-                
+              transition={isMobile ? { duration: 0 } : {
                 duration: 0.2,
                 // delay: index * 0.05,
                 type: "spring",
                 stiffness: 50,
                 damping: 20
               }}
-              whileHover={{
+              whileHover={!isMobile ? { // Disable hover effect on mobile
                 scale: 1.3,
                 z: z + 30,
                 transition: { duration: 0.3 }
-              }}
+              } : {}}
               // onClick={() => onSkillClick(skill)}
             >
               {skill}

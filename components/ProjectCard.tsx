@@ -33,25 +33,25 @@ const ProjectCard: React.FC<ProjectCardProps> = ({title, description, imageUrl, 
                     />
                 </Link>
             </div>
-            <div className="p-6 flex flex-col flex-grow relative">
+            <div className="p-4 sm:p-6 flex flex-col flex-grow relative">
                 {/* Subtle glow effect */}
                 <div className="absolute -inset-1 rounded-lg bg-gradient-to-r from-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 blur-xl transition-opacity duration-700"></div>
                 
                 <div className="relative">
-                    <div className="flex justify-between items-start mb-4">
-                        <h3 className="text-xl font-bold text-white group-hover:text-blue-300 transition-colors duration-300">
+                    <div className="flex justify-between items-start mb-3 sm:mb-4">
+                        <h3 className="text-lg sm:text-xl font-bold text-white group-hover:text-blue-300 transition-colors duration-300">
                             <Link href={`/projects/${slug}`} className="hover:text-blue-400 transition-colors">
                                 {title}
                             </Link>
                         </h3>
-                        <div className="icon-3d p-1">
+                        <div className="icon-3d p-1 shrink-0"> {/* Added shrink-0 to prevent icon from shrinking */}
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="#3b82f6">
                                 <path fillRule="evenodd" d="M12.316 3.051a1 1 0 01.633 1.265l-4 12a1 1 0 11-1.898-.632l4-12a1 1 0 011.265-.633zM5.707 6.293a1 1 0 010 1.414L3.414 10l2.293 2.293a1 1 0 11-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0zm8.586 0a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 11-1.414-1.414L16.586 10l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
                             </svg>
                         </div>
                     </div>
                     
-                    <p className="text-soft-gray mb-6 line-clamp-3">{description}</p>
+                    <p className="text-xs sm:text-sm text-soft-gray mb-4 sm:mb-6 line-clamp-3">{description}</p>
                     
                     <div className="flex flex-wrap mt-auto">
                         {technologies.map((tech) => {
@@ -71,7 +71,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({title, description, imageUrl, 
                             return (
                                 <span
                                     key={tech}
-                                    className="inline-flex items-center m-1 px-3 py-1 text-xs font-medium rounded-full bg-black/30 backdrop-blur-sm border border-white/5 hover:border-white/20 transition-all duration-300"
+                                    className="inline-flex items-center m-0.5 sm:m-1 px-2 py-0.5 sm:px-3 sm:py-1 text-[10px] sm:text-xs font-medium rounded-full bg-black/30 backdrop-blur-sm border border-white/5 hover:border-white/20 transition-all duration-300"
                                     style={{ color: colors[colorIndex] }}
                                 >
                                     {tech}

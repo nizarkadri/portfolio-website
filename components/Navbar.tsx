@@ -5,9 +5,11 @@ import Link from 'next/link';
 import React, { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
+import useIsMobile from '../lib/useIsMobile'; // Import useIsMobile
 
 const Navbar: React.FC = () => {
   const pathname = usePathname();
+  const isMobile = useIsMobile(); // Initialize useIsMobile
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -47,10 +49,10 @@ const Navbar: React.FC = () => {
   return (
     <>
       <motion.nav 
-        initial={{ y: -20, opacity: 0 }}
+        initial={isMobile ? { y: 0, opacity: 1 } : { y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.5 }}
-        className={`fixed top-4 left-1/4 transform -translate-x-1/2 z-50 px-6 md:px-12 py-3 rounded-full ${
+        transition={isMobile ? { duration: 0 } : { duration: 0.5 }}
+        className={`fixed top-4 left-1/2 transform -translate-x-1/2 z-50 px-6 md:px-12 py-3 rounded-full ${
           scrolled 
             ? 'bg-deep-black/70 backdrop-blur-xl w-[95%] md:w-auto shadow-floating' 
             : 'bg-transparent md:bg-deep-black/30 md:backdrop-blur-lg md:shadow-floating'
@@ -119,22 +121,22 @@ const Navbar: React.FC = () => {
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div 
-            initial={{ opacity: 0 }}
+            initial={isMobile ? { opacity: 1 } : { opacity: 0 }}
             animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
+            exit={isMobile ? { opacity: 1 } : { opacity: 0 }}
+            transition={isMobile ? { duration: 0 } : { duration: 0.2 }}
             className="fixed inset-0 z-40 bg-black/90 backdrop-blur-md"
           >
             <motion.div 
-              initial={{ y: 20, opacity: 0 }}
+              initial={isMobile ? { y: 0, opacity: 1 } : { y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              transition={{ duration: 0.3, delay: 0.1 }}
+              transition={isMobile ? { duration: 0 } : { duration: 0.3, delay: 0.1 }}
               className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 p-8 w-[90%] max-w-sm"
             >
               <div className="flex justify-between items-center mb-10">
                 <motion.span 
                   className="text-2xl font-black text-white tracking-tighter"
-                  animate={{ 
+                  animate={isMobile ? {} : { 
                     x: [0, 5, 0],
                     transition: { duration: 1, repeat: Infinity, repeatType: "reverse" }
                   }}
@@ -152,9 +154,9 @@ const Navbar: React.FC = () => {
               
               {/* Social links */}
               <motion.div 
-                initial={{ opacity: 0, y: 20 }}
+                initial={isMobile ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
+                transition={isMobile ? { duration: 0 } : { delay: 0.3 }}
                 className="mt-16 flex justify-center space-x-6"
               >
                 <SocialIcon href="https://github.com" label="GitHub">
@@ -200,17 +202,19 @@ const NavLink: React.FC<NavLinkProps> = ({ href, isActive, label }) => {
           {isActive && (
             <motion.div 
               className="absolute bottom-0 left-0 w-full h-px bg-[#8acea2]/80"
-              initial={{ opacity: 0, scaleX: 0 }}
+            initial={isMobile ? { opacity: 1, scaleX: 1 } : { opacity: 0, scaleX: 0 }}
               animate={{ opacity: 1, scaleX: 1 }}
-              transition={{ duration: 0.3 }}
-            ></motion.div>
-          )}
+            transition={isMobile ? { duration: 0 } : { duration: 0.3 }}
+          ></motion.div>
+        )}
+        {!isMobile && ( // Only show this hover effect on non-mobile
           <motion.div 
             className="absolute bottom-0 left-0 w-0 h-px bg-[#8acea2]"
             initial={{ scaleX: 0 }}
             whileHover={{ scaleX: 1 }}
-            transition={{ duration: 0.3 }}
-          ></motion.div>
+              transition={{ duration: 0.3 }}
+            ></motion.div>
+          )}
         </div>
       </Link>
     </motion.div>
@@ -224,8 +228,10 @@ interface MobileNavLinkProps {
 }
 
 const MobileNavLink: React.FC<MobileNavLinkProps> = ({ href, isActive, label }) => {
+  const isMobile = useIsMobile(); // Using hook here too for consistency if needed, or pass as prop
+
   return (
-    <motion.div whileHover={{ x: 5 }} whileTap={{ x: 0 }}>
+    <motion.div whileHover={!isMobile ? { x: 5 } : {}} whileTap={!isMobile ? { x: 0 } : {}}>
       <Link 
         href={href} 
         className={`group block relative overflow-hidden py-2 transition-colors ${
@@ -236,20 +242,22 @@ const MobileNavLink: React.FC<MobileNavLinkProps> = ({ href, isActive, label }) 
       >
         <div className="flex items-center justify-between">
           <span className="text-2xl font-black tracking-tighter">{label}</span>
-          <motion.svg 
-            xmlns="http://www.w3.org/2000/svg" 
-            className={`h-5 w-5 ${isActive ? 'opacity-100 text-[#8acea2]' : 'opacity-0 group-hover:opacity-50'}`} 
-            viewBox="0 0 20 20" 
-            fill="currentColor"
-            animate={isActive ? { x: [0, 5, 0] } : {}}
-            transition={{ duration: 1.5, repeat: Infinity, repeatType: "reverse" }}
-          >
-            <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
-          </motion.svg>
+          {!isMobile && ( // Conditionally render or animate the SVG
+            <motion.svg 
+              xmlns="http://www.w3.org/2000/svg" 
+              className={`h-5 w-5 ${isActive ? 'opacity-100 text-[#8acea2]' : 'opacity-0 group-hover:opacity-50'}`} 
+              viewBox="0 0 20 20" 
+              fill="currentColor"
+              animate={isActive && !isMobile ? { x: [0, 5, 0] } : {}}
+              transition={isMobile ? {duration:0} : { duration: 1.5, repeat: Infinity, repeatType: "reverse" }}
+            >
+              <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
+            </motion.svg>
+          )}
         </div>
         <motion.div 
           className={`absolute bottom-0 left-0 h-px w-full ${isActive ? 'bg-[#8acea2] opacity-70' : 'bg-white opacity-10 group-hover:opacity-20'}`}
-          whileHover={{ scaleX: 1.1 }}
+          whileHover={!isMobile ? { scaleX: 1.1 } : {}}
         ></motion.div>
       </Link>
     </motion.div>
