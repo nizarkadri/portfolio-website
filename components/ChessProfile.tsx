@@ -398,7 +398,7 @@ const DonutChart = ({
               strokeWidth={strokeWidth}
               strokeDasharray={circumference}
               initial={{ strokeDashoffset: circumference }}
-              animate={{ strokeDashoffset: animate ? strokeDashoffset : circumference }}
+              animate={{ strokeDashoffset: animateProp ? strokeDashoffset : circumference }}
               transition={{ duration: 1.5, ease: "easeOut", delay: index * 0.2 }}
               strokeLinecap="round"
             />

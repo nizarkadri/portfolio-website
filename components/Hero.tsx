@@ -17,6 +17,12 @@ const Hero = () => {
   const xFirstLine = useTransform(scrollYProgress, [0, 1], ['0%', '90%']);
   const xSecondLine = useTransform(scrollYProgress, [0, 1], ['0%', '-90%']);
   const opacityForBoth = useTransform(scrollYProgress, [0, 1], [1, 0]);
+
+  // Background parallax transforms (now unconditional)
+  const bgY = useTransform(scrollYProgress, [0, 1], ['0%', '50%']);
+  const bgOpacity = useTransform(scrollYProgress, [0, 0.3, 0.6], [0.8, 0.6, 0.1]);
+  const bgScale = useTransform(scrollYProgress, [0, 1], [1, 1.2]);
+
   const isMobile = useIsMobile();
 
   // Optional: Listen to Lenis scroll events
@@ -45,10 +51,14 @@ const Hero = () => {
         <motion.div
           className="absolute inset-0 flex items-center justify-center pointer-events-none z-0"
           style={!isMobile ? {
-            y: useTransform(scrollYProgress, [0, 1], ['0%', '50%']),
-            opacity: useTransform(scrollYProgress, [0, 0.3, 0.6], [0.8, 0.6, 0.1]),
-            scale: useTransform(scrollYProgress, [0, 1], [1, 1.2]),
-          } : {}}
+            y: bgY,
+            opacity: bgOpacity,
+            scale: bgScale,
+          } : {
+            // On mobile, ensure no scroll-driven transforms are applied from these hooks
+            // If static appearance is desired, set static values, e.g., opacity: 0.1
+            // For this fix, an empty object means these specific transforms are simply not applied on mobile
+          }}
         >
           <h1
             className="text-[25vw] font-black text-transparent select-none tracking-tighter"
