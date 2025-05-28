@@ -187,11 +187,12 @@ interface NavLinkProps {
   href: string;
   isActive: boolean;
   label: string;
+  isMobile: boolean; // Added isMobile
 }
 
-const NavLink: React.FC<NavLinkProps> = ({ href, isActive, label }) => {
+const NavLink: React.FC<NavLinkProps> = ({ href, isActive, label, isMobile }) => { // Added isMobile
   return (
-    <motion.div whileHover={{ y: -2 }} whileTap={{ y: 0 }}>
+    <motion.div whileHover={!isMobile ? { y: -2 } : {}} whileTap={!isMobile ? { y: 0 } : {}}> {/* Conditional hover/tap */}
       <Link href={href} className="group">
         <div className="relative py-1 overflow-hidden">
           <span className={`text-xs tracking-widest uppercase font-medium transition-colors ${
