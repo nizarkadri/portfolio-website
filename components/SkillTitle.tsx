@@ -13,13 +13,14 @@ const SkillTitle = () => {
         className="relative"
       >
         <motion.h2 
-          className="text-4xl md:text-6xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-[#B8E62D] to-[#89D32D] mb-2"
+          className="huge-text font-bold text-[#B8E62D]/90 mb-2"
+          // huge-text absolute top-6 md:-top-16 left-[7%] md:left-0 md:translate-x-0 opacity-80 text-[#B8E62D]/90 font-bold select-none
           variants={titleVariants}
         >
           Skills & Expertise
         </motion.h2>
         <motion.div 
-          className="absolute -bottom-2 left-0 h-1 bg-[#B8E62D]/30 rounded-full"
+          className="absolute -bottom-2 left-0 h-0.5 bg-[#B8E62D]/10 rounded-full"
           variants={highlightVariants}
         />
         {/* <motion.div 

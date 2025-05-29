@@ -193,13 +193,13 @@ const NavLink: React.FC<NavLinkProps> = ({ href, isActive, label }) => {
       <Link href={href} className="group">
         <div className="relative py-1 overflow-hidden">
           <span className={`text-xs tracking-widest uppercase font-medium transition-colors ${
-            isActive ? 'text-white' : 'text-white/60 group-hover:text-white/90'
+            isActive ? 'text-[white]' : 'text-white/60 group-hover:text-white/90'
           }`}>
             {label}
           </span>
           {isActive && (
             <motion.div 
-              className="absolute bottom-0 left-0 w-full h-px bg-[#8acea2]/80"
+              className="absolute bottom-0 left-0 w-full h-px bg-[#B8E62D]/80"
               initial={{ opacity: 0, scaleX: 0 }}
               animate={{ opacity: 1, scaleX: 1 }}
               transition={{ duration: 0.3 }}
@@ -230,7 +230,7 @@ const MobileNavLink: React.FC<MobileNavLinkProps> = ({ href, isActive, label }) 
         href={href} 
         className={`group block relative overflow-hidden py-2 transition-colors ${
           isActive 
-            ? 'text-[#8acea2]' 
+            ? 'text-[#B8E62D]' 
             : 'text-white/70 hover:text-white'
         }`}
       >

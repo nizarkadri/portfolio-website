@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
+import { useIsMobile } from "../app/hooks/useMobile";
 
 type LeetCodeStats = {
   username: string;
@@ -144,7 +145,7 @@ export default function LeetCodeProfile() {
   const [isLoading, setIsLoading] = useState(true);
   const [stats, setStats] = useState<LeetCodeStats | null>(null);
   const [error, setError] = useState<string | null>(null);
-  
+  const isMobile = useIsMobile();
   useEffect(() => {
     const fetchLeetCodeStats = async () => {
       try {
@@ -228,13 +229,13 @@ export default function LeetCodeProfile() {
 
   return (
     <div className="h-full bg-[#141414] rounded-xl p-6 relative flex flex-col">
-      <div className="flex items-center mb-6">
-        <div className="w-14 h-14 rounded-full overflow-hidden bg-[#F89F1B]/20 flex items-center justify-center mr-4">
+      <div className="flex flex-col md:flex-row items-center mb-6">
+        <div className="w-20 h-20 md:w-14 md:h-14 rounded-full overflow-hidden bg-[#F89F1B]/20 flex items-center justify-center md:mr-4">
           <Image 
-            src="/images/leetcode-icon.png" 
+            src="/images/leetcode-96.png" 
             alt="LeetCode" 
-            width={32}
-            height={32}
+            width={isMobile ? 32 : 60}
+            height={isMobile ? 32 : 60}
             className="object-contain"
           />
         </div>
@@ -261,7 +262,7 @@ export default function LeetCodeProfile() {
         </div>
       ) : stats && (
         <>
-          <div className="mt-2 mb-6 text-right">
+          <div className="mt-2 mb-6 md:text-right">
             <div className="text-3xl font-bold text-white">{stats.solved.total}</div>
             <div className="text-sm text-gray-400">Problems Solved</div>
           </div>
@@ -289,7 +290,7 @@ export default function LeetCodeProfile() {
                 <span className="text-[#F89F1B] font-medium">#{stats.ranking?.toLocaleString() || 'N/A'}</span>
               </div>
               
-              {stats.reputation !== undefined && (
+              {stats.reputation !== undefined && stats.reputation > 0 && (
                 <div className="bg-[#1e1e1e] rounded-md p-3 flex justify-between items-center border border-[rgba(255,255,255,0.05)]">
                   <span className="text-gray-400">Reputation</span>
                   <span className={`${stats.reputation >= 0 ? 'text-[#00B8A3]' : 'text-[#EF4743]'} font-medium`}>

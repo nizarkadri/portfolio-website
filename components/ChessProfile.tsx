@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useMotionValue, useTransform, useSpring } from 'framer-motion';
-
+import { useIsMobile } from '../app/hooks/useMobile';
+import Image from 'next/image';
 interface GameTypeStats {
   last: {
     rating: number;
@@ -429,7 +430,8 @@ export default function ChessProfile() {
   const [error, setError] = useState<string | null>(null);
   const [activeGameType, setActiveGameType] = useState<string>("Bullet");
   const [showWinRateGraph, setShowWinRateGraph] = useState(false);
-
+  const isMobile = useIsMobile();
+  const [showAllStats, setShowAllStats] = useState(false);
   // Define available game modes
   const gameModes = ["Rapid", "Blitz", "Bullet"] as const;
   type GameMode = typeof gameModes[number];
@@ -613,6 +615,11 @@ export default function ChessProfile() {
             transition={{ type: "spring", stiffness: 300, damping: 15 }}
           >
             {/* Chess Knight with animated eyes */}
+            {isMobile ?
+            (<div className="relative w-full h-full">
+              <Image src="/images/chess-icon.png" alt="Chess Knight" width={64} height={64} />
+            </div>
+            ): (
             <div className="w-full h-full bg-[#B58863] flex items-center justify-center">
               <div className="relative w-10 h-10">
                 {/* Knight base shape */}
@@ -645,6 +652,7 @@ export default function ChessProfile() {
                 </div>
               </div>
             </div>
+            ) }
           </motion.div>
           <div className="text-center">
             <h3 className="text-xl font-bold text-white">Chess</h3>
@@ -696,13 +704,13 @@ export default function ChessProfile() {
       </motion.div>
       
       {/* Stats Grid with 3D Cards */}
-      <div  className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-10 relative z-10 max-w-2xl mx-auto">
+      <div  className="grid grid-cols-2 md:grid-cols-2 sm:grid-cols-2 gap-4 sm:gap-6 mb-10 relative z-10 max-w-2xl mx-auto">
         <DonutChart 
           label="Overall Rating" 
           value={calculateOverallRating()}
           percent={Math.min(Math.round(Number(calculateOverallRating()) / 2000 * 100), 100)}
           color="#4287f5"
-          size={120}
+          size={100}
           index={0}
         />
         <DonutChart 
@@ -710,11 +718,18 @@ export default function ChessProfile() {
           value={getBestRating()}
           percent={Math.min(Math.round(Number(getBestRating()) / 2000 * 100), 100)}
           color="#f59e0b"
-          size={120}
+          size={100}
           index={1}
         />
       </div>
-      
+      {isMobile && (
+      <div className='flex justify-center items-center h-32 w-full bg-black/50'>
+        <button className='bg-[#B8E62D] text-black px-4 py-2 rounded-md' onClick={() => setShowAllStats(!showAllStats)}>View All Stats</button>
+      </div>
+      )}
+
+      {(showAllStats || !isMobile) && (
+        <>
       <h4 className="text-lg font-medium text-white mb-5 border-b border-white/10 pb-2 z-10 relative">Game Mode Statistics</h4>
       
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-10 relative z-10">
@@ -1029,6 +1044,8 @@ export default function ChessProfile() {
           </Card3D>
         )}
       </div>
+      </>
+      )}
     </motion.div>
   );
 } 
