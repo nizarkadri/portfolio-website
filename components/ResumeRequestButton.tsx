@@ -17,7 +17,7 @@ const ResumeRequestButton = ({ onClick }: ResumeRequestButtonProps) => {
 
   return (
     <motion.div
-      className="fixed top-6 right-6 z-50 group cursor-pointer"
+      className="fixed top-8 right-[40%] transform -translate-x-1/3 z-50 group cursor-pointer md:top-8 md:right-8"
       initial={{ opacity: 0, scale: 0 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ 

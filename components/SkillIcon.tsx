@@ -29,7 +29,7 @@ const SkillIcon: React.FC<SkillIconProps> = ({
   position, 
   isHighlighted, 
   prefersReducedMotion,
-  iconSize = 80
+  iconSize
 }) => {
   const [isHovered, setIsHovered] = useState(false);
   // const glowColors = getSkillGlowColors(skill);

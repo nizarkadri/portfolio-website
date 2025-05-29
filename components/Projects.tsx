@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import ProjectCard from "./ProjectCard";
 import { motion } from "framer-motion";
+import {useIsMobile} from "../app/hooks/useMobile";
 
 interface Project {
   slug: string;
@@ -14,29 +15,29 @@ interface Project {
 }
 
 const SectionTitle = () => {
-  const titleVariants = {
-    initial: { opacity: 0, y: 20 },
-    animate: { 
-      opacity: 1, 
-      y: 0,
-      transition: {
-        duration: 0.8,
-        ease: [0.22, 1, 0.36, 1]
-      }
-    }
-  };
+  // const titleVariants = {
+  //   initial: { opacity: 0, y: 20 },
+  //   animate: { 
+  //     opacity: 1, 
+  //     y: 0,
+  //     transition: {
+  //       duration: 0.8,
+  //       ease: [0.22, 1, 0.36, 1]
+  //     }
+  //   }
+  // };
   
-  const underlineVariants = {
-    initial: { width: 0 },
-    animate: { 
-      width: "100%",
-      transition: {
-        duration: 1.2, 
-        ease: [0.22, 1, 0.36, 1],
-        delay: 0.3
-      }
-    }
-  };
+  // const underlineVariants = {
+  //   initial: { width: 0 },
+  //   animate: { 
+  //     width: "100%",
+  //     transition: {
+  //       duration: 1.2, 
+  //       ease: [0.22, 1, 0.36, 1],
+  //       delay: 0.3
+  //     }
+  //   }
+  // };
   
   const buttonVariants = {
     initial: { opacity: 0, x: 20 },
@@ -102,6 +103,7 @@ const SectionTitle = () => {
 };
 
 function Projects() {
+  const isMobile = useIsMobile();
   const [projects, setProjects] = useState<Project[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
@@ -137,14 +139,13 @@ function Projects() {
     return (
       <section className="relative pt-24 pb-16">
         <motion.h2 
-           
-          className="huge-text absolute -top-16 left-0 opacity-80 text-[#B8E62D]/90 font-bold select-none"
-          initial={{ opacity: 0, x: -50 }}
-          animate={{ opacity: 0.7, x: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-        >
-          PROJECTS
-        </motion.h2>
+            className="huge-text absolute top-6 md:-top-16 left-[9%] md:left-0 md:translate-x-0 opacity-80 text-[#B8E62D]/90 font-bold select-none"
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 0.8, x: 0 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+          >
+            PROJECTS
+          </motion.h2>
         
         <SectionTitle />
         
@@ -205,27 +206,34 @@ function Projects() {
   return (
     <section className="relative pt-24 pb-16">
       <motion.h2 
-        className="huge-text absolute -top-16 left-0 opacity-80 text-[#B8E62D]/90 font-bold select-none"
-        initial={{ opacity: 0, x: -50 }}
-        animate={{
-          opacity: [0.7, 0.92, 0.7], // fade in & out subtly
-          x: 0
-        }}
-        transition={{
-          duration: 3,
-          repeat: Infinity,
-          repeatType: "mirror",
-          ease: "easeInOut"
-        }}
-      >
-        PROJECTS
+            className="huge-text absolute top-26 md:-top-16 left-[12%] md:left-0 md:translate-x-0 opacity-80 text-[#B8E62D]/90 font-bold select-none"
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 0.8, x: 0 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+          >
+            PROJECTS
       </motion.h2>
+      <div className="flex items-center mb-10">
+            <motion.div 
+              className="h-px bg-[#B8E62D]/20 w-full ml-[8%] md:ml-0"
+              initial={{ opacity: 0, width: 0 }}
+              whileInView={{ 
+                opacity: 1, 
+                width: isMobile ? "85%" : "100%",
+                transition: {
+                  duration: 0.8,
+                  delay: 0.2
+                }
+              }}
+              viewport={{ once: false, margin: "-100px" }}
+            />
+      </div>
       
-      <SectionTitle />
+      {/* <SectionTitle /> */}
       
       {/* Display projects from data/projects directory */}
       <motion.div 
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 m-5 pt-20"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, delay: 0.2 }}
@@ -247,6 +255,36 @@ function Projects() {
           </motion.div>
         ))}
       </motion.div>
+      <div className="flex justify-center mt-8">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.5 }}
+              whileHover={{ 
+                scale: 1.05,
+                backgroundColor: "rgba(184, 230, 45, 0.15)",
+                borderColor: "#B8E62D",
+                boxShadow: "0 0 20px rgba(184, 230, 45, 0.3)",
+                transition: { duration: 0.3 }
+              }}
+            >
+              <Link 
+                href="/experience" 
+                className="px-8 py-3 border border-[#B8E62D]/50 text-[#B8E62D] rounded-md inline-flex items-center group transition-all duration-300 font-medium backdrop-blur-sm bg-black/40"
+              >
+                View All Projects
+                <svg 
+                  xmlns="http://www.w3.org/2000/svg" 
+                  className="h-5 w-5 ml-2 transform transition-transform duration-300 group-hover:translate-x-1" 
+                  fill="none" 
+                  viewBox="0 0 24 24" 
+                  stroke="currentColor"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                </svg>
+              </Link>
+            </motion.div>
+          </div>
     </section>
   );
 }
