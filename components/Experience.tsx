@@ -1,11 +1,13 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
-
+import {useIsMobile} from "../app/hooks/useMobile";
 const Experience = () => {
+  const isMobile = useIsMobile();
+  console.log(isMobile);
     return (
-        <section className="relative pt-24 pb-36">
+        <section className="relative pt-24 pb-26 md:pb-36">
           <motion.h2 
-            className="huge-text absolute -top-16 left-0 opacity-80 text-[#B8E62D]/90 font-bold select-none"
+            className="huge-text absolute top-6 md:-top-16 left-[7%] md:left-0 md:translate-x-0 opacity-80 text-[#B8E62D]/90 font-bold select-none"
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 0.8, x: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
@@ -15,22 +17,22 @@ const Experience = () => {
           
           <div className="flex items-center mb-10">
             <motion.div 
-              className="h-px bg-[#B8E62D]/20 w-full"
+              className="h-px bg-[#B8E62D]/20 w-full ml-[8%] md:ml-0"
               initial={{ opacity: 0, width: 0 }}
               whileInView={{ 
                 opacity: 1, 
-                width: "100%",
+                width: isMobile ? "85%" : "100%",
                 transition: {
                   duration: 0.8,
                   delay: 0.2
                 }
               }}
-              viewport={{ once: true, margin: "-100px" }}
+              viewport={{ once: false, margin: "-100px" }}
             />
           </div>
           
           {/* Experience Preview */}
-          <div className="relative mb-20">
+          <div className="relative mb-20 mx-5 md:mx-0 ">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {/* Experience Details - Left Side */}
               <div className="bg-gradient-to-b from-soft-black/40 to-soft-black/10 p-8 rounded-2xl backdrop-blur-sm border border-white/5 hover:border-[#B8E62D]/20 transition-all duration-500 shadow-lg shadow-black/40">
@@ -174,7 +176,7 @@ const Experience = () => {
                 href="/experience" 
                 className="px-8 py-3 border border-[#B8E62D]/50 text-[#B8E62D] rounded-md inline-flex items-center group transition-all duration-300 font-medium backdrop-blur-sm bg-black/40"
               >
-                View All Experience
+                View All Experiences
                 <svg 
                   xmlns="http://www.w3.org/2000/svg" 
                   className="h-5 w-5 ml-2 transform transition-transform duration-300 group-hover:translate-x-1" 

@@ -3,20 +3,21 @@
 import React, { useEffect, useState, useRef, useMemo, useCallback, Suspense } from 'react';
 import { motion, useReducedMotion, AnimatePresence, useInView } from 'framer-motion';
 import SkillIcon from './SkillIcon';
-import SectionTitle from './SectionTitle';
+import SkillTitle from './SkillTitle';
 import { 
   generateMobbinPositions, 
   shouldExcludeSkill,
   type PositionProps 
 } from '../utils/skill-utils';
 import { generateSkillIds } from '../utils/3d-utils';
-
+import { useIsMobile } from '../app/hooks/useMobile';
 // Lazy load the heavy 3D component
 const SkillCloud = React.lazy(() => import('./SkillCloud'));
 
 // Constants
 const MAX_VISIBLE_SKILLS = 12;
 const SKILL_ICON_SIZE = 80;
+const SKILL_ICON_SIZE_MOBILE = 50;
 const ROTATION_INTERVAL = 6000;
 const PRIMARY_COLOR = '#B8E62D';
 
@@ -43,6 +44,8 @@ interface UIState {
 }
 
 const Skills = () => {
+
+  const isMobile = useIsMobile();
   // Grouped state for skills-related data
   const [skillsState, setSkillsState] = useState<SkillsState>({
     available: [],
@@ -62,16 +65,16 @@ const Skills = () => {
   });
   
   const containerRef = useRef<HTMLDivElement>(null);
-  const collageRef = useRef<HTMLDivElement>(null);
-  const animationFrameRef = useRef<number | undefined>(undefined);
+  // const collageRef = useRef<HTMLDivElement>(null);
+  // const animationFrameRef = useRef<number | undefined>(undefined);
   const prefersReducedMotion = useReducedMotion();
-  const isInView = useInView(containerRef, { once: false, amount: 0.2 });
+  // const isInView = useInView(containerRef, { once: false, amount: 0.2 });
 
-  // Companies data with fallback
-  const companies = useMemo(() => [
-    { name: 'CGI', logo: '/images/Experience/CGI.svg' },
-    { name: 'Fiera Capital', logo: '/images/Experience/FieraCapital.png' },
-  ], []);
+  // // Companies data with fallback
+  // const companies = useMemo(() => [
+  //   { name: 'CGI', logo: '/images/Experience/CGI.svg' },
+  //   { name: 'Fiera Capital', logo: '/images/Experience/FieraCapital.png' },
+  // ], []);
 
   // Memoized positions calculation
   const positions = useMemo((): PositionProps[] => {
@@ -192,57 +195,52 @@ const Skills = () => {
   // === OVERLAY EFFECTS ===
   
   // Company overlay rotation
-  useEffect(() => {
-    if (uiState.isLoading || skillsState.visible.length === 0) return;
+  // useEffect(() => {
+  //   if (uiState.isLoading || skillsState.visible.length === 0) return;
 
-    const toggleOverlay = () => {
-      setUIState(prev => ({ ...prev, showingOverlay: true }));
+  //   const toggleOverlay = () => {
+  //     setUIState(prev => ({ ...prev, showingOverlay: true }));
       
-      setTimeout(() => {
-        setUIState(prev => ({ ...prev, showingOverlay: false }));
+  //     // setTimeout(() => {
+  //     //   setUIState(prev => ({ ...prev, showingOverlay: false }));
         
-        setTimeout(() => {
-          setUIState(prev => ({ 
-            ...prev, 
-            currentCompanyIndex: (prev.currentCompanyIndex + 1) % companies.length 
-          }));
-        }, 500);
-      }, 3000);
-    };
+  //     //   setTimeout(() => {
+  //     //     setUIState(prev => ({ 
+  //     //       ...prev, 
+  //     //       currentCompanyIndex: (prev.currentCompanyIndex + 1) % companies.length 
+  //     //     }));
+  //     //   }, 500);
+  //     // }, 3000);
+  //   };
 
-    const intervalId = setInterval(toggleOverlay, 8000);
-    return () => clearInterval(intervalId);
-  }, [uiState.isLoading, skillsState.visible, companies.length]);
+  //   const intervalId = setInterval(toggleOverlay, 8000);
+  //   return () => clearInterval(intervalId);
+  // }, [uiState.isLoading, skillsState.visible]);
 
   // === ANIMATION EFFECTS ===
   
   // Optimized mouse auto-rotation with requestAnimationFrame
-  useEffect(() => {
-    const animate = () => {
-      setUIState(prev => ({
-        ...prev,
-        mousePosition: {
-          x: prev.mousePosition.x + 0.05,
-          y: Math.sin(Date.now() / 2000) * 5
-        }
-      }));
-      animationFrameRef.current = requestAnimationFrame(animate);
-    };
+  // useEffect(() => {
+  //   const animate = () => {
+  //     setUIState(prev => ({
+  //       ...prev,
+  //       mousePosition: {
+  //         x: prev.mousePosition.x + 0.05,
+  //         y: Math.sin(Date.now() / 2000) * 5
+  //       }
+  //     }));
+  //     animationFrameRef.current = requestAnimationFrame(animate);
+  //   };
 
-    animationFrameRef.current = requestAnimationFrame(animate);
+  //   animationFrameRef.current = requestAnimationFrame(animate);
     
-    return () => {
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current);
-      }
-    };
-  }, []);
-
-  // === EVENT HANDLERS ===
-  
-  // const handleSkillClick = useCallback((skill: string) => {
-  //   setSkillsState(prev => ({ ...prev, active: skill }));
+  //   return () => {
+  //     if (animationFrameRef.current) {
+  //       cancelAnimationFrame(animationFrameRef.current);
+  //     }
+  //   };
   // }, []);
+
 
   const renderSkillIcon = useCallback((skill: string, index: number, skillId: string) => {
     if (!positions || positions.length === 0) return null;
@@ -263,19 +261,19 @@ const Skills = () => {
         position={position}
         isHighlighted={isHighlighted}
         prefersReducedMotion={prefersReducedMotion}
-        iconSize={SKILL_ICON_SIZE}
+        iconSize={isMobile ? SKILL_ICON_SIZE_MOBILE : SKILL_ICON_SIZE}
       />
     );
   }, [positions, skillsState.highlighted, prefersReducedMotion]);
 
   // Fallback for company data
-  const currentCompany = companies[uiState.currentCompanyIndex] || companies[0];
+  // const currentCompany = companies[uiState.currentCompanyIndex] || companies[0];
 
   return (
     <section className="relative py-24" id="skills">
       <h2 className="huge-text absolute -top-8 left-0 opacity-40 text-[#B8E62D]/10 font-bold select-none">SKILLS</h2>
       
-      <SectionTitle />
+      <SkillTitle />
       
       <div className="container px-4 mx-auto">
         {uiState.isLoading ? (
@@ -296,7 +294,7 @@ const Skills = () => {
             {/* Skill text collage in the middle */}
             <div className="absolute inset-0 z-10">
               <Suspense fallback={
-                <div className="flex items-center justify-center h-full">
+                <div className="flex items-center justify-center h-full md:h-1/2">
                   <div className="text-soft-white/50">Loading 3D cloud...</div>
                 </div>
               }>
@@ -308,46 +306,6 @@ const Skills = () => {
                 />
               </Suspense>
             </div>
-
-            {/* Center overlay for company logos */}
-            {/* <div className="pointer-events-none z-30">
-              {uiState.showingOverlay && currentCompany && (
-                <div className="flex flex-col items-center justify-center max-w-xl">
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: [0, 0.7, 0], y: [10, 0, -5] }}
-                    transition={{ 
-                      duration: 3, 
-                      times: [0, 0.2, 1],
-                      ease: [0.33, 1, 0.68, 1]
-                    }}
-                    className="text-white text-sm md:text-base font-medium tracking-wider mb-4 opacity-70"
-                  >
-                    worked with
-                  </motion.div>
-
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: [0, 1, 0], scale: [0.95, 1, 0.98] }}
-                    transition={{ 
-                      duration: 3, 
-                      times: [0, 0.2, 1],
-                      ease: [0.33, 1, 0.68, 1]
-                    }}
-                    className="w-full max-w-md flex items-center justify-center"
-                  >
-                    <img
-                      src={currentCompany.logo}
-                      alt={currentCompany.name}
-                      className="max-h-40 md:max-h-52 w-auto object-contain filter brightness-110 contrast-105"
-                      style={{
-                        filter: 'drop-shadow(0 10px 15px rgba(0, 0, 0, 0.25))'
-                      }}
-                    />
-                  </motion.div>
-                </div>
-              )}
-            </div> */}
           </div>
         )}
       </div>

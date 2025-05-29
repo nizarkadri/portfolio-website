@@ -586,8 +586,8 @@ export default function DuolingoProfile() {
               ease: "easeInOut"
             }}
           >
-            <div className="absolute -inset-1 bg-[#ff9600]/20 rounded-full blur-md" />
-            <div className="relative z-10 w-12 h-12 bg-gradient-to-br from-[#ff9600] to-[#ffb700] rounded-full flex items-center justify-center shadow-lg shadow-[#ff9600]/20">
+           <div className="block absolute -inset-1 bg-[#ff9600]/20 rounded-full blur-md"/>
+            <div className="relative z-10 w-0 h-0 md:w-12 md:h-12 bg-gradient-to-br from-[#ff9600] to-[#ffb700] rounded-full flex items-center justify-center shadow-lg shadow-[#ff9600]/20">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M20 6h-3V4c0-1.1-.9-2-2-2H9c-1.1 0-2 .9-2 2v2H4c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zM9 4h6v2H9V4zm11 15H4V8h16v11z" fill="white"/>
                 <path d="M12 9.5c-2.48 0-4.5 2.02-4.5 4.5s2.02 4.5 4.5 4.5 4.5-2.02 4.5-4.5-2.02-4.5-4.5-4.5zm0 7c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" fill="white"/>

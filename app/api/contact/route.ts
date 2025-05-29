@@ -42,6 +42,16 @@ Email: ${data.email}
 Message:
 ${data.message}
     `.trim();
+  } else if (data.userType === 'resume_request') {
+    return `
+Resume Request
+
+Email: ${data.email}
+Job Description: ${data.jobDescription}
+
+Message:
+${data.message}
+    `.trim();
   } else {
     return `
 Client Inquiry
