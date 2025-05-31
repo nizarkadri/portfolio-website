@@ -2,19 +2,17 @@ import { NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
-import { remark } from 'remark';
-import html from 'remark-html';
 
 const projectsDirectory = path.join(process.cwd(), 'data/projects');
 
-interface Project {
-  slug: string;
-  title: string;
-  description: string;
-  imageUrl: string;
-  technologies: string[];
-  contentHtml?: string;
-}
+// interface Project {
+//   slug: string;
+//   title: string;
+//   description: string;
+//   imageUrl: string;
+//   technologies: string[];
+//   contentHtml?: string;
+// }
 
 // GET /api/projects
 export async function GET() {
