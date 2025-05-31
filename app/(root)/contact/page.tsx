@@ -34,41 +34,18 @@ const clientSchema = z.object({
   timeline: z.string().optional(),
 });
 
+const resumeSchema = z.object({
+  userType: z.literal('resume_request'), // required!
+  email: z.string().email(),
+  jobDescription: z.string(),
+  message: z.string(),
+})
 type RecruiterErrors = FieldErrors<z.infer<typeof recruiterSchema>>;
 type ClientErrors = FieldErrors<z.infer<typeof clientSchema>>;
 
+
 // Create schema based on user type
-const contactSchema = z.discriminatedUnion('userType', [recruiterSchema, clientSchema]);
-// const contactSchema = z.object({
-//   userType: z.enum(['recruiter', 'client']),
-//   // Name not required for recruiters, only for clients
-//   name: z.string().min(2, 'Name must be at least 2 characters').optional(),
-//   email: z.string().email('Invalid email address'),
-//   message: z.string().min(10, 'Message must be at least 10 characters'),
-//   // Recruiter fields
-//   company: z.string().optional(),
-//   position: z.string().optional(),
-//   jobDescription: z.string().optional(),
-//   employmentType: z.string().optional(),
-//   interview: z.string().optional(),
-//   workLocation: z.string().optional(),
-//   // Client fields
-//   projectType: z.string().optional(),
-//   budget: z.string().optional(),
-//   timeline: z.string().optional(),
-// }).refine(data => {
-//   if (data.userType === 'recruiter') {
-//     return !!data.company && !!data.position && !!data.jobDescription && 
-//       !!data.employmentType && !!data.interview && !!data.workLocation;
-//   }
-//   if (data.userType === 'client') {
-//     return !!data.name && !!data.projectType;
-//   }
-//   return true;
-// }, {
-//   message: "Please fill in the required fields for your user type",
-//   path: ["userType"],
-// });
+const contactSchema = z.discriminatedUnion('userType', [recruiterSchema, clientSchema, resumeSchema]);
 
 type ContactFormData = z.infer<typeof contactSchema>;
 
@@ -80,19 +57,7 @@ const fadeInUp = {
   transition: { duration: 0.5 }
 };
 
-const fadeIn = {
-  initial: { opacity: 0 },
-  animate: { opacity: 1 },
-  exit: { opacity: 0 },
-};
 
-const staggerContainer = {
-  animate: {
-    transition: {
-      staggerChildren: 0.1
-    }
-  }
-};
 
 export default function ContactPage() {
 
@@ -182,11 +147,11 @@ export default function ContactPage() {
   ];
 
   // Form handling
-  useEffect(() => {
-    console.log("Form errors:", errors);
-    console.log("Form is valid:", isValid);
-    console.log('Submitting:', watch('userType'), formValues);
-  }, [errors, isValid]);
+  // useEffect(() => {
+  //   console.log("Form errors:", errors);
+  //   console.log("Form is valid:", isValid);
+  //   console.log('Submitting:', watch('userType'), formValues);
+  // }, [errors, isValid]);
 
   // Handle clicking outside dropdown to close it
   useEffect(() => {
