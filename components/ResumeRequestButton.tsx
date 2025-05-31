@@ -8,12 +8,12 @@ interface ResumeRequestButtonProps {
 
 const ResumeRequestButton = ({ onClick }: ResumeRequestButtonProps) => {
   // Fixed positions to avoid hydration mismatch
-  const particlePositions = [
-    { top: '30%', left: '20%' },
-    { top: '60%', left: '70%' },
-    { top: '45%', left: '15%' },
-    { top: '35%', left: '80%' }
-  ];
+  // const particlePositions = [
+  //   { top: '30%', left: '20%' },
+  //   { top: '60%', left: '70%' },
+  //   { top: '45%', left: '15%' },
+  //   { top: '35%', left: '80%' }
+  // ];
 
   return (
     <motion.div

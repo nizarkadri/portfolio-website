@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { downloadLatexFile, copyToClipboard } from '../utils/resumeUtils';
+// import { downloadLatexFile, copyToClipboard } from '../utils/resumeUtils';
 
 import Toast from './Toast';
 
@@ -11,13 +11,13 @@ interface ResumeRequestModalProps {
   onClose: () => void;
 }
 
-interface ApiResponse {
-  success: boolean;
-  message: string;
-  resume?: string;
-  email?: string;
-  error?: string;
-}
+// interface ApiResponse {
+//   success: boolean;
+//   message: string;
+//   resume?: string;
+//   email?: string;
+//   error?: string;
+// }
 
 const ResumeRequestModal = ({ isOpen, onClose }: ResumeRequestModalProps) => {
   const [formData, setFormData] = useState({
