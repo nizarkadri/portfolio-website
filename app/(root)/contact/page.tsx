@@ -9,7 +9,7 @@ import FormFieldError from '../../../components/FormFieldError';
 
 
 // Define user types
-type UserType = 'recruiter' | 'client' | null;
+type UserType = 'recruiter' | 'client' | 'resume_request' | null;
 
 const recruiterSchema = z.object({
   userType: z.literal('recruiter'),
@@ -37,7 +37,7 @@ const clientSchema = z.object({
 const resumeSchema = z.object({
   userType: z.literal('resume_request'), // required!
   email: z.string().email(),
-  jobDescription: z.string(),
+  jobDescription: z.string().min(10, 'Job description must be at least 10 characters'),
   message: z.string(),
 })
 type RecruiterErrors = FieldErrors<z.infer<typeof recruiterSchema>>;
@@ -67,7 +67,7 @@ export default function ContactPage() {
     reset,
     watch,
     setValue,
-    formState: { errors, isValid },
+    formState: { errors},
   } = useForm<ContactFormData>({
     resolver: zodResolver(contactSchema),
     mode: 'onChange',
@@ -88,7 +88,7 @@ export default function ContactPage() {
   const recruiterErrors = errors as RecruiterErrors;
   const clientErrors = errors as ClientErrors;
   // Watch form values for conditional logic
-  const formValues = watch();
+  // const formValues = watch();
 
   // Helper function to format budget input
   const formatBudgetInput = (value: string) => {
