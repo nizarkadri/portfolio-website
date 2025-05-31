@@ -1,16 +1,16 @@
 'use client'
 
-import { useRef, useEffect, useState, useMemo, useLayoutEffect } from 'react';
+import { useRef, useState, useLayoutEffect } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import ResumeRequestButton from './ResumeRequestButton';
 import ResumeRequestModal from './ResumeRequestModal';
 
 // Add type declaration for window.lenis
-declare global {
-  interface Window {
-    lenis?: any;
-  }
-}
+// declare global {
+//   interface Window {
+//     lenis?: any;
+//   }
+// }
 
 const Hero = () => {
   const containerRef = useRef(null);
@@ -35,25 +35,26 @@ const Hero = () => {
   }, []);
   
   // Optional: Listen to Lenis scroll events
-  useEffect(() => {
-    const handleLenisScroll = (e: any) => {
-      // You can use Lenis scroll values here if needed
-      // console.log(e.scroll, e.limit, e.velocity, e.direction, e.progress);
-    };
+  // useEffect(() => {
+  //   // const handleLenisScroll = (e: any) => {
+  //   //   // You can use Lenis scroll values here if needed
+  //   //   // console.log(e.scroll, e.limit, e.velocity, e.direction, e.progress);
+  //   // };
 
-    // Check if Lenis is available in the window object
-    if (typeof window !== 'undefined' && window.lenis) {
-      window.lenis.on('scroll', handleLenisScroll);
-    }
+  //   // Check if Lenis is available in the window object
+  //   if (typeof window !== 'undefined' && window.lenis) {
+  //     window.lenis.on('scroll', handleLenisScroll);
+  //   }
 
-    return () => {
-      if (typeof window !== 'undefined' && window.lenis) {
-        window.lenis.off('scroll', handleLenisScroll);
-      }
-    };
-  }, []);
+  //   return () => {
+  //     if (typeof window !== 'undefined' && window.lenis) {
+  //       window.lenis.off('scroll', handleLenisScroll);
+  //     }
+  //   };
+  // }, []);
 
   return (
+    
     <div ref={containerRef} className="relative min-h-[100dvh] md:min-h-[170vh]">
       {/* Request Resume Button - Top Right */}
       <ResumeRequestButton 
@@ -121,6 +122,7 @@ const Hero = () => {
       {/* Page content after hero */}
 
     </div>
+    
   );
 };
 
