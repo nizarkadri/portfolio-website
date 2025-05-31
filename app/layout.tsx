@@ -5,7 +5,7 @@ import Navbar from '../components/Navbar';
 import NewFooter from '../components/NewFooter';
 import './globals.css';
 import { Inter } from 'next/font/google'; 
-import FooterOld from '../components/FooterOld';
+
 
 import SmoothScroll from '../components/SmoothScroll'
 
