@@ -104,6 +104,7 @@ const Skills = () => {
     const fetchSkills = async () => {
       try {
         const response = await fetch('/api/skill-icons');
+        
         if (!response.ok) throw new Error('Failed to fetch skills');
         const iconFiles = await response.json();
 
