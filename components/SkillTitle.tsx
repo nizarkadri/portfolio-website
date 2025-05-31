@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { titleVariants, highlightVariants, decorationVariants } from '../utils/animations';
+import { titleVariants, highlightVariants} from '../utils/animations';
 
 const SkillTitle = () => {
   return (

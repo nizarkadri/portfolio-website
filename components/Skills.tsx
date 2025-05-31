@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState, useRef, useMemo, useCallback, Suspense } from 'react';
-import { motion, useReducedMotion, AnimatePresence, useInView } from 'framer-motion';
+import { useReducedMotion, AnimatePresence } from 'framer-motion';
 import SkillIcon from './SkillIcon';
 import SkillTitle from './SkillTitle';
 import { 
@@ -19,7 +19,7 @@ const MAX_VISIBLE_SKILLS = 12;
 const SKILL_ICON_SIZE = 80;
 const SKILL_ICON_SIZE_MOBILE = 50;
 const ROTATION_INTERVAL = 6000;
-const PRIMARY_COLOR = '#B8E62D';
+// const PRIMARY_COLOR = '#B8E62D';
 
 // Fallback skills if API fails
 const FALLBACK_SKILLS = [
@@ -265,7 +265,7 @@ const Skills = () => {
         iconSize={isMobile ? SKILL_ICON_SIZE_MOBILE : SKILL_ICON_SIZE}
       />
     );
-  }, [positions, skillsState.highlighted, prefersReducedMotion]);
+  }, [positions, skillsState.highlighted, prefersReducedMotion, isMobile]);
 
   // Fallback for company data
   // const currentCompany = companies[uiState.currentCompanyIndex] || companies[0];

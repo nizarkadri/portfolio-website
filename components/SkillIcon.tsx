@@ -4,13 +4,14 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { createFloatAnimation, createPulseAnimation } from '../utils/animations';
 import { 
-  getSkillGlowColors, 
-  needsBackground, 
+  // getSkillGlowColors, 
+  // needsBackground, 
   isPngIcon, 
   getSvgTileEffectStyles, 
   getPngBackgroundStyles,
   type PositionProps 
 } from '../utils/skill-utils';
+import Image from 'next/image';
 
 interface SkillIconProps {
   skill: string;
@@ -108,7 +109,7 @@ const SkillIcon: React.FC<SkillIconProps> = ({
             />
           )}
 
-          <img
+          <Image
             src={`/images/NewIcons/${skill === 'C_Sharp' ? 'CSharp' : skill}${isPng ? '.png' : '.svg'}`}
             alt={skill === 'C_Sharp' ? 'C#' : skill.replace('_', ' ').replace('-', ' ')}
             className={`
@@ -121,6 +122,8 @@ const SkillIcon: React.FC<SkillIconProps> = ({
               imageRendering: 'crisp-edges',
               mixBlendMode: 'normal'
             }}
+            width={iconSize}
+            height={iconSize}
           />
         </motion.div>
       </motion.div>

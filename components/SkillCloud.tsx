@@ -9,7 +9,7 @@ import {
   type SphereCoordinates,
   type SkillStyle 
 } from '../utils/3d-utils';
-import { getSkillGlowColors, shouldExcludeSkill } from '../utils/skill-utils';
+import { shouldExcludeSkill } from '../utils/skill-utils';
 
 // Constants
 const PRIMARY_COLOR = '#B8E62D';
