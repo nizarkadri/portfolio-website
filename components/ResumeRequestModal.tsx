@@ -2,6 +2,9 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { z, ZodError } from 'zod';
+
+
 // import { downloadLatexFile, copyToClipboard } from '../utils/resumeUtils';
 
 import Toast from './Toast';
@@ -20,6 +23,14 @@ interface ResumeRequestModalProps {
 // }
 
 const ResumeRequestModal = ({ isOpen, onClose }: ResumeRequestModalProps) => {
+
+  const resumeSchema = z.object({
+    userType: z.literal('resume_request'), // required!
+    email: z.string().email(),
+    jobDescription: z.string().min(10, 'Job description must be at least 10 characters'),
+    message: z.string(),
+  })
+
   const [formData, setFormData] = useState({
     email: '',
     jobDescription: ''
@@ -58,6 +69,26 @@ const ResumeRequestModal = ({ isOpen, onClose }: ResumeRequestModalProps) => {
     setErrorMessage('');
     
     try {
+
+      const parsed = resumeSchema.safeParse({
+        userType: 'resume_request',
+        email: formData.email,
+        jobDescription: formData.jobDescription,
+        message: `Resume request for: ${formData.jobDescription}`,
+      });
+
+      if (!parsed.success) {
+        // console.error('Validation error:', parsed.error);
+        setSubmitStatus('error');
+        if (parsed.error instanceof ZodError) {
+          const messages = parsed.error.errors.map(err => err.message).join('\n');
+          // console.error(messages);
+          setErrorMessage(messages);
+          return;
+        }
+        setErrorMessage('An unknown validation error occurred');
+        return;
+      }
       // Use contact API instead of generateResume API
       const response = await fetch('/api/contact', {
         method: 'POST',
