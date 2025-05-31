@@ -16,10 +16,12 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({ message: 'Email sent successfully' });
-  } catch (error: any) {
-    console.error(error);
+  } catch (error) {
+
+    const err = error as Error;
+    console.error(err);
     return new NextResponse(
-      JSON.stringify({ message: 'Failed to send email', error: error.message }),
+      JSON.stringify({ message: 'Failed to send email', error: err.message }),
       { status: 500 }
     );
   }
