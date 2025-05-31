@@ -1,14 +1,13 @@
   // app/(pages)/page.tsx
 'use client';
 
-import React, { useEffect } from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
+import React from 'react';
+
 import Skills from '../../components/Skills';
 import Hero from '../../components/Hero';
 import Projects from '../../components/Projects';
 import Experience from '../../components/Experience';
-import Test from '../../components/Test';
+
 
 const Home = () => {
   
