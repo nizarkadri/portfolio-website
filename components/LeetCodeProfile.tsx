@@ -21,121 +21,121 @@ type LeetCodeStats = {
 };
 
 // 3D Card component that responds to mouse movement
-const Card3D = ({ 
-  children, 
-  depth = 10, 
-  className = "", 
-  glare = false 
-}: { 
-  children: React.ReactNode; 
-  depth?: number; 
-  className?: string; 
-  glare?: boolean;
-}) => {
-  const [rotateX, setRotateX] = useState(0);
-  const [rotateY, setRotateY] = useState(0);
-  const [scale, setScale] = useState(1);
-  const [glarePosition, setGlarePosition] = useState({ x: 0, y: 0 });
-  const cardRef = useRef<HTMLDivElement>(null);
+// const Card3D = ({ 
+//   children, 
+//   depth = 10, 
+//   className = "", 
+//   glare = false 
+// }: { 
+//   children: React.ReactNode; 
+//   depth?: number; 
+//   className?: string; 
+//   glare?: boolean;
+// }) => {
+//   const [rotateX, setRotateX] = useState(0);
+//   const [rotateY, setRotateY] = useState(0);
+//   const [scale, setScale] = useState(1);
+//   const [glarePosition, setGlarePosition] = useState({ x: 0, y: 0 });
+//   const cardRef = useRef<HTMLDivElement>(null);
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!cardRef.current) return;
+//   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+//     if (!cardRef.current) return;
     
-    const rect = cardRef.current.getBoundingClientRect();
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
+//     const rect = cardRef.current.getBoundingClientRect();
+//     const centerX = rect.left + rect.width / 2;
+//     const centerY = rect.top + rect.height / 2;
     
-    const mouseX = e.clientX;
-    const mouseY = e.clientY;
+//     const mouseX = e.clientX;
+//     const mouseY = e.clientY;
     
-    const rotateXValue = ((mouseY - centerY) / (rect.height / 2)) * -depth;
-    const rotateYValue = ((mouseX - centerX) / (rect.width / 2)) * depth;
+//     const rotateXValue = ((mouseY - centerY) / (rect.height / 2)) * -depth;
+//     const rotateYValue = ((mouseX - centerX) / (rect.width / 2)) * depth;
     
-    // Calculate glare position (0-100%)
-    const glareX = ((mouseX - rect.left) / rect.width) * 100;
-    const glareY = ((mouseY - rect.top) / rect.height) * 100;
+//     // Calculate glare position (0-100%)
+//     const glareX = ((mouseX - rect.left) / rect.width) * 100;
+//     const glareY = ((mouseY - rect.top) / rect.height) * 100;
     
-    setRotateX(rotateXValue);
-    setRotateY(rotateYValue);
-    setScale(1.02);
-    setGlarePosition({ x: glareX, y: glareY });
-  };
+//     setRotateX(rotateXValue);
+//     setRotateY(rotateYValue);
+//     setScale(1.02);
+//     setGlarePosition({ x: glareX, y: glareY });
+//   };
 
-  const handleMouseLeave = () => {
-    setRotateX(0);
-    setRotateY(0);
-    setScale(1);
-  };
+//   const handleMouseLeave = () => {
+//     setRotateX(0);
+//     setRotateY(0);
+//     setScale(1);
+//   };
 
-  return (
-    <motion.div
-      ref={cardRef}
-      className={`relative transform-gpu ${className}`}
-      style={{ 
-        perspective: "1200px",
-        transformStyle: "preserve-3d"
-      }}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
-    >
-      <motion.div
-        style={{ 
-          rotateX,
-          rotateY,
-          scale,
-          transformStyle: "preserve-3d",
-          transition: "all 0.15s ease-out"
-        }}
-        className="w-full h-full"
-      >
-        {children}
+//   return (
+//     <motion.div
+//       ref={cardRef}
+//       className={`relative transform-gpu ${className}`}
+//       style={{ 
+//         perspective: "1200px",
+//         transformStyle: "preserve-3d"
+//       }}
+//       onMouseMove={handleMouseMove}
+//       onMouseLeave={handleMouseLeave}
+//     >
+//       <motion.div
+//         style={{ 
+//           rotateX,
+//           rotateY,
+//           scale,
+//           transformStyle: "preserve-3d",
+//           transition: "all 0.15s ease-out"
+//         }}
+//         className="w-full h-full"
+//       >
+//         {children}
         
-        {/* Glare effect */}
-        {glare && (
-          <motion.div 
-            className="absolute inset-0 w-full h-full rounded-lg opacity-0 pointer-events-none"
-            style={{ 
-              background: `radial-gradient(circle at ${glarePosition.x}% ${glarePosition.y}%, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 60%)`,
-              opacity: scale > 1 ? 0.7 : 0,
-              transition: 'opacity 0.2s ease-out'
-            }} 
-          />
-        )}
-      </motion.div>
-    </motion.div>
-  );
-};
+//         {/* Glare effect */}
+//         {glare && (
+//           <motion.div 
+//             className="absolute inset-0 w-full h-full rounded-lg opacity-0 pointer-events-none"
+//             style={{ 
+//               background: `radial-gradient(circle at ${glarePosition.x}% ${glarePosition.y}%, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 60%)`,
+//               opacity: scale > 1 ? 0.7 : 0,
+//               transition: 'opacity 0.2s ease-out'
+//             }} 
+//           />
+//         )}
+//       </motion.div>
+//     </motion.div>
+//   );
+// };
 
-// Animated stat card component
-const StatCard = ({ 
-  label, 
-  value, 
-  color = "#F89F1B", 
-  index = 0
-}: { 
-  label: string; 
-  value: string | number; 
-  color?: string; 
-  index?: number;
-}) => {
-  return (
-    <motion.div 
-      className="bg-white/5 rounded-lg p-3 backdrop-blur-sm border border-white/5"
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ 
-        duration: 0.4, 
-        delay: 0.1 * index,
-        ease: [0.23, 1, 0.32, 1]
-      }}
-    >
-      <div className="flex items-center justify-between">
-        <div className="text-sm text-soft-white/80">{label}</div>
-        <div className="text-sm font-medium" style={{ color }}>{value}</div>
-      </div>
-    </motion.div>
-  );
-};
+// // Animated stat card component
+// const StatCard = ({ 
+//   label, 
+//   value, 
+//   color = "#F89F1B", 
+//   index = 0
+// }: { 
+//   label: string; 
+//   value: string | number; 
+//   color?: string; 
+//   index?: number;
+// }) => {
+//   return (
+//     <motion.div 
+//       className="bg-white/5 rounded-lg p-3 backdrop-blur-sm border border-white/5"
+//       initial={{ opacity: 0, y: 10 }}
+//       animate={{ opacity: 1, y: 0 }}
+//       transition={{ 
+//         duration: 0.4, 
+//         delay: 0.1 * index,
+//         ease: [0.23, 1, 0.32, 1]
+//       }}
+//     >
+//       <div className="flex items-center justify-between">
+//         <div className="text-sm text-soft-white/80">{label}</div>
+//         <div className="text-sm font-medium" style={{ color }}>{value}</div>
+//       </div>
+//     </motion.div>
+//   );
+// };
 
 // Note: Since LeetCode doesn't provide a public API,
 // this component uses static data or could be connected to a proxy server
@@ -229,8 +229,8 @@ export default function LeetCodeProfile() {
 
   return (
     <div className="h-full bg-[#141414] rounded-xl p-6 relative flex flex-col">
-      <div className="flex flex-col md:flex-row items-center mb-6">
-        <div className="w-20 h-20 md:w-14 md:h-14 rounded-full overflow-hidden bg-[#F89F1B]/20 flex items-center justify-center md:mr-4">
+      <div className="flex flex-col items-center mb-6">
+        <div className="w-20 h-20 rounded-full overflow-hidden bg-[#F89F1B]/20 flex items-center justify-center">
           <Image 
             src="/images/leetcode-96.png" 
             alt="LeetCode" 
@@ -262,7 +262,7 @@ export default function LeetCodeProfile() {
         </div>
       ) : stats && (
         <>
-          <div className="mt-2 mb-6 md:text-right">
+          <div className="mt-2 mb-6 text-center">
             <div className="text-3xl font-bold text-white">{stats.solved.total}</div>
             <div className="text-sm text-gray-400">Problems Solved</div>
           </div>
