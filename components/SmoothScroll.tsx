@@ -6,7 +6,7 @@ import Lenis from '@studio-freight/lenis'
 // Add type declaration for window.lenis
 declare global {
   interface Window {
-    lenis?: any;
+    lenis?: Lenis;
   }
 }
 
@@ -31,10 +31,15 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
 
     requestAnimationFrame(raf)
 
-    lenis.on('scroll', ({ scroll, limit, velocity, direction, progress }: any) => {
-      // You can use these values to create effects
-      // console.log({ scroll, limit, velocity, direction, progress })
-    })
+    // lenis.on('scroll', ({ scroll, limit, velocity, direction, progress }: any) => {
+    //   limit = 100;
+    //   velocity = 10;
+    //   direction = 100;
+    //   progress = 100;
+
+    //   // You can use these values to create effects
+    //   // console.log({ scroll, limit, velocity, direction, progress })
+    // })
 
     return () => {
       lenis.destroy()

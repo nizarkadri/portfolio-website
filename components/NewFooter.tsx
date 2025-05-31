@@ -101,7 +101,7 @@ const NewFooter: React.FC = () => {
           >
             {socialLinks.map((link, index) => (
               <motion.a
-                key={link.name}
+                key={index}
                 href={link.url}
                 className="icon-3d text-white/50 hover:text-[#B8E62D] transition-colors"
                 aria-label={link.name}
