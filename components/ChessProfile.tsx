@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence, useMotionValue, useTransform, useSpring } from 'framer-motion';
+import { motion, useMotionValue, useTransform, useSpring } from 'framer-motion';
 import { useIsMobile } from '../app/hooks/useMobile';
 import Image from 'next/image';
 interface GameTypeStats {
@@ -100,132 +100,132 @@ const Card3D = ({ children, depth = 10, className = "" }: { children: React.Reac
   );
 };
 
-const GameTypeCard = ({ type, stats, isActive, onClick, index }: { 
-  type: string; 
-  stats?: GameTypeStats; 
-  isActive: boolean;
-  onClick: () => void;
-  index: number;
-}) => {
-  if (!stats) return null;
+// const GameTypeCard = ({ type, stats, isActive, onClick, index }: { 
+//   type: string; 
+//   stats?: GameTypeStats; 
+//   isActive: boolean;
+//   onClick: () => void;
+//   index: number;
+// }) => {
+//   if (!stats) return null;
   
-  const totalGames = stats.record.win + stats.record.loss + stats.record.draw;
-  const winRate = totalGames > 0 ? Math.round((stats.record.win / totalGames) * 100) : 0;
+//   const totalGames = stats.record.win + stats.record.loss + stats.record.draw;
+//   const winRate = totalGames > 0 ? Math.round((stats.record.win / totalGames) * 100) : 0;
   
-  return (
-    <Card3D depth={7} className="cursor-pointer">
-      <motion.div 
-        className={`rounded-lg p-4 backdrop-blur-sm transition-all ${
-          isActive 
-            ? "bg-white/15 border border-white/20 shadow-lg shadow-white/5" 
-            : "bg-white/5 hover:bg-white/10"
-        }`}
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, delay: index * 0.1 }}
-        whileTap={{ scale: 0.98 }}
-        onClick={onClick}
-      >
-        <div className="flex items-center justify-between mb-2">
-          <div className="flex items-center gap-2">
-            <div className={`w-6 h-6 flex items-center justify-center rounded-full ${isActive ? "bg-[#B8E62D]/20" : "bg-white/10"}`}>
-              {GameTypeIcons[type as keyof typeof GameTypeIcons]}
-            </div>
-            <h4 className="text-white font-medium">{type}</h4>
-          </div>
-          <div className={`px-2 py-0.5 rounded text-sm transition-colors ${isActive ? "bg-[#B8E62D]/20" : "bg-white/10"}`}>
-            <span className="text-white font-bold">{stats.last.rating}</span>
-          </div>
-        </div>
+//   return (
+//     <Card3D depth={7} className="cursor-pointer">
+//       <motion.div 
+//         className={`rounded-lg p-4 backdrop-blur-sm transition-all ${
+//           isActive 
+//             ? "bg-white/15 border border-white/20 shadow-lg shadow-white/5" 
+//             : "bg-white/5 hover:bg-white/10"
+//         }`}
+//         initial={{ opacity: 0, y: 10 }}
+//         animate={{ opacity: 1, y: 0 }}
+//         transition={{ duration: 0.4, delay: index * 0.1 }}
+//         whileTap={{ scale: 0.98 }}
+//         onClick={onClick}
+//       >
+//         <div className="flex items-center justify-between mb-2">
+//           <div className="flex items-center gap-2">
+//             <div className={`w-6 h-6 flex items-center justify-center rounded-full ${isActive ? "bg-[#B8E62D]/20" : "bg-white/10"}`}>
+//               {GameTypeIcons[type as keyof typeof GameTypeIcons]}
+//             </div>
+//             <h4 className="text-white font-medium">{type}</h4>
+//           </div>
+//           <div className={`px-2 py-0.5 rounded text-sm transition-colors ${isActive ? "bg-[#B8E62D]/20" : "bg-white/10"}`}>
+//             <span className="text-white font-bold">{stats.last.rating}</span>
+//           </div>
+//         </div>
         
-        {isActive && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3 }}
-            className="overflow-hidden"
-          >
-            <div className="pt-2">
-              <div className="flex justify-between items-center mb-2">
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-white/50 rounded-full"></div>
-                  <span className="text-xs text-white/70">Best: {stats.best.rating}</span>
-                </div>
-                <span className="text-xs text-white/70">{totalGames} games</span>
-              </div>
+//         {isActive && (
+//           <motion.div
+//             initial={{ opacity: 0, height: 0 }}
+//             animate={{ opacity: 1, height: "auto" }}
+//             exit={{ opacity: 0, height: 0 }}
+//             transition={{ duration: 0.3 }}
+//             className="overflow-hidden"
+//           >
+//             <div className="pt-2">
+//               <div className="flex justify-between items-center mb-2">
+//                 <div className="flex items-center gap-2">
+//                   <div className="w-2 h-2 bg-white/50 rounded-full"></div>
+//                   <span className="text-xs text-white/70">Best: {stats.best.rating}</span>
+//                 </div>
+//                 <span className="text-xs text-white/70">{totalGames} games</span>
+//               </div>
               
-              <div className="bg-black/30 rounded-lg p-2 mb-3">
-                <div className="flex justify-between mb-1">
-                  <p className="text-xs text-white/60">Win Rate</p>
-                  <p className="text-xs font-medium text-white">{winRate}%</p>
-                </div>
-                <div className="w-full bg-black/30 rounded-full h-1.5">
-                  <motion.div 
-                    className="bg-[#B8E62D] h-1.5 rounded-full" 
-                    initial={{ width: 0 }}
-                    animate={{ width: `${winRate}%` }}
-                    transition={{ duration: 0.7, ease: "easeOut" }}
-                  />
-                </div>
-              </div>
+//               <div className="bg-black/30 rounded-lg p-2 mb-3">
+//                 <div className="flex justify-between mb-1">
+//                   <p className="text-xs text-white/60">Win Rate</p>
+//                   <p className="text-xs font-medium text-white">{winRate}%</p>
+//                 </div>
+//                 <div className="w-full bg-black/30 rounded-full h-1.5">
+//                   <motion.div 
+//                     className="bg-[#B8E62D] h-1.5 rounded-full" 
+//                     initial={{ width: 0 }}
+//                     animate={{ width: `${winRate}%` }}
+//                     transition={{ duration: 0.7, ease: "easeOut" }}
+//                   />
+//                 </div>
+//               </div>
               
-              <div className="grid grid-cols-3 gap-2">
-                <div className="flex flex-col items-center justify-center">
-                  <p className="text-xs text-white/60">Wins</p>
-                  <p className="text-base font-bold text-[#B8E62D]">{stats.record.win}</p>
-                </div>
-                <div className="flex flex-col items-center justify-center">
-                  <p className="text-xs text-white/60">Losses</p>
-                  <p className="text-base font-bold text-red-400">{stats.record.loss}</p>
-                </div>
-                <div className="flex flex-col items-center justify-center">
-                  <p className="text-xs text-white/60">Draws</p>
-                  <p className="text-base font-bold text-yellow-400">{stats.record.draw}</p>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </motion.div>
-    </Card3D>
-  );
-};
+//               <div className="grid grid-cols-3 gap-2">
+//                 <div className="flex flex-col items-center justify-center">
+//                   <p className="text-xs text-white/60">Wins</p>
+//                   <p className="text-base font-bold text-[#B8E62D]">{stats.record.win}</p>
+//                 </div>
+//                 <div className="flex flex-col items-center justify-center">
+//                   <p className="text-xs text-white/60">Losses</p>
+//                   <p className="text-base font-bold text-red-400">{stats.record.loss}</p>
+//                 </div>
+//                 <div className="flex flex-col items-center justify-center">
+//                   <p className="text-xs text-white/60">Draws</p>
+//                   <p className="text-base font-bold text-yellow-400">{stats.record.draw}</p>
+//                 </div>
+//               </div>
+//             </div>
+//           </motion.div>
+//         )}
+//       </motion.div>
+//     </Card3D>
+//   );
+// };
 
-const StatPreview = ({ 
-  label, 
-  value, 
-  bgColor = "bg-white/5", 
-  textColor = "text-white", 
-  iconClass,
-  index
-}: { 
-  label: string; 
-  value: string | number; 
-  bgColor?: string; 
-  textColor?: string;
-  iconClass?: string;
-  index: number;
-}) => (
-  <Card3D depth={5}>
-    <motion.div 
-      className={`${bgColor} rounded-lg p-3 backdrop-blur-sm flex items-center gap-3`}
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay: index * 0.1 }}
-    >
-      {iconClass && (
-        <div className={`w-8 h-8 flex items-center justify-center ${iconClass} rounded-full`}>
-          {StatIcons[label as keyof typeof StatIcons]}
-        </div>
-      )}
-      <div>
-        <p className="text-xs text-white/60">{label}</p>
-        <p className={`text-lg font-bold ${textColor}`}>{value}</p>
-      </div>
-    </motion.div>
-  </Card3D>
-);
+// const StatPreview = ({ 
+//   label, 
+//   value, 
+//   bgColor = "bg-white/5", 
+//   textColor = "text-white", 
+//   iconClass,
+//   index
+// }: { 
+//   label: string; 
+//   value: string | number; 
+//   bgColor?: string; 
+//   textColor?: string;
+//   iconClass?: string;
+//   index: number;
+// }) => (
+//   <Card3D depth={5}>
+//     <motion.div 
+//       className={`${bgColor} rounded-lg p-3 backdrop-blur-sm flex items-center gap-3`}
+//       initial={{ opacity: 0, y: 10 }}
+//       animate={{ opacity: 1, y: 0 }}
+//       transition={{ duration: 0.4, delay: index * 0.1 }}
+//     >
+//       {iconClass && (
+//         <div className={`w-8 h-8 flex items-center justify-center ${iconClass} rounded-full`}>
+//           {StatIcons[label as keyof typeof StatIcons]}
+//         </div>
+//       )}
+//       <div>
+//         <p className="text-xs text-white/60">{label}</p>
+//         <p className={`text-lg font-bold ${textColor}`}>{value}</p>
+//       </div>
+//     </motion.div>
+//   </Card3D>
+// );
 
 // Utility functions for chess rating colors
 const getRatingColor = (rating: number | string): string => {
@@ -261,29 +261,29 @@ const GameTypeIcons = {
 };
 
 // Stat icons map
-const StatIcons = {
-  "Overall Rating": (
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
-    </svg>
-  ),
-  "Best Rating": (
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-    </svg>
-  ),
-  "Total Games": (
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
-      <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
-    </svg>
-  ),
-  "Tactics Rating": (
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M12 2v4M5 5l2.5 2.5M19 5l-2.5 2.5M5 19l2.5-2.5M19 19l-2.5-2.5M2 12h4M18 12h4M12 18v4"></path>
-    </svg>
-  )
-};
+// const StatIcons = {
+//   "Overall Rating": (
+//     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+//       <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+//     </svg>
+//   ),
+//   "Best Rating": (
+//     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+//       <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+//     </svg>
+//   ),
+//   "Total Games": (
+//     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+//       <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+//       <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+//     </svg>
+//   ),
+//   "Tactics Rating": (
+//     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+//       <path d="M12 2v4M5 5l2.5 2.5M19 5l-2.5 2.5M5 19l2.5-2.5M19 19l-2.5-2.5M2 12h4M18 12h4M12 18v4"></path>
+//     </svg>
+//   )
+// };
 
 // Custom hook for parallax motion effects
 const useParallaxMotion = (options: {
@@ -429,12 +429,12 @@ export default function ChessProfile() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeGameType, setActiveGameType] = useState<string>("Bullet");
-  const [showWinRateGraph, setShowWinRateGraph] = useState(false);
+  // const [showWinRateGraph, setShowWinRateGraph] = useState(false);
   const isMobile = useIsMobile();
   const [showAllStats, setShowAllStats] = useState(false);
   // Define available game modes
   const gameModes = ["Rapid", "Blitz", "Bullet"] as const;
-  type GameMode = typeof gameModes[number];
+  // type GameMode = typeof gameModes[number];
 
   // Use our custom hook for mouse tracking and parallax effects
   const heroParallax = useParallaxMotion({
@@ -505,15 +505,15 @@ export default function ChessProfile() {
     fetchChessData();
   }, []);
 
-  useEffect(() => {
-    if (!loading && stats) {
-      // Animate win rate graphs after a short delay
-      const timer = setTimeout(() => {
-        setShowWinRateGraph(true);
-      }, 500);
-      return () => clearTimeout(timer);
-    }
-  }, [loading, stats]);
+  // useEffect(() => {
+  //   if (!loading && stats) {
+  //     // Animate win rate graphs after a short delay
+  //     const timer = setTimeout(() => {
+  //       setShowWinRateGraph(true);
+  //     }, 500);
+  //     return () => clearTimeout(timer);
+  //   }
+  // }, [loading, stats]);
 
   if (loading) {
     return (
@@ -557,12 +557,12 @@ export default function ChessProfile() {
     return Math.max(...ratings);
   };
 
-  const totalGames = 
-    (stats.rapid?.record.win || 0) + (stats.rapid?.record.loss || 0) + (stats.rapid?.record.draw || 0) +
-    (stats.blitz?.record.win || 0) + (stats.blitz?.record.loss || 0) + (stats.blitz?.record.draw || 0) +
-    (stats.bullet?.record.win || 0) + (stats.bullet?.record.loss || 0) + (stats.bullet?.record.draw || 0);
+  // const totalGames = 
+  //   (stats.rapid?.record.win || 0) + (stats.rapid?.record.loss || 0) + (stats.rapid?.record.draw || 0) +
+  //   (stats.blitz?.record.win || 0) + (stats.blitz?.record.loss || 0) + (stats.blitz?.record.draw || 0) +
+  //   (stats.bullet?.record.win || 0) + (stats.bullet?.record.loss || 0) + (stats.bullet?.record.draw || 0);
 
-  const tacticRating = stats.tactics?.highest?.rating || 'N/A';
+  // const tacticRating = stats.tactics?.highest?.rating || 'N/A';
 
   // Create pie chart data for win/loss/draw distribution
   const getWinLossDrawData = () => {
@@ -747,7 +747,7 @@ export default function ChessProfile() {
             "#f59e0b";
             
           // Get icon based on game mode
-          const icon = GameTypeIcons[mode as keyof typeof GameTypeIcons];
+          // const icon = GameTypeIcons[mode as keyof typeof GameTypeIcons];
           
           return (
             <motion.div 
