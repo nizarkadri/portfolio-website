@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { ReactNode } from 'react';
+
 
 const FormFieldError = ({message}: {message: string | undefined}) => {
 
@@ -19,31 +19,31 @@ const FormFieldError = ({message}: {message: string | undefined}) => {
 
 export default FormFieldError;
 
-const fadeInUp = {
-    initial: { opacity: 0, y: 20 },
-    animate: { opacity: 1, y: 0 },
-    exit: { opacity: 0, y: -20 },
-    transition: { duration: 0.5 }
-  };
-const FormStepWrapper = ({
-    children,
-    stepKey,
-    maxWidth = "max-w-lg"
-  }: {
-    children: ReactNode;
-    stepKey: string;
-    maxWidth?: string;
-  }) => {
-    return (
-      <motion.div
-        key={stepKey}
-        className={`${maxWidth} w-full mx-auto`}
-        variants={fadeInUp}
-        initial="initial"
-        animate="animate"
-        exit="exit"
-      >
-        {children}
-      </motion.div>
-    );
-  }
+// const fadeInUp = {
+//     initial: { opacity: 0, y: 20 },
+//     animate: { opacity: 1, y: 0 },
+//     exit: { opacity: 0, y: -20 },
+//     transition: { duration: 0.5 }
+//   };
+// const FormStepWrapper = ({
+//     children,
+//     stepKey,
+//     maxWidth = "max-w-lg"
+//   }: {
+//     children: ReactNode;
+//     stepKey: string;
+//     maxWidth?: string;
+//   }) => {
+//     return (
+//       <motion.div
+//         key={stepKey}
+//         className={`${maxWidth} w-full mx-auto`}
+//         variants={fadeInUp}
+//         initial="initial"
+//         animate="animate"
+//         exit="exit"
+//       >
+//         {children}
+//       </motion.div>
+//     );
+//   }
