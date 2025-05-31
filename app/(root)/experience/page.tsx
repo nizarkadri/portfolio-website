@@ -3,6 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
 
+
 interface Experience {
   title: string;
   company: string;
@@ -151,6 +152,7 @@ const ExperiencePage = async () => {
   const education: Education[] = data.degrees || [];
 
   return (
+    
     <div className="min-h-screen py-20">
       <div className="container mx-auto px-4">
         <h1 className="text-5xl md:text-7xl font-bold mb-4 text-white">
@@ -424,6 +426,7 @@ const ExperiencePage = async () => {
         </div>
       </div>
     </div>
+    
   );
 }
 
