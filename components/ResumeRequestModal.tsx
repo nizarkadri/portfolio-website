@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { downloadLatexFile, copyToClipboard } from '../utils/resumeUtils';
-import OpenAI from 'openai';
+
 import Toast from './Toast';
 
 interface ResumeRequestModalProps {
@@ -27,7 +27,7 @@ const ResumeRequestModal = ({ isOpen, onClose }: ResumeRequestModalProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
-  const [generatedResume, setGeneratedResume] = useState<string>('');
+  // const [generatedResume, setGeneratedResume] = useState<string>('');
   
   // Toast state
   const [toast, setToast] = useState({
@@ -75,11 +75,11 @@ const ResumeRequestModal = ({ isOpen, onClose }: ResumeRequestModalProps) => {
       if (response.ok) {
         setSubmitStatus('success');
         // Set a success message instead of generated resume
-        setGeneratedResume('Resume request sent successfully! You will receive a tailored resume shortly.');
+        // setGeneratedResume('Resume request sent successfully! You will receive a tailored resume shortly.');
         console.log('Resume request sent successfully');
         
         // Show success toast
-        showToast('Resume request sent successfully! You will receive a tailored resume shortly.', 'success');
+        showToast('Resume request sent successfully! You will receive my resume shortly.', 'success');
         
         handleClose();
       } else {
@@ -137,29 +137,29 @@ const ResumeRequestModal = ({ isOpen, onClose }: ResumeRequestModalProps) => {
   };
 
   // Handle download
-  const handleDownload = () => {
-    if (generatedResume) {
-      downloadLatexFile(generatedResume, `tailored_resume_${Date.now()}.tex`);
-    }
-  };
+  // const handleDownload = () => {
+  //   if (generatedResume) {
+  //     downloadLatexFile(generatedResume, `tailored_resume_${Date.now()}.tex`);
+  //   }
+  // };
 
-  // Handle copy to clipboard
-  const handleCopy = async () => {
-    if (generatedResume) {
-      const success = await copyToClipboard(generatedResume);
-      if (success) {
-        // You could show a toast notification here
-        console.log('Resume copied to clipboard');
-      }
-    }
-  };
+  // // Handle copy to clipboard
+  // const handleCopy = async () => {
+  //   if (generatedResume) {
+  //     const success = await copyToClipboard(generatedResume);
+  //     if (success) {
+  //       // You could show a toast notification here
+  //       console.log('Resume copied to clipboard');
+  //     }
+  //   }
+  // };
 
   // Reset form when modal closes
   const handleClose = () => {
     setFormData({ email: '', jobDescription: '' });
     setSubmitStatus('idle');
     setErrorMessage('');
-    setGeneratedResume('');
+    // setGeneratedResume('');
     onClose();
   };
 
@@ -214,7 +214,7 @@ const ResumeRequestModal = ({ isOpen, onClose }: ResumeRequestModalProps) => {
               <div className="mb-6">
                 <h2 className="text-2xl font-bold text-white mb-2">Request Resume</h2>
                 <p className="text-white/60 text-sm">
-                  Please provide your email and job description to receive my tailored resume.
+                  Please provide your email and job description to receive my resume.
                 </p>
               </div>
 
@@ -229,7 +229,7 @@ const ResumeRequestModal = ({ isOpen, onClose }: ResumeRequestModalProps) => {
                     ✓ Resume request sent successfully!
                   </p>
                   <p className="text-white/70 text-xs">
-                    Your request has been received. You will receive a tailored resume at the provided email address shortly.
+                    Your request has been received. You will receive my resume at the provided email address shortly.
                   </p>
                   {/* Keep original download/copy buttons for future resume generation feature */}
                   {/*
