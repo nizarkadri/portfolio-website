@@ -1,5 +1,32 @@
 import { NextResponse } from 'next/server';
 
+type onlyRequiredCourseFields = {
+  title: string;
+  xp: number;
+}
+
+// More accurate level calculation based on Duolingo's progression system
+function calculateLevelAndProgress(xp: number) {
+  // Duolingo uses an increasing XP requirement per level
+  // This is a more realistic approximation of their system
+  let level = 1;
+  let totalXpForLevel = 0;
+  let xpForCurrentLevel = 60; // Starting XP requirement
+  
+  while (totalXpForLevel + xpForCurrentLevel <= xp) {
+    totalXpForLevel += xpForCurrentLevel;
+    level++;
+    // XP requirement increases gradually (roughly 10-15% per level in early levels)
+    xpForCurrentLevel = Math.floor(xpForCurrentLevel * 1.12);
+  }
+  
+  // Calculate progress within current level
+  const xpInCurrentLevel = xp - totalXpForLevel;
+  const progress = Math.min(100, Math.round((xpInCurrentLevel / xpForCurrentLevel) * 100));
+  
+  return { level, progress };
+}
+
 async function fetchDuolingoData(username: string) {
   try {
     // Using the unofficial Duolingo API endpoint
@@ -31,12 +58,15 @@ async function fetchDuolingoData(username: string) {
       streak: user.streak,
       totalXp: user.totalXp,
       profilePicture: user.picture,
-      languages: user.courses.map((course: any) => ({
-        language: course.title,
-        level: Math.floor(course.xp / 60), // Rough estimate of level based on XP
-        xp: course.xp,
-        progress: Math.min(100, Math.round((course.xp % 60) / 60 * 100)), // Rough estimate of level progress
-      })),
+      languages: user.courses.map((course: onlyRequiredCourseFields) => {
+        const { level, progress } = calculateLevelAndProgress(course.xp);
+        return {
+          language: course.title,
+          level,
+          xp: course.xp,
+          progress,
+        };
+      }),
     };
 
     return processedData;
@@ -54,8 +84,9 @@ export async function GET(request: Request) {
     const data = await fetchDuolingoData(username);
     return NextResponse.json(data);
   } catch (error) {
+    const err = error as Error;
     return NextResponse.json(
-      { error: 'Failed to fetch Duolingo data' },
+      { error: 'Failed to fetch Duolingo data', details: err.message },
       { status: 500 }
     );
   }
