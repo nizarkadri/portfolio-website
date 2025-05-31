@@ -3,6 +3,38 @@ import { NextResponse } from 'next/server';
 
 const resend = new Resend(process.env.RESEND_KEY);
 
+type RecruiterData = {
+  userType: 'recruiter';
+  email: string;
+  company: string;
+  position: string;
+  jobDescription: string;
+  employmentType: string;
+  interview: string;
+  workLocation: string;
+  locationDetails?: string;
+  message?: string;
+};
+
+type ResumeRequestData = {
+  userType: 'resume_request';
+  email: string;
+  jobDescription: string;
+  message?: string;
+};
+
+type ClientData = {
+  userType: 'client';
+  email: string;
+  name: string;
+  projectType: string;
+  budget?: string;
+  timeline?: string;
+  message: string;
+};
+
+type InquiryData = RecruiterData | ResumeRequestData | ClientData;
+
 export async function POST(req: Request) {
   try {
     const data = await req.json();
@@ -27,7 +59,7 @@ export async function POST(req: Request) {
   }
 }
 
-function generatePlainText(data: any): string {
+function generatePlainText(data: InquiryData): string {
   if (data.userType === 'recruiter') {
     return `
 Recruiter Inquiry
