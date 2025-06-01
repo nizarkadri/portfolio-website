@@ -4,7 +4,8 @@
 FROM node:20-slim AS deps
 WORKDIR /app
 COPY package*.json ./
-RUN npm ci --omit=dev        # cache-friendly layer (≈120 MB)
+# cache-friendly layer (≈120 MB)
+RUN npm ci --omit=dev        
 
 ############################################
 # ❷ build stage – needs dev deps
@@ -13,8 +14,10 @@ FROM node:20-slim AS build
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-RUN npm ci                # adds dev deps temporarily
-RUN npm run build         # creates .next
+# adds dev deps temporarily
+RUN npm ci                
+# creates .next
+RUN npm run build         
 
 ############################################
 # ❸ runtime stage – smallest possible
@@ -29,6 +32,8 @@ COPY --from=deps /app/node_modules ./node_modules
 # compiled output + public assets
 COPY --from=build /app/.next ./.next
 COPY --from=build /app/public ./public
+COPY --from=build /app/data ./data
+
 
 # any small config files the server may still read
 COPY next.config.* tailwind.config.* postcss.config.* ./
