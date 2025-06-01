@@ -33,5 +33,6 @@ COPY --from=build /app/public ./public
 # any small config files the server may still read
 COPY next.config.* tailwind.config.* postcss.config.* ./
 
-EXPOSE 8080               # Cloud Run sets $PORT
-CMD ["node","./node_modules/next/dist/bin/next","start","-p","$PORT"]
+# Cloud Run sets $PORT
+EXPOSE 8080               
+CMD ["node","./node_modules/next/dist/bin/next","start"]
