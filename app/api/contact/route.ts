@@ -1,7 +1,7 @@
 import { Resend } from 'resend';
 import { NextResponse } from 'next/server';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+
 
 type RecruiterData = {
   userType: 'recruiter';
@@ -38,7 +38,7 @@ type InquiryData = RecruiterData | ResumeRequestData | ClientData;
 export async function POST(req: Request) {
   try {
     const data = await req.json();
-
+    const resend = new Resend(process.env.RESEND_API_KEY);
     await resend.emails.send({
       from: process.env.RESEND_EMAIL!,
       to: 'nikk4apps@gmail.com',
