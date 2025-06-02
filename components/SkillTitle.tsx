@@ -34,21 +34,7 @@ const SkillTitle = () => {
           </svg>
         </motion.div> */}
       </motion.div>
-      <motion.p 
-        className="text-lg md:text-xl text-soft-white/70 text-center max-w-3xl mt-2"
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ 
-          opacity: 1, 
-          y: 0,
-          transition: {
-            duration: 0.5,
-            delay: 0.4
-          }
-        }}
-        viewport={{ once: false, margin: "-100px" }}
-      >
-        Technologies and frameworks I work with
-      </motion.p>
+      
     </div>
   );
 };
