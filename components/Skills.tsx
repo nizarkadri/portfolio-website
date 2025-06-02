@@ -1,35 +1,38 @@
 'use client';
 
-import React, { useEffect, useState, useRef, useMemo, useCallback, Suspense } from 'react';
+import React, { useEffect, useState, useRef, useMemo, useCallback } from 'react';
 import { useReducedMotion, AnimatePresence } from 'framer-motion';
 import SkillIcon from './SkillIcon';
 import SkillTitle from './SkillTitle';
+import SkillCloud from './SkillCloud';
 import { 
   generateMobbinPositions, 
-  shouldExcludeSkill,
+  // shouldExcludeSkill,
   type PositionProps 
 } from '../utils/skill-utils';
 import { generateSkillIds } from '../utils/3d-utils';
 import { useIsMobile } from '../app/hooks/useMobile';
-// Lazy load the heavy 3D component
-const SkillCloud = React.lazy(() => import('./SkillCloud'));
 
 // Constants
-const MAX_VISIBLE_SKILLS = 12;
+const MAX_VISIBLE_SKILLS = 12; // For floating icons only
 const SKILL_ICON_SIZE = 80;
 const SKILL_ICON_SIZE_MOBILE = 50;
 const ROTATION_INTERVAL = 6000;
 // const PRIMARY_COLOR = '#B8E62D';
 
-// Fallback skills if API fails
-const FALLBACK_SKILLS = [
-  'JavaScript', 'Typescript', 'React', 'Nextjs', 'NodeJs',
-  'Git-logo', 'Java'
+// Hardcoded skills list - no API call needed
+const ALL_SKILLS = [
+  'React', 'Nextjs', 'JavaScript', 'Typescript', 'NodeJs', 'Vue',
+  'Python', 'Java', 'Docker', 'Kubernetes', 'GitHub',
+  'GitLab', 'Jenkins', 'Linux', 'MySQL', 'Postgresql', 'Firebase',
+  'Django', 'VS_Code', 'aws', 'Azure', 'C#', 'C++', 'CSS', 'HTML5',
+  'Shopify', 'WordPress'
 ];
 
 interface SkillsState {
   available: string[];
-  visible: string[];
+  visible: string[]; // For floating icons (limited to 12)
+  allSkills: string[]; // For text cloud (all skills)
   ids: string[];
   highlighted: number[];
   active: string | null;
@@ -37,10 +40,10 @@ interface SkillsState {
 
 interface UIState {
   isLoading: boolean;
-  showingOverlay: boolean;
-  currentCompanyIndex: number;
+  // showingOverlay: boolean;
+  // currentCompanyIndex: number;
   mousePosition: { x: number; y: number };
-  isHovered: boolean;
+  // isHovered: boolean;
 }
 
 const Skills = () => {
@@ -50,6 +53,7 @@ const Skills = () => {
   const [skillsState, setSkillsState] = useState<SkillsState>({
     available: [],
     visible: [],
+    allSkills: [],
     ids: [],
     highlighted: [],
     active: null,
@@ -58,10 +62,10 @@ const Skills = () => {
   // Grouped state for UI-related data
   const [uiState, setUIState] = useState<UIState>({
     isLoading: true,
-    showingOverlay: false,
-    currentCompanyIndex: 0,
+    // showingOverlay: false,
+    // currentCompanyIndex: 0,
     mousePosition: { x: 0, y: 0 },
-    isHovered: false,
+    // isHovered: false,
   });
   
   const containerRef = useRef<HTMLDivElement>(null);
@@ -76,16 +80,16 @@ const Skills = () => {
   //   { name: 'Fiera Capital', logo: '/images/Experience/FieraCapital.png' },
   // ], []);
 
-  // Memoized positions calculation
+  // Memoized positions calculation (for floating icons)
   const positions = useMemo((): PositionProps[] => {
     if (uiState.isLoading || skillsState.visible.length === 0) return [];
     return generateMobbinPositions(MAX_VISIBLE_SKILLS);
   }, [uiState.isLoading, skillsState.visible]);
 
-  // Memoized filtered skills
+  // Memoized filtered skills (for text cloud - show all skills)
   const filteredAvailableSkills = useMemo(() => {
-    return skillsState.available.filter(skill => !shouldExcludeSkill(skill));
-  }, [skillsState.available]);
+    return ALL_SKILLS; // Show ALL skills in text cloud, no filtering at all
+  }, []);
 
   // Stable ID generation
   const updateSkillsWithStableIds = useCallback((skills: string[]) => {
@@ -93,51 +97,33 @@ const Skills = () => {
     setSkillsState(prev => ({
       ...prev,
       visible: skills,
+      allSkills: skills,
       ids: stableIds
     }));
   }, []);
 
   // === SKILLS EFFECTS ===
   
-  // Fetch skills on mount
+  // Initialize skills on mount - separate logic for icons vs text cloud
   useEffect(() => {
-    const fetchSkills = async () => {
-      try {
-        const response = await fetch('/api/skill-icons');
-        
-        if (!response.ok) throw new Error('Failed to fetch skills');
-        const iconFiles = await response.json();
-
-        const names: string[] = iconFiles.map((skill: string) =>
-          skill.replace('.svg', '').replace('.png', '')
-        );
-        
-        const filteredSkills = names.filter(skill => !shouldExcludeSkill(skill));
-        const initialSkills = filteredSkills.slice(0, MAX_VISIBLE_SKILLS);
-        
-        setSkillsState(prev => ({
-          ...prev,
-          available: filteredSkills,
-        }));
-        
-        updateSkillsWithStableIds(initialSkills);
-      } catch (error) {
-        console.error('Error fetching skills:', error);
-        setSkillsState(prev => ({
-          ...prev,
-          available: FALLBACK_SKILLS,
-        }));
-        
-        updateSkillsWithStableIds(FALLBACK_SKILLS.slice(0, MAX_VISIBLE_SKILLS));
-      } finally {
-        setUIState(prev => ({ ...prev, isLoading: false }));
-      }
+    const initializeSkills = () => {
+      // Use all skills for both floating icons and text cloud
+      const initialVisibleSkills = ALL_SKILLS.slice(0, MAX_VISIBLE_SKILLS); // Limited for icons
+      
+      setSkillsState(prev => ({
+        ...prev,
+        available: ALL_SKILLS, // All skills available for icon rotation pool
+        allSkills: ALL_SKILLS, // All skills for text cloud (unfiltered)
+      }));
+      
+      updateSkillsWithStableIds(initialVisibleSkills); // Limited for icons
+      setUIState(prev => ({ ...prev, isLoading: false }));
     };
 
-    fetchSkills();
+    initializeSkills();
   }, [updateSkillsWithStableIds]);
 
-  // Rotate skills periodically
+  // Rotate skills periodically (for floating icons only)
   useEffect(() => {
     if (uiState.isLoading || !skillsState.available || skillsState.available.length <= MAX_VISIBLE_SKILLS) return;
 
@@ -170,7 +156,7 @@ const Skills = () => {
     return () => clearInterval(intervalId);
   }, [uiState.isLoading, skillsState.available, skillsState.visible, updateSkillsWithStableIds]);
 
-  // Randomly highlight skills
+  // Randomly highlight skills (for floating icons)
   useEffect(() => {
     if (uiState.isLoading || skillsState.visible.length === 0) return;
 
@@ -193,9 +179,9 @@ const Skills = () => {
     return () => clearInterval(intervalId);
   }, [uiState.isLoading, skillsState.visible]);
 
-  // === OVERLAY EFFECTS ===
+  // === UNUSED CODE ===
   
-  // Company overlay rotation
+  // // Company overlay rotation
   // useEffect(() => {
   //   if (uiState.isLoading || skillsState.visible.length === 0) return;
 
@@ -218,9 +204,7 @@ const Skills = () => {
   //   return () => clearInterval(intervalId);
   // }, [uiState.isLoading, skillsState.visible]);
 
-  // === ANIMATION EFFECTS ===
-  
-  // Optimized mouse auto-rotation with requestAnimationFrame
+  // // Optimized mouse auto-rotation with requestAnimationFrame
   // useEffect(() => {
   //   const animate = () => {
   //     setUIState(prev => ({
@@ -245,8 +229,9 @@ const Skills = () => {
 
   const renderSkillIcon = useCallback((skill: string, index: number, skillId: string) => {
     if (!positions || positions.length === 0) return null;
-    const shouldRenderSkill = !shouldExcludeSkill(skill) && skill !== 'C#';
-    if (!shouldRenderSkill) return null;
+    // Remove filtering to allow all skills to show as floating icons
+    // const shouldRenderSkill = !shouldExcludeSkill(skill) && skill !== 'C#';
+    // if (!shouldRenderSkill) return null;
     
     const position = positions[index % positions.length];
     if (!position) return null;
@@ -294,18 +279,12 @@ const Skills = () => {
 
             {/* Skill text collage in the middle */}
             <div className="absolute inset-0 z-10">
-              <Suspense fallback={
-                <div className="flex items-center justify-center h-full md:h-1/2">
-                  <div className="text-soft-white/50">Loading 3D cloud...</div>
-                </div>
-              }>
-                <SkillCloud
-                  availableSkills={filteredAvailableSkills}
-                  mousePosition={uiState.mousePosition}
-                  activeSkill={skillsState.active}
-                  // onSkillClick={handleSkillClick}
-                />
-              </Suspense>
+              <SkillCloud
+                availableSkills={filteredAvailableSkills}
+                mousePosition={uiState.mousePosition}
+                activeSkill={skillsState.active}
+                // onSkillClick={handleSkillClick}
+              />
             </div>
           </div>
         )}

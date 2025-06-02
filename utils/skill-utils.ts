@@ -147,11 +147,8 @@ export function isPngIcon(skill: string): boolean {
  * Function to determine if a skill should be excluded
  */
 export function shouldExcludeSkill(skill: string): boolean {
-  const excludedSkills = [
-    'HTML5', 'CSS', 'C++', 'Azure', 'C_Sharp', 'CSharp', 
-    'WordPress', 'Wordpress', 'Microsoft_Azure', 'C#'
-  ];
-  return excludedSkills.includes(skill);
+  // No skills excluded - show all skills
+  return false;
 }
 
 /**

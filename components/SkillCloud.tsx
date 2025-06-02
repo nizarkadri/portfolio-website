@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   getSphereCoordinates, 
   getDepthOpacity, 
@@ -9,7 +9,7 @@ import {
   type SphereCoordinates,
   type SkillStyle 
 } from '../utils/3d-utils';
-import { shouldExcludeSkill } from '../utils/skill-utils';
+import { useIsMobile } from '../app/hooks/useMobile';
 
 // Constants
 const PRIMARY_COLOR = '#B8E62D';
@@ -19,14 +19,148 @@ interface SkillCloudProps {
   availableSkills: string[];
   mousePosition: { x: number; y: number };
   activeSkill: string | null;
-  // onSkillClick: (skill: string) => void;
 }
 
-const SkillCloud: React.FC<SkillCloudProps> = ({
-  availableSkills,
-  mousePosition,
-  activeSkill,
-  // onSkillClick
+// Mobile Corporate Typography Component
+const MobileSkillCloud: React.FC<{ skills: string[] }> = ({ skills }) => {
+  const [visibleSkills, setVisibleSkills] = React.useState<string[]>([]);
+  const [currentIndex, setCurrentIndex] = React.useState(0);
+  const [isTransitioning, setIsTransitioning] = React.useState(false);
+
+  // Show only 50% of skills at once
+  const skillsToShow = Math.ceil(skills.length * 0.5);
+
+  // Initialize and rotate skills
+  React.useEffect(() => {
+    const updateVisibleSkills = () => {
+      const startIndex = currentIndex;
+      const endIndex = (startIndex + skillsToShow) % skills.length;
+      
+      let newVisibleSkills;
+      if (endIndex > startIndex) {
+        newVisibleSkills = skills.slice(startIndex, endIndex);
+      } else {
+        // Handle wrap around
+        newVisibleSkills = [...skills.slice(startIndex), ...skills.slice(0, endIndex)];
+      }
+      
+      setVisibleSkills(newVisibleSkills);
+    };
+
+    updateVisibleSkills();
+
+    // Rotate skills every 5 seconds (increased for smoother experience)
+    const interval = setInterval(() => {
+      setIsTransitioning(true);
+      
+      // Small delay before changing skills to allow exit animation
+      setTimeout(() => {
+        setCurrentIndex((prev) => (prev + Math.ceil(skillsToShow * 0.3)) % skills.length);
+        setIsTransitioning(false);
+      }, 300);
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [skills, currentIndex, skillsToShow]);
+
+  // Generate positions for mobile grid layout
+  const generateMobilePositions = (skillCount: number) => {
+    const positions = [];
+    const cols = 3; // Back to 3 columns for better spacing with fewer skills
+    const rows = Math.ceil(skillCount / cols);
+    
+    for (let i = 0; i < skillCount; i++) {
+      const row = Math.floor(i / cols);
+      const col = i % cols;
+      
+      // Calculate position with better spacing
+      const baseX = (col / (cols - 1)) * 80 + 10; // 10% to 90%
+      const baseY = (row / (rows - 1)) * 70 + 15; // 15% to 85%
+      
+      // Add some randomness for organic feel
+      const randomX = (Math.random() - 0.5) * 8;
+      const randomY = (Math.random() - 0.5) * 8;
+      
+      positions.push({
+        x: Math.max(5, Math.min(95, baseX + randomX)),
+        y: Math.max(10, Math.min(90, baseY + randomY))
+      });
+    }
+    
+    return positions;
+  };
+
+  const positions = generateMobilePositions(visibleSkills.length);
+
+  return (
+    <div className="relative w-full h-full overflow-hidden">
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={currentIndex}
+          className="absolute inset-0"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ 
+            duration: 0.5,
+            ease: [0.25, 0.46, 0.45, 0.94]
+          }}
+        >
+          {/* Skills with same styling as desktop */}
+          {visibleSkills.map((skill, index) => {
+            const position = positions[index];
+            const { fontSize, fontWeight } = getSkillStyle(skill);
+            
+            return (
+              <motion.div
+                key={skill}
+                className="absolute select-none cursor-pointer skill-word active-skill"
+                style={{
+                  left: `${position.x}%`,
+                  top: `${position.y}%`,
+                  fontSize: `${Math.max(16, parseInt(fontSize) * 1.0)}px`, // Good readable size
+                  fontWeight,
+                  color: PRIMARY_COLOR,
+                  transform: 'translate(-50%, -50%)', // Center the text on the position
+                }}
+                initial={{
+                  opacity: 0,
+                  scale: 0.5,
+                  y: 30,
+                  filter: 'blur(6px)'
+                }}
+                animate={{
+                  opacity: 0.7,
+                  scale: 1,
+                  y: 0,
+                  filter: 'blur(0px)'
+                }}
+                transition={{
+                  duration: 0.8,
+                  delay: index * 0.08,
+                  type: "spring",
+                  stiffness: 80,
+                  damping: 20,
+                  opacity: { duration: 0.6, delay: index * 0.08 },
+                  scale: { duration: 0.7, delay: index * 0.08 },
+                  y: { duration: 0.6, delay: index * 0.08 },
+                  filter: { duration: 0.5, delay: index * 0.08 + 0.2 }
+                }}
+              >
+                {skill}
+              </motion.div>
+            );
+          })}
+        </motion.div>
+      </AnimatePresence>
+    </div>
+  );
+};
+
+// Desktop 3D Sphere Component
+const DesktopSkillCloud: React.FC<{ skills: string[]; mousePosition: { x: number; y: number } }> = ({ 
+  skills, 
+  mousePosition 
 }) => {
   return (
     <motion.div 
@@ -50,18 +184,13 @@ const SkillCloud: React.FC<SkillCloudProps> = ({
           transformStyle: 'preserve-3d',
           transform: `rotateX(${mousePosition.y}deg) rotateY(${mousePosition.x}deg)`
         }}
-        
       >
         {/* Map all skills to 3D sphere points */}
-        {availableSkills && availableSkills.length > 0 && availableSkills.map((skill, index) => {
-          // Skip rendering excluded skills
-          const shouldRenderSkill = !shouldExcludeSkill(skill) && skill !== 'C#';
-          if (!shouldRenderSkill) return null;
-          
+        {skills.map((skill, index) => {
           // Calculate position on a sphere
           const { x, y, z }: SphereCoordinates = getSphereCoordinates(
             index, 
-            availableSkills.length, 
+            skills.length, 
             SPHERE_RADIUS
           );
           
@@ -74,7 +203,7 @@ const SkillCloud: React.FC<SkillCloudProps> = ({
           return (
             <motion.div
               key={skill}
-              className={`skill-word ${activeSkill === skill ? 'active-skill' : ''}`}
+              className='skill-word active-skill'
               style={{
                 position: 'absolute',
                 left: '50%',
@@ -96,9 +225,7 @@ const SkillCloud: React.FC<SkillCloudProps> = ({
                 rotateZ: Math.random() * 360,
                 scale: 0
               }}
-              
               whileInView={{
-                
                 opacity,
                 x: x,
                 y: y,
@@ -109,19 +236,10 @@ const SkillCloud: React.FC<SkillCloudProps> = ({
                 scale: 1
               }}
               transition={{
-                
-                duration: 0.2,
-                // delay: index * 0.05,
                 type: "spring",
                 stiffness: 50,
                 damping: 20
               }}
-              whileHover={{
-                scale: 1.3,
-                z: z + 30,
-                transition: { duration: 0.3 }
-              }}
-              // onClick={() => onSkillClick(skill)}
             >
               {skill}
             </motion.div>
@@ -129,6 +247,21 @@ const SkillCloud: React.FC<SkillCloudProps> = ({
         })}
       </motion.div>
     </motion.div>
+  );
+};
+
+// Main SkillCloud Component
+const SkillCloud: React.FC<SkillCloudProps> = ({
+  availableSkills,
+  mousePosition,
+  activeSkill,
+}) => {
+  const isMobile = useIsMobile();
+
+  return isMobile ? (
+    <MobileSkillCloud skills={availableSkills} />
+  ) : (
+    <DesktopSkillCloud skills={availableSkills} mousePosition={mousePosition} />
   );
 };
 

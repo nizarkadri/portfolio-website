@@ -110,8 +110,8 @@ const SkillIcon: React.FC<SkillIconProps> = ({
           )}
 
           <Image
-            src={`/images/NewIcons/${skill === 'C_Sharp' ? 'CSharp' : skill}${isPng ? '.png' : '.svg'}`}
-            alt={skill === 'C_Sharp' ? 'C#' : skill.replace('_', ' ').replace('-', ' ')}
+            src={`/images/NewIcons/${skill === 'C#' ? 'C%23' : skill}${isPng ? '.png' : '.svg'}`}
+            alt={skill === 'C#' ? 'C#' : skill.replace('_', ' ').replace('-', ' ')}
             className={`
               w-full h-full object-contain transition-all duration-300 relative z-20
               ${isJsOrTs ? '' : 'p-2 rounded-2xl'}
@@ -142,7 +142,7 @@ const SkillIcon: React.FC<SkillIconProps> = ({
           }}
           className="text-xs font-medium bg-[#1F2937] px-3 py-1 rounded-full backdrop-blur-sm whitespace-nowrap block text-[#E5E7EB]"
         >
-          {skill === 'C_Sharp' ? 'C#' : skill.replace('_', ' ').replace('-', ' ')}
+          {skill === 'C#' ? 'C#' : skill.replace('_', ' ').replace('-', ' ')}
         </motion.span>
       </div>
     </motion.div>
