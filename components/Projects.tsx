@@ -269,7 +269,7 @@ function Projects() {
               }}
             >
               <Link 
-                href="/experience" 
+                href="/projects" 
                 className="px-8 py-3 border border-[#B8E62D]/50 text-[#B8E62D] rounded-md inline-flex items-center group transition-all duration-300 font-medium backdrop-blur-sm bg-black/40"
               >
                 View All Projects
