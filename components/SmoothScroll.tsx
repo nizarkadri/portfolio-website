@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
-import Lenis from '@studio-freight/lenis'
+import Lenis from 'lenis'
 
 // Add type declaration for window.lenis
 declare global {
@@ -12,13 +12,17 @@ declare global {
 
 export default function SmoothScroll({ children }: { children: React.ReactNode }) {
   useEffect(() => {
+    const isMobile = window.matchMedia('(max-width: 640px)').matches;
+    
     const lenis = new Lenis({
-      duration: 1.2,
+      duration: isMobile ? 0.8 : 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       orientation: 'vertical',
-      smoothWheel: true,
+      smoothWheel: !isMobile,
       wheelMultiplier: 1,
-      touchMultiplier: 2
+      touchMultiplier: isMobile ? 1.5 : 2,
+      infinite: false,
+      
     })
 
     // Add lenis to window for global access
