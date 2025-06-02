@@ -2,8 +2,10 @@
 
 import { motion } from 'framer-motion';
 import { titleVariants, highlightVariants} from '../utils/animations';
+import {useIsMobile} from '../app/hooks/useMobile';
 
 const SkillTitle = () => {
+  const isMobile = useIsMobile();
   return (
     <div className="flex flex-col items-center mb-16">
       <motion.div
@@ -17,7 +19,7 @@ const SkillTitle = () => {
           // huge-text absolute top-6 md:-top-16 left-[7%] md:left-0 md:translate-x-0 opacity-80 text-[#B8E62D]/90 font-bold select-none
           variants={titleVariants}
         >
-          Skills & Expertise
+          {isMobile ? 'Skills' : 'Skills & Expertise'}
         </motion.h2>
         <motion.div 
           className="absolute -bottom-2 left-0 h-0.5 bg-[#B8E62D]/10 rounded-full"
