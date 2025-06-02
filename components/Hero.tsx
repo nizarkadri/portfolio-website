@@ -2,6 +2,8 @@
 
 import { useRef, useState, useLayoutEffect } from 'react';
 import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion';
+import ResumeRequestModal from './ResumeRequestModal';
+import Premium3DResumeButton from './Premium3DResumeButton';
 
 // Add type declaration for window.lenis
 // declare global {
@@ -14,6 +16,7 @@ const Hero = () => {
   const containerRef = useRef(null);
   const [isMobile, setIsMobile] = useState(false);
   const [isClient, setIsClient] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const shouldReduceMotion = useReducedMotion();
   
   // Initialize mobile detection immediately to prevent flash
@@ -99,8 +102,8 @@ const Hero = () => {
                 Technical Reality
               </span>
             </h1>
-            <div className="mt-12 text-white/60 text-sm">
-              ↓ Scroll to explore
+            <div className="mt-12">
+              <Premium3DResumeButton onClick={() => setIsModalOpen(true)} />
             </div>
           </div>
         </div>
@@ -109,6 +112,7 @@ const Hero = () => {
   }
 
   return (
+    <>
     <div ref={containerRef} className="relative min-h-[100dvh] md:min-h-[170vh]">
       <div className="sticky top-0 h-dvh flex items-center justify-center bg-transparent overflow-hidden pointer-events-none pb-[env(safe-area-inset-bottom)]">
         {/* Background - continues parallax throughout entire scroll */}
@@ -120,56 +124,64 @@ const Hero = () => {
             scale: shouldReduceMotion ? 1 : backgroundScale,
           }}
         >
-          <h1
+          <motion.h1
             className="text-[clamp(30vw,20vw,20vw)] sm:text-[25vw] font-black text-transparent select-none tracking-tighter"
-            style={{ WebkitTextStroke: '3px rgba(184,230,45,0.08)' }}
+            style={{ WebkitTextStroke: '3px rgba(184,230,45,0.08)',transform: 'translateY(-5vh)' } }
+            
           >
             NIZAR
-          </h1>
+          </motion.h1>
         </motion.div>
 
-        {/* Text - animates early and stays in place */}
-        <div className="z-10 relative text-center pointer-events-auto">
-          <h1 className="text-[clamp(2.5rem,10vw,6rem)] sm:text-7xl lg:text-9xl font-bold tracking-tighter mt-10 md:mb-6 md:mt-0">
-            <motion.span
-              className="text-white bg-clip-text bg-gradient-to-r from-white via-white/90 to-white/80"
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
+          {/* Text - animates early and stays in place */}
+          <div className="z-10 relative text-center pointer-events-auto">
+            <h1 className="text-[clamp(2.5rem,10vw,6rem)] sm:text-7xl lg:text-9xl font-bold tracking-tighter mt-10 md:mb-6 md:mt-0">
+              <motion.span
+                className="text-white bg-clip-text bg-gradient-to-r from-white via-white/90 to-white/80"
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+                style={{
+                  x: shouldReduceMotion ? 0 : xFirstLine,
+                  opacity: shouldReduceMotion ? 1 : opacityForBoth,
+                }}
+              >
+                Turning Ideas into
+              </motion.span>
+              <motion.span
+                className="block text-[#B8E62D] bg-clip-text text-transparent bg-gradient-to-r from-[#B8E62D] to-[#8fba1f] md:mt-4"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.4 }}
+                style={{
+                  x: shouldReduceMotion ? 0 : xSecondLine,
+                  opacity: shouldReduceMotion ? 1 : opacityForBoth,
+                }}
+              >
+                Technical Reality
+              </motion.span>
+            </h1>
+            <motion.div
+              className="mt-12"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.8, delay: 0.8 }}
               style={{
-                x: shouldReduceMotion ? 0 : xFirstLine,
                 opacity: shouldReduceMotion ? 1 : opacityForBoth,
               }}
             >
-              Turning Ideas into
-            </motion.span>
-            <motion.span
-              className="block text-[#B8E62D] bg-clip-text text-transparent bg-gradient-to-r from-[#B8E62D] to-[#8fba1f] md:mt-4"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.4 }}
-              style={{
-                x: shouldReduceMotion ? 0 : xSecondLine,
-                opacity: shouldReduceMotion ? 1 : opacityForBoth,
-              }}
-            >
-              Technical Reality
-            </motion.span>
-          </h1>
-          <motion.div
-            className="mt-12 text-white/60 text-sm"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.8 }}
-            style={{
-              opacity: shouldReduceMotion ? 1 : opacityForBoth,
-            }}
-          >
-            ↓ Scroll to explore
-          </motion.div>
+              <Premium3DResumeButton onClick={() => setIsModalOpen(true)} />
+            </motion.div>
+          </div>
         </div>
       </div>
-    </div>
+
+      {/* Resume Request Modal */}
+      <ResumeRequestModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+      />
+    </>
   );
 };
 
