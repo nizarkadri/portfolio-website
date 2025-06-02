@@ -50,7 +50,7 @@ const Navbar: React.FC = () => {
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.5 }}
-        className={`fixed top-4 left-1 transform -translate-x-1/2 z-50 px-6 md:px-12 md:left-1/4 py-3 rounded-full ${
+        className={`fixed top-4  transform -translate-x-1/2 z-50 px-6 md:px-12 md:left-1/4  py-3 rounded-full ${
           scrolled 
             ? 'bg-deep-black/70 backdrop-blur-xl w-[95%] md:w-auto shadow-floating' 
             : 'bg-transparent md:bg-deep-black/30 md:backdrop-blur-lg md:shadow-floating'
@@ -86,7 +86,7 @@ const Navbar: React.FC = () => {
           <div className="md:hidden">
             <motion.button 
               whileTap={{ scale: 0.9 }}
-              className="relative z-50 w-10 h-10 flex items-center justify-center focus:outline-none" 
+              className="relative z-50 w-10 h-10 flex items-center justify-center focus:outline-none " 
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               aria-label="Toggle menu"
             >
