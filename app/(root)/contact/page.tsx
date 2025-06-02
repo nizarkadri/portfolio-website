@@ -7,10 +7,14 @@ import { z } from 'zod';
 import { motion, AnimatePresence } from 'framer-motion';
 import FormFieldError from '../../../components/FormFieldError';
 
+// ============================================================================
+// TYPE DEFINITIONS
+// ============================================================================
 
-// Define user types
+/** Available user types for the contact form */
 type UserType = 'recruiter' | 'client' | 'resume_request' | null;
 
+/** Zod schema for recruiter form data */
 const recruiterSchema = z.object({
   userType: z.literal('recruiter'),
   email: z.string().email('Invalid email address'),
@@ -24,6 +28,7 @@ const recruiterSchema = z.object({
   message: z.string().optional(),
 });
 
+/** Zod schema for client form data */
 const clientSchema = z.object({
   userType: z.literal('client'),
   email: z.string().email('Invalid email address'),
@@ -34,22 +39,35 @@ const clientSchema = z.object({
   timeline: z.string().optional(),
 });
 
+/** Zod schema for resume request form data (currently unused but kept for future use) */
 const resumeSchema = z.object({
-  userType: z.literal('resume_request'), // required!
+  userType: z.literal('resume_request'),
   email: z.string().email(),
   jobDescription: z.string().min(10, 'Job description must be at least 10 characters'),
   message: z.string(),
-})
+});
+
+/** Type-safe error types for form validation */
 type RecruiterErrors = FieldErrors<z.infer<typeof recruiterSchema>>;
 type ClientErrors = FieldErrors<z.infer<typeof clientSchema>>;
 
-
-// Create schema based on user type
+/** Main contact form schema using discriminated union for type safety */
 const contactSchema = z.discriminatedUnion('userType', [recruiterSchema, clientSchema, resumeSchema]);
 
+/** Inferred type from the contact schema */
 type ContactFormData = z.infer<typeof contactSchema>;
 
-// Animation variants
+/** Submit status type for form submission feedback */
+type SubmitStatus = {
+  type: 'success' | 'error';
+  message: string;
+} | null;
+
+// ============================================================================
+// ANIMATION VARIANTS
+// ============================================================================
+
+/** Reusable animation variant for fade in up effect */
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
   animate: { opacity: 1, y: 0 },
@@ -57,66 +75,99 @@ const fadeInUp = {
   transition: { duration: 0.5 }
 };
 
-
+// ============================================================================
+// MAIN COMPONENT
+// ============================================================================
 
 export default function ContactPage() {
-
+  // ============================================================================
+  // FORM SETUP
+  // ============================================================================
+  
   const {
     register,
     handleSubmit,
     reset,
     watch,
     setValue,
-    formState: { errors},
+    formState: { errors },
   } = useForm<ContactFormData>({
     resolver: zodResolver(contactSchema),
     mode: 'onChange',
   });
-  // State for multi-step form
-  const [step, setStep] = useState(0);
-  const userType = watch('userType') as 'recruiter' | 'client' | null;
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState<{
-    type: 'success' | 'error';
-    message: string;
-  } | null>(null);
-  
-  // Add state for timeline counter
-  const [timelineDays, setTimelineDays] = useState(30);
-  const [isProjectDropdownOpen, setIsProjectDropdownOpen] = useState(false);
-  
-  const recruiterErrors = errors as RecruiterErrors;
-  const clientErrors = errors as ClientErrors;
-  // Watch form values for conditional logic
-  // const formValues = watch();
 
-  // Helper function to format budget input
-  const formatBudgetInput = (value: string) => {
-    // Remove any characters that aren't numbers, commas, or hyphens
+  // ============================================================================
+  // STATE MANAGEMENT
+  // ============================================================================
+  
+  /** Current step in the multi-step form */
+  const [step, setStep] = useState<number>(0);
+  
+  /** Current user type, watched from form */
+  const userType = watch('userType') as UserType;
+  
+  /** Form submission loading state */
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  
+  /** Form submission status for user feedback */
+  const [submitStatus, setSubmitStatus] = useState<SubmitStatus>(null);
+  
+  /** Timeline counter for client projects (in days) */
+  const [timelineDays, setTimelineDays] = useState<number>(30);
+  
+  /** Project type dropdown open/closed state */
+  const [isProjectDropdownOpen, setIsProjectDropdownOpen] = useState<boolean>(false);
+  
+  // ============================================================================
+  // TYPE-SAFE ERROR HANDLING
+  // ============================================================================
+  
+  /** Type-safe recruiter form errors */
+  const recruiterErrors = errors as RecruiterErrors;
+  
+  /** Type-safe client form errors */
+  const clientErrors = errors as ClientErrors;
+
+  // ============================================================================
+  // HELPER FUNCTIONS
+  // ============================================================================
+
+  /** Format budget input to only allow numbers, commas, and hyphens */
+  const formatBudgetInput = (value: string): string => {
     return value.replace(/[^0-9,-]/g, '');
   };
 
-  // Helper function to handle budget input change
-  const handleBudgetChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  /** Handle budget input change with formatting */
+  const handleBudgetChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const formatted = formatBudgetInput(e.target.value);
     setValue('budget', formatted, { shouldValidate: true });
   };
 
-  // Helper function to update timeline
-  const updateTimeline = (days: number) => {
-    const newDays = Math.max(1, Math.min(365, days)); // Limit between 1 and 365 days
+  /** Update timeline with bounds checking (1-365 days) */
+  const updateTimeline = (days: number): void => {
+    const newDays = Math.max(1, Math.min(365, days));
     setTimelineDays(newDays);
     setValue('timeline', `${newDays} days`, { shouldValidate: true });
   };
 
-  // Helper function to handle project type selection
-  const handleProjectTypeSelect = (projectType: string) => {
+  /** Handle project type selection and close dropdown */
+  const handleProjectTypeSelect = (projectType: string): void => {
     setValue('projectType', projectType, { shouldValidate: true });
     setIsProjectDropdownOpen(false);
   };
 
-  // Predefined project types
-  const projectTypes = [
+  /** Handle user type selection and advance to next step */
+  const handleUserTypeSelection = (type: UserType): void => {
+    setValue('userType', type as 'recruiter' | 'client');
+    setStep(1);
+  };
+
+  // ============================================================================
+  // CONSTANTS
+  // ============================================================================
+
+  /** Available project types for client selection */
+  const projectTypes: readonly string[] = [
     'Website',
     'Web Application',
     'Mobile App (iOS)',
@@ -144,18 +195,15 @@ export default function ContactPage() {
     'Educational Platform',
     'Social Media Platform',
     'Other'
-  ];
+  ] as const;
 
-  // Form handling
-  // useEffect(() => {
-  //   console.log("Form errors:", errors);
-  //   console.log("Form is valid:", isValid);
-  //   console.log('Submitting:', watch('userType'), formValues);
-  // }, [errors, isValid]);
+  // ============================================================================
+  // EFFECTS
+  // ============================================================================
 
-  // Handle clicking outside dropdown to close it
+  /** Handle clicking outside dropdown to close it */
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
+    const handleClickOutside = (event: MouseEvent): void => {
       const target = event.target as Element;
       if (isProjectDropdownOpen && !target.closest('.dropdown-container')) {
         setIsProjectDropdownOpen(false);
@@ -165,47 +213,37 @@ export default function ContactPage() {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [isProjectDropdownOpen]);
+
+  // ============================================================================
+  // FORM NAVIGATION
+  // ============================================================================
   
-  
-  
-  
-  // Set user type when changed
-  // useEffect(() => {
-  //   if (userType) {
-  //     setValue('userType', userType as 'recruiter' | 'client');
-  //   }
-  // }, [userType, setValue]);
-  
-  // Total steps based on user type
+  /** Calculate total steps based on user type */
   const getTotalSteps = (): number => {
     if (!userType) return 1; // Initial step to select user type
     return userType === 'recruiter' ? 8 : 7; // Different steps for each user type
   };
   
-  // Handle next step
-  const handleNextStep = () => {
+  /** Navigate to next step */
+  const handleNextStep = (): void => {
     if (step < getTotalSteps() - 1) {
       setStep(step + 1);
     }
   };
   
-  // Handle previous step
-  const handlePrevStep = () => {
+  /** Navigate to previous step */
+  const handlePrevStep = (): void => {
     if (step > 0) {
       setStep(step - 1);
     }
   };
 
-  // Handle user type selection - fix for first click issue
-  const handleUserTypeSelection = (type: UserType) => {
-    // setUserType(type);
-    setValue('userType', type as 'recruiter' | 'client');
-    setStep(1);
-  };
-  
-  // Form submission handler
-  const onSubmit = async (data: ContactFormData) => {
-    console.log("Submitting:", data.userType, data);
+  // ============================================================================
+  // FORM SUBMISSION
+  // ============================================================================
+
+  /** Handle form submission with proper error handling */
+  const onSubmit = async (data: ContactFormData): Promise<void> => {
     try {
       setIsSubmitting(true);
       setSubmitStatus(null);
@@ -215,7 +253,6 @@ export default function ContactPage() {
         headers: {
           'Content-Type': 'application/json',
         },
-
         body: JSON.stringify(data),
       });
 
@@ -231,7 +268,6 @@ export default function ContactPage() {
       });
       reset();
       setStep(0);
-      // setUserType(null);
     } catch (error) {
       setSubmitStatus({
         type: 'error',
@@ -242,8 +278,12 @@ export default function ContactPage() {
     }
   };
 
-  // Render the appropriate form step
-  const renderStep = () => {
+  // ============================================================================
+  // RENDER METHODS
+  // ============================================================================
+
+  /** Render the appropriate form step based on current step and user type */
+  const renderStep = (): React.ReactElement | null => {
     switch (step) {
       case 0:
         return (
@@ -255,8 +295,31 @@ export default function ContactPage() {
             exit="exit"
             key="step-0"
           >
-            <h2 className="text-3xl md:text-4xl font-bold mb-8 text-white">Who are you?</h2>
-            <p className="text-soft-white/70 mb-10">I'll tailor our conversation based on your needs.</p>
+            <h2 className="text-3xl md:text-4xl font-bold mb-8 text-white">
+              Hey there! 
+              <motion.span
+                animate={{ 
+                  rotate: [0, 20, -20, 0],
+                  transition: { duration: 1.5, repeat: Infinity, ease: "easeInOut" }
+                }}
+                className="inline-block ml-2"
+              >
+                👋
+              </motion.span> 
+              <br />Who do I have the <span className="text-[#B8E62D]">pleasure</span> of meeting?
+            </h2>
+            <p className="text-soft-white/70 mb-10">
+              This helps me point you in the <span className="text-[#B8E62D]">right</span> direction and make our chat <span className="text-[#B8E62D]">super useful</span>! 
+              <motion.span
+                animate={{ 
+                  scale: [1, 1.2, 1],
+                  transition: { duration: 1, repeat: Infinity, ease: "easeInOut" }
+                }}
+                className="inline-block ml-1"
+              >
+                🎯
+              </motion.span>
+            </p>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <motion.button
@@ -266,13 +329,22 @@ export default function ContactPage() {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
-                <div className="w-16 h-16 mx-auto bg-[#B8E62D]/10 rounded-full flex items-center justify-center mb-4">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-[#B8E62D]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                  </svg>
-                </div>
-                <h3 className="text-xl font-semibold text-white mb-2">Recruiter / Hiring Manager</h3>
-                <p className="text-soft-white/70 text-sm">Looking to hire me for a position</p>
+                <motion.div 
+                  className="w-16 h-16 mx-auto bg-[#B8E62D]/10 rounded-full flex items-center justify-center mb-4"
+                  whileHover={{ rotate: 5 }}
+                >
+                  <motion.span
+                    animate={{ 
+                      scale: [1, 1.1, 1],
+                      transition: { duration: 2, repeat: Infinity, ease: "easeInOut" }
+                    }}
+                    className="text-2xl"
+                  >
+                    🧑‍💼
+                  </motion.span>
+                </motion.div>
+                <h3 className="text-xl font-semibold text-white mb-2">I'm a Recruiter or Hiring Manager</h3>
+                <p className="text-soft-white/70 text-sm">Looking to fill a role or discuss an <span className="text-[#B8E62D]">awesome</span> opportunity 🤝</p>
               </motion.button>
               
               <motion.button
@@ -282,13 +354,22 @@ export default function ContactPage() {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
-                <div className="w-16 h-16 mx-auto bg-[#B8E62D]/10 rounded-full flex items-center justify-center mb-4">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-[#B8E62D]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                  </svg>
-                </div>
-                <h3 className="text-xl font-semibold text-white mb-2">Client</h3>
-                <p className="text-soft-white/70 text-sm">Looking for development services</p>
+                <motion.div 
+                  className="w-16 h-16 mx-auto bg-[#B8E62D]/10 rounded-full flex items-center justify-center mb-4"
+                  whileHover={{ rotate: -5 }}
+                >
+                  <motion.span
+                    animate={{ 
+                      scale: [1, 1.1, 1],
+                      transition: { duration: 2, repeat: Infinity, ease: "easeInOut", delay: 0.5 }
+                    }}
+                    className="text-2xl"
+                  >
+                    💡
+                  </motion.span>
+                </motion.div>
+                <h3 className="text-xl font-semibold text-white mb-2">I'm a Potential Client</h3>
+                <p className="text-soft-white/70 text-sm">Got a project brewing? I'm here to help with <span className="text-[#B8E62D]">development</span>! 🚀</p>
               </motion.button>
             </div>
           </motion.div>
@@ -305,15 +386,26 @@ export default function ContactPage() {
               exit="exit"
               key="step-1-client"
             >
-              <h2 className="text-3xl md:text-4xl font-bold mb-3 text-white">What's your name?</h2>
-              <p className="text-soft-white/70 mb-10">Let's start with an introduction.</p>
+              <h2 className="text-3xl md:text-4xl font-bold mb-3 text-white">
+                <span className="text-[#B8E62D]">Great</span> choice! So, who do I have the <span className="text-[#B8E62D]">pleasure</span> of chatting with? 
+                <motion.span
+                  animate={{ 
+                    rotate: [0, 10, -10, 0],
+                    transition: { duration: 2, repeat: Infinity, ease: "easeInOut" }
+                  }}
+                  className="inline-block ml-2"
+                >
+                  😊
+                </motion.span>
+              </h2>
+              <p className="text-soft-white/70 mb-10">Let's get <span className="text-[#B8E62D]">acquainted</span>! I'm <span className="text-[#B8E62D]">excited</span> to learn your name.</p>
               
               <div className="space-y-2">
                 <input
                   {...register('name')}
                   type="text"
                   className="w-full p-4 bg-white/5 border border-[#B8E62D]/10 rounded-xl text-white text-xl placeholder-soft-white/50 focus:outline-none focus:ring-2 focus:ring-[#B8E62D]/30 focus:border-transparent transition-all"
-                  placeholder="Enter your name"
+                  placeholder="e.g., Alex Stellar ✨"
                   autoFocus
                 />
                 {clientErrors.name && (
@@ -332,19 +424,30 @@ export default function ContactPage() {
               exit="exit"
               key="step-1-recruiter"
             >
-              <h2 className="text-3xl md:text-4xl font-bold mb-3 text-white">Which company do you represent?</h2>
-              <p className="text-soft-white/70 mb-10">Let me know where you work.</p>
+              <h2 className="text-3xl md:text-4xl font-bold mb-3 text-white">
+                <span className="text-[#B8E62D]">Perfect</span>! What <span className="text-[#B8E62D]">specific</span> role are you looking to fill? 
+                <motion.span
+                  animate={{ 
+                    scale: [1, 1.3, 1],
+                    transition: { duration: 1.2, repeat: Infinity, ease: "easeInOut" }
+                  }}
+                  className="inline-block ml-2"
+                >
+                  🎯
+                </motion.span>
+              </h2>
+              <p className="text-soft-white/70 mb-10">Tell me about the <span className="text-[#B8E62D]">exciting</span> position you've got! ✨</p>
               
               <div className="space-y-2">
                 <input
-                  {...register('company')}
+                  {...register('position')}
                   type="text"
                   className="w-full p-4 bg-white/5 border border-[#B8E62D]/10 rounded-xl text-white text-xl placeholder-soft-white/50 focus:outline-none focus:ring-2 focus:ring-[#B8E62D]/30 focus:border-transparent transition-all"
-                  placeholder="Enter company name"
+                  placeholder="e.g. Frontend Developer, Full Stack Engineer"
                   autoFocus
                 />
-                {recruiterErrors.company && (
-                  <FormFieldError message={recruiterErrors.company.message} />
+                {recruiterErrors.position && (
+                  <FormFieldError message={recruiterErrors.position.message} />
                 )}
               </div>
             </motion.div>
@@ -362,15 +465,26 @@ export default function ContactPage() {
               exit="exit"
               key="step-2-client"
             >
-              <h2 className="text-3xl md:text-4xl font-bold mb-3 text-white">What's your email?</h2>
-              <p className="text-soft-white/70 mb-10">I'll use this to get back to you.</p>
+              <h2 className="text-3xl md:text-4xl font-bold mb-3 text-white">
+                Got it, <span className="text-[#B8E62D] font-bold">{watch('name') || 'friend'}</span>! What's the <span className="text-[#B8E62D]">best</span> email to reach you at? 
+                <motion.span
+                  animate={{ 
+                    y: [0, -5, 0],
+                    transition: { duration: 1, repeat: Infinity, ease: "easeInOut" }
+                  }}
+                  className="inline-block ml-2"
+                >
+                  📧
+                </motion.span>
+              </h2>
+              <p className="text-soft-white/70 mb-10">This way, I can <span className="text-[#B8E62D]">easily</span> send you updates or follow-ups 📬</p>
               
               <div className="space-y-2">
                 <input
                   {...register('email')}
                   type="email"
                   className="w-full p-4 bg-white/5 border border-[#B8E62D]/10 rounded-xl text-white text-xl placeholder-soft-white/50 focus:outline-none focus:ring-2 focus:ring-[#B8E62D]/30 focus:border-transparent transition-all"
-                  placeholder="Enter your email"
+                  placeholder="e.g., alex@example.com"
                   autoFocus
                 />
                 {clientErrors.email && (
@@ -419,8 +533,30 @@ export default function ContactPage() {
               exit="exit"
               key="step-3-client"
             >
-              <h2 className="text-3xl md:text-4xl font-bold mb-3 text-white">What type of project are you looking for?</h2>
-              <p className="text-soft-white/70 mb-10">Tell me about your project needs.</p>
+              <h2 className="text-3xl md:text-4xl font-bold mb-3 text-white">
+                <span className="text-[#B8E62D]">Excellent</span>! What kind of <span className="text-[#B8E62D]">amazing</span> project are you dreaming up? 
+                <motion.span
+                  animate={{ 
+                    rotate: [0, 15, -15, 0],
+                    transition: { duration: 2, repeat: Infinity, ease: "easeInOut" }
+                  }}
+                  className="inline-block ml-2"
+                >
+                  🤔
+                </motion.span>
+              </h2>
+              <p className="text-soft-white/70 mb-10">
+                Let's dive into the type of services you're after 
+                <motion.span
+                  animate={{ 
+                    scale: [1, 1.2, 1],
+                    transition: { duration: 1, repeat: Infinity, ease: "easeInOut" }
+                  }}
+                  className="inline-block ml-1"
+                >
+                  🛠️
+                </motion.span>
+              </p>
               
               <div className="space-y-2">
                 <div className="relative dropdown-container">
@@ -436,7 +572,7 @@ export default function ContactPage() {
                   >
                     <div className="flex items-center justify-between">
                       <span className={watch('projectType') ? 'text-white' : 'text-soft-white/50'}>
-                        {watch('projectType') || 'Select project type'}
+                        {watch('projectType') || 'Choose a project category ✨'}
                       </span>
                       <motion.div
                         animate={{ rotate: isProjectDropdownOpen ? 180 : 0 }}
@@ -849,7 +985,6 @@ export default function ContactPage() {
                 <FormFieldError message={recruiterErrors.message.message} />
               )}
               
-              
             </div>
           </motion.div>
         );
@@ -858,6 +993,10 @@ export default function ContactPage() {
         return null;
     }
   };
+
+  // ============================================================================
+  // MAIN COMPONENT RENDER
+  // ============================================================================
 
   return (
     <div className="min-h-screen flex flex-col bg-black">
