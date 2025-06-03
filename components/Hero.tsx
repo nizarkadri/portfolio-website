@@ -2,8 +2,8 @@
 
 import { useRef, useState, useLayoutEffect } from 'react';
 import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion';
-import ResumeRequestModal from './ResumeRequestModal';
 import Premium3DResumeButton from './Premium3DResumeButton';
+import { useResumeModal } from './GlobalResumeButton';
 
 // Add type declaration for window.lenis
 // declare global {
@@ -16,8 +16,8 @@ const Hero = () => {
   const containerRef = useRef(null);
   const [isMobile, setIsMobile] = useState(false);
   const [isClient, setIsClient] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const shouldReduceMotion = useReducedMotion();
+  const { openModal } = useResumeModal();
   
   // Initialize mobile detection immediately to prevent flash
   useLayoutEffect(() => {
@@ -103,7 +103,7 @@ const Hero = () => {
               </span>
             </h1>
             <div className="mt-12">
-              <Premium3DResumeButton onClick={() => setIsModalOpen(true)} />
+              <Premium3DResumeButton onClick={openModal} />
             </div>
           </div>
         </div>
@@ -113,10 +113,9 @@ const Hero = () => {
 
   return (
     <>
-    <div ref={containerRef} className="relative min-h-[100dvh] md:min-h-[170vh]">
-      <div className="sticky top-0 h-dvh flex items-center justify-center bg-transparent overflow-hidden pointer-events-none pb-[env(safe-area-inset-bottom)]">
-        {/* Background - continues parallax throughout entire scroll */}
-        <motion.div
+      <div ref={containerRef} className="relative min-h-[100dvh] md:min-h-[170vh]">
+        {/* Background - continues animating throughout scroll for parallax */}
+        <motion.div 
           className="absolute inset-0 flex items-center justify-center pointer-events-none z-0"
           style={{
             y: shouldReduceMotion ? 0 : backgroundY,
@@ -126,13 +125,17 @@ const Hero = () => {
         >
           <motion.h1
             className="text-[clamp(30vw,20vw,20vw)] sm:text-[25vw] font-black text-transparent select-none tracking-tighter"
-            style={{ WebkitTextStroke: '3px rgba(184,230,45,0.08)',transform: 'translateY(-5vh)' } }
-            
+            style={{ WebkitTextStroke: '3px rgba(184,230,45,0.08)' }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1.5, delay: 0.5 }}
           >
             NIZAR
           </motion.h1>
         </motion.div>
 
+        {/* Sticky container for text */}
+        <div className="sticky top-0 h-dvh flex items-center justify-center bg-transparent overflow-hidden pointer-events-none pb-[env(safe-area-inset-bottom)]">
           {/* Text - animates early and stays in place */}
           <div className="z-10 relative text-center pointer-events-auto">
             <h1 className="text-[clamp(2.5rem,10vw,6rem)] sm:text-7xl lg:text-9xl font-bold tracking-tighter mt-10 md:mb-6 md:mt-0">
@@ -170,17 +173,11 @@ const Hero = () => {
                 opacity: shouldReduceMotion ? 1 : opacityForBoth,
               }}
             >
-              <Premium3DResumeButton onClick={() => setIsModalOpen(true)} />
+              <Premium3DResumeButton onClick={openModal} />
             </motion.div>
           </div>
         </div>
       </div>
-
-      {/* Resume Request Modal */}
-      <ResumeRequestModal 
-        isOpen={isModalOpen} 
-        onClose={() => setIsModalOpen(false)} 
-      />
     </>
   );
 };
