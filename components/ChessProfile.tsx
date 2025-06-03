@@ -590,14 +590,14 @@ export default function ChessProfile() {
 
   return (
     <motion.div 
-      className="flex flex-col justify-between bg-gradient-to-b from-soft-black/40 to-soft-black/10 p-6 sm:p-8 rounded-2xl backdrop-blur-sm border border-white/5 overflow-hidden"
+      className="flex flex-col bg-gradient-to-b from-soft-black/40 to-soft-black/10 p-6 sm:p-8 rounded-2xl backdrop-blur-sm border border-white/5"
      
       transition={{ duration: 0.6 }}
       onMouseMove={heroParallax.handleMouseMove}
     > 
       {/* Hero Section with 3D Effects */}
       <motion.div 
-        className="relative mb-8 z-10 container mx-auto"
+        className="relative mb-6 z-10"
         style={{ 
           x: heroParallax.springX, 
           y: heroParallax.springY, 
@@ -671,40 +671,10 @@ export default function ChessProfile() {
             </a>
           </div>
         </div>
-        
-        {/* Background decorative elements */}
-        <motion.div 
-          className="absolute -top-10 -right-10 w-40 h-40 bg-gradient-to-br from-[#b8e62d]/10 to-transparent rounded-full filter blur-xl z-0"
-          animate={{ 
-            scale: [1, 1.2, 1],
-            opacity: [0.3, 0.5, 0.3],
-            rotate: [0, 90]
-          }}
-          transition={{ 
-            duration: 8, 
-            repeat: Infinity,
-            ease: "easeInOut"
-          }}
-        />
-        
-        <motion.div 
-          className="absolute -bottom-10 -left-10 w-40 h-40 bg-gradient-to-tr from-white/5 to-transparent rounded-full filter blur-xl z-0"
-          animate={{ 
-            scale: [1, 1.3, 1],
-            opacity: [0.2, 0.4, 0.2],
-            rotate: [0, -90]
-          }}
-          transition={{ 
-            duration: 10, 
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: 1
-          }}
-        />
       </motion.div>
       
       {/* Stats Grid with 3D Cards */}
-      <div  className="grid grid-cols-2 md:grid-cols-2 sm:grid-cols-2 gap-4 sm:gap-6 mb-10 relative z-10 max-w-2xl mx-auto">
+      <div className="grid grid-cols-2 gap-4 sm:gap-6 mb-8 relative z-10">
         <DonutChart 
           label="Overall Rating" 
           value={calculateOverallRating()}
@@ -722,329 +692,292 @@ export default function ChessProfile() {
           index={1}
         />
       </div>
+      
       {isMobile && (
-      <div className='flex justify-center items-center h-32 w-full bg-black/50'>
-        <button className='bg-[#B8E62D] text-black px-4 py-2 rounded-md' onClick={() => setShowAllStats(!showAllStats)}>View All Stats</button>
-      </div>
+        <div className='flex justify-center items-center py-4 w-full bg-black/50 rounded-lg mb-6'>
+          <button className='bg-[#B8E62D] text-black px-4 py-2 rounded-md' onClick={() => setShowAllStats(!showAllStats)}>View All Stats</button>
+        </div>
       )}
 
       {(showAllStats || !isMobile) && (
         <>
-      <h4 className="text-lg font-medium text-white mb-5 border-b border-white/10 pb-2 z-10 relative">Game Mode Statistics</h4>
-      
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-10 relative z-10">
-        {gameModes.map((mode, index) => {
-          const modeStats = stats[mode.toLowerCase() as keyof typeof stats] as GameTypeStats | undefined;
-          if (!modeStats) return null;
+          <h4 className="text-lg font-medium text-white mb-4 border-b border-white/10 pb-2 z-10 relative">Game Mode Statistics</h4>
           
-          const totalModeGames = modeStats.record.win + modeStats.record.loss + modeStats.record.draw;
-          const winRate = totalModeGames > 0 ? Math.round((modeStats.record.win / totalModeGames) * 100) : 0;
-          
-          // Choose color based on game mode
-          const modeColor = 
-            mode === "Rapid" ? "#B8E62D" : 
-            mode === "Blitz" ? "#4287f5" : 
-            "#f59e0b";
-            
-          // Get icon based on game mode
-          // const icon = GameTypeIcons[mode as keyof typeof GameTypeIcons];
-          
-          return (
-            <motion.div 
-              key={mode}
-              onHoverStart={() => setActiveGameType(mode)}
-              className="bg-gradient-to-b from-black/60 to-black/30 p-5 rounded-xl backdrop-blur-sm border border-white/5 hover:border-[#B8E62D]/20 transition-all duration-500 overflow-hidden"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-              whileHover={{ y: -5, boxShadow: "0 10px 30px -10px rgba(184, 230, 45, 0.1)" }}
-            >
-              <div className="flex flex-col items-center mb-4">
-                <div className="flex flex-col">
-                  <div className="flex items-center gap-2">
-                    {/* <div className="w-6 h-6 flex items-center justify-center rounded-full flex-shrink-0" style={{ backgroundColor: `${modeColor}20` }}>
-                      {icon}
-                    </div> */}
-                    <h4 className="text-white font-medium">{mode}</h4>
-                  </div>
-                  <p className="text-sm text-white/60 mt-1">{modeStats.last.rating}</p>
-                </div>
-                <div className="px-2 py-1 rounded text-sm flex-shrink-0" style={{ backgroundColor: `${modeColor}20` }}>
-                  <span className="text-white font-bold">
-                    {modeStats.best.rating}
-                  </span>
-                  <span className="text-xs text-white/60 ml-1">peak</span>
-                </div>
-              </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8 relative z-10">
+            {gameModes.map((mode, index) => {
+              const modeStats = stats[mode.toLowerCase() as keyof typeof stats] as GameTypeStats | undefined;
+              if (!modeStats) return null;
               
-              <div className="flex flex-col justify-between gap-4 mb-4 overflow-hidden">
-                <div className="text-center flex-1 min-w-0">
-                  <div className="relative w-16 sm:w-20 h-16 sm:h-20 mx-auto mb-1">
-                    <svg width="100%" height="100%" viewBox="0 0 100 100" className="transform -rotate-90">
-                      <circle cx="50" cy="50" r="40" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="12" />
-                      <motion.circle
-                        cx="50"
-                        cy="50"
-                        r="40"
-                        fill="none"
-                        stroke="#B8E62D"
-                        strokeWidth="12"
-                        strokeDasharray={2 * Math.PI * 40}
-                        strokeDashoffset={2 * Math.PI * 40 * (1 - modeStats.record.win / totalModeGames)}
-                        initial={{ strokeDashoffset: 2 * Math.PI * 40 }}
-                        animate={{ strokeDashoffset: 2 * Math.PI * 40 * (1 - modeStats.record.win / totalModeGames) }}
-                        transition={{ duration: 1.5, ease: "easeOut" }}
-                        strokeLinecap="round"
-                      />
-                    </svg>
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <p className="text-lg font-bold text-[#B8E62D]">{modeStats.record.win}</p>
-                    </div>
-                  </div>
-                  <p className="text-xs text-white/70">Wins</p>
-                </div>
+              const totalModeGames = modeStats.record.win + modeStats.record.loss + modeStats.record.draw;
+              const winRate = totalModeGames > 0 ? Math.round((modeStats.record.win / totalModeGames) * 100) : 0;
+              
+              // Choose color based on game mode
+              const modeColor = 
+                mode === "Rapid" ? "#B8E62D" : 
+                mode === "Blitz" ? "#4287f5" : 
+                "#f59e0b";
                 
-                {/* <div className="text-center flex-1 min-w-0">
-                  <div className="relative w-16 sm:w-20 h-16 sm:h-20 mx-auto mb-1">
-                    <svg width="100%" height="100%" viewBox="0 0 100 100" className="transform -rotate-90">
-                      <circle cx="50" cy="50" r="40" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="12" />
-                      <motion.circle
-                        cx="50"
-                        cy="50"
-                        r="40"
-                        fill="none"
-                        stroke="#EF4444"
-                        strokeWidth="12"
-                        strokeDasharray={2 * Math.PI * 40}
-                        strokeDashoffset={2 * Math.PI * 40 * (1 - modeStats.record.loss / totalModeGames)}
-                        initial={{ strokeDashoffset: 2 * Math.PI * 40 }}
-                        animate={{ strokeDashoffset: 2 * Math.PI * 40 * (1 - modeStats.record.loss / totalModeGames) }}
-                        transition={{ duration: 1.5, ease: "easeOut" }}
-                        strokeLinecap="round"
-                      />
-                    </svg>
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <p className="text-lg font-bold text-red-400">{modeStats.record.loss}</p>
+              return (
+                <motion.div 
+                  key={mode}
+                  onHoverStart={() => setActiveGameType(mode)}
+                  className="bg-gradient-to-b from-black/60 to-black/30 p-4 rounded-xl backdrop-blur-sm border border-white/5 hover:border-[#B8E62D]/20 transition-all duration-500"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  whileHover={{ y: -5, boxShadow: "0 10px 30px -10px rgba(184, 230, 45, 0.1)" }}
+                >
+                  <div className="text-center mb-4">
+                    <h4 className="text-white font-medium text-lg mb-1">{mode}</h4>
+                    <p className="text-sm text-white/60">{modeStats.last.rating}</p>
+                    <div className="inline-block px-2 py-1 rounded text-sm mt-2" style={{ backgroundColor: `${modeColor}20` }}>
+                      <span className="text-white font-bold">
+                        {modeStats.best.rating}
+                      </span>
+                      <span className="text-xs text-white/60 ml-1">peak</span>
                     </div>
                   </div>
-                  <p className="text-xs text-white/70">Losses</p>
-                </div> */}
-              </div>
-              
-              <div className="mt-2">
-                <div className="flex justify-between mb-1">
-                  <p className="text-xs text-white/70">Win Rate</p>
-                  <p className="text-xs text-white font-medium">{winRate}%</p>
-                </div>
-                <div className="bg-black/50 rounded-full h-1.5 w-full overflow-hidden">
-                  <motion.div 
-                    className="h-full bg-[#B8E62D] rounded-full"
-                    initial={{ width: "0%" }}
-                    animate={{ width: `${winRate}%` }}
-                    transition={{ duration: 0.8, delay: 0.2 }}
-                  />
-                </div>
-              </div>
-            </motion.div>
-          );
-        })}
-      </div>
-      
-      <div className="space-y-3 relative z-10">
-        {/* Performance Graph with 3D effect */}
-        {winLossDrawData && (
-          <Card3D depth={8} className="mt-5 overflow-hidden">
-            <motion.div 
-              className="p-4 sm:p-6 bg-gradient-to-b from-soft-black/40 to-soft-black/10 rounded-xl backdrop-blur-sm border border-white/5 overflow-hidden"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: 0.2 }}
-            >
-              <div className="flex justify-between items-center mb-5">
-                <h4 className="text-lg font-medium text-white">{activeGameType} Performance</h4>
-                <div className="text-xs text-white/60 bg-[#B8E62D]/10 px-3 py-1 rounded-full">
-                  {winLossDrawData.wins + winLossDrawData.losses + winLossDrawData.draws} games
-                </div>
-              </div>
-              
-              <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8">
-                {/* Large donut chart */}
-                <div className="w-full md:w-1/2 flex justify-center overflow-hidden">
-                  <div className="relative w-40 h-40 sm:w-48 sm:h-48">
-                    <svg width="100%" height="100%" viewBox="0 0 100 100" className="transform -rotate-90">
-                      {/* Background circle */}
-                      <circle cx="50" cy="50" r="40" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="10" />
-                      
-                      {/* Win segment */}
-                      <motion.circle
-                        cx="50"
-                        cy="50"
-                        r="40"
-                        fill="none"
-                        stroke="#B8E62D"
-                        strokeWidth="10"
-                        strokeDasharray={2 * Math.PI * 40}
-                        strokeDashoffset={2 * Math.PI * 40 * (1 - winLossDrawData.winPercent / 100)}
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ duration: 0.5 }}
-                      />
-                      
-                      {/* Loss segment overlaid with stroke-dashoffset trick */}
-                      <motion.circle
-                        cx="50"
-                        cy="50"
-                        r="40"
-                        fill="none"
-                        stroke="#EF4444"
-                        strokeWidth="10"
-                        strokeDasharray={2 * Math.PI * 40}
-                        strokeDashoffset={2 * Math.PI * 40 * (1 - winLossDrawData.lossPercent / 100)}
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ duration: 0.5, delay: 0.2 }}
-                        style={{ 
-                          transformOrigin: 'center',
-                          transform: `rotate(${winLossDrawData.winPercent * 3.6}deg)`
-                        }}
-                      />
-                      
-                      {/* Draw segment */}
-                      <motion.circle
-                        cx="50"
-                        cy="50"
-                        r="40"
-                        fill="none"
-                        stroke="#FBBF24"
-                        strokeWidth="10"
-                        strokeDasharray={2 * Math.PI * 40}
-                        strokeDashoffset={2 * Math.PI * 40 * (1 - winLossDrawData.drawPercent / 100)}
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ duration: 0.5, delay: 0.4 }}
-                        style={{ 
-                          transformOrigin: 'center',
-                          transform: `rotate(${(winLossDrawData.winPercent + winLossDrawData.lossPercent) * 3.6}deg)`
-                        }}
-                      />
-                    </svg>
-                    
-                    {/* Inner circle with total games */}
-                    <div className="absolute inset-0 flex flex-col items-center justify-center rounded-full bg-soft-black/40 m-10">
-                      <motion.p 
-                        className="text-2xl font-bold text-white" 
-                        initial={{ scale: 0.8, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        transition={{ duration: 0.4, delay: 0.6 }}
-                      >
-                        {winLossDrawData.wins + winLossDrawData.losses + winLossDrawData.draws}
-                      </motion.p>
-                      <motion.p 
-                        className="text-xs text-white/60"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ duration: 0.4, delay: 0.7 }}
-                      >
-                        Total Games
-                      </motion.p>
-                    </div>
-                  </div>
-                </div>
-                
-                {/* Stats breakdown */}
-                <div className="w-full md:w-1/2 space-y-6 min-w-0">
-                  <div>
-                    <div className="flex justify-between items-center mb-2">
-                      <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 rounded-full bg-[#B8E62D] flex-shrink-0"></div>
-                        <span className="text-white">Wins</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-[#B8E62D] font-bold">{winLossDrawData.wins}</span>
-                        <span className="text-white/60">({winLossDrawData.winPercent}%)</span>
+                  
+                  <div className="text-center mb-4">
+                    <div className="relative w-16 h-16 mx-auto mb-2">
+                      <svg width="100%" height="100%" viewBox="0 0 100 100" className="transform -rotate-90">
+                        <circle cx="50" cy="50" r="35" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="8" />
+                        <motion.circle
+                          cx="50"
+                          cy="50"
+                          r="35"
+                          fill="none"
+                          stroke="#B8E62D"
+                          strokeWidth="8"
+                          strokeDasharray={2 * Math.PI * 35}
+                          strokeDashoffset={2 * Math.PI * 35 * (1 - modeStats.record.win / totalModeGames)}
+                          initial={{ strokeDashoffset: 2 * Math.PI * 35 }}
+                          animate={{ strokeDashoffset: 2 * Math.PI * 35 * (1 - modeStats.record.win / totalModeGames) }}
+                          transition={{ duration: 1.5, ease: "easeOut" }}
+                          strokeLinecap="round"
+                        />
+                      </svg>
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <p className="text-sm font-bold text-[#B8E62D]">{modeStats.record.win}</p>
                       </div>
                     </div>
-                    <div className="h-2 bg-black/30 rounded-full overflow-hidden">
+                    <p className="text-xs text-white/70">Wins</p>
+                  </div>
+                  
+                  <div className="mt-3">
+                    <div className="flex justify-between mb-1">
+                      <p className="text-xs text-white/70">Win Rate</p>
+                      <p className="text-xs text-white font-medium">{winRate}%</p>
+                    </div>
+                    <div className="bg-black/50 rounded-full h-1.5 w-full overflow-hidden">
                       <motion.div 
                         className="h-full bg-[#B8E62D] rounded-full"
-                        initial={{ width: 0 }}
-                        animate={{ width: `${winLossDrawData.winPercent}%` }}
-                        transition={{ duration: 1, ease: "easeOut" }}
+                        initial={{ width: "0%" }}
+                        animate={{ width: `${winRate}%` }}
+                        transition={{ duration: 0.8, delay: 0.2 }}
                       />
                     </div>
                   </div>
-                  
-                  <div>
-                    <div className="flex justify-between items-center mb-2">
-                      <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 rounded-full bg-[#EF4444] flex-shrink-0"></div>
-                        <span className="text-white">Losses</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-red-400 font-bold">{winLossDrawData.losses}</span>
-                        <span className="text-white/60">({winLossDrawData.lossPercent}%)</span>
-                      </div>
-                    </div>
-                    <div className="h-2 bg-black/30 rounded-full overflow-hidden">
-                      <motion.div 
-                        className="h-full bg-[#EF4444] rounded-full"
-                        initial={{ width: 0 }}
-                        animate={{ width: `${winLossDrawData.lossPercent}%` }}
-                        transition={{ duration: 1, ease: "easeOut", delay: 0.2 }}
-                      />
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <div className="flex justify-between items-center mb-2">
-                      <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 rounded-full bg-[#FBBF24] flex-shrink-0"></div>
-                        <span className="text-white">Draws</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-yellow-400 font-bold">{winLossDrawData.draws}</span>
-                        <span className="text-white/60">({winLossDrawData.drawPercent}%)</span>
-                      </div>
-                    </div>
-                    <div className="h-2 bg-black/30 rounded-full overflow-hidden">
-                      <motion.div 
-                        className="h-full bg-[#FBBF24] rounded-full"
-                        initial={{ width: 0 }}
-                        animate={{ width: `${winLossDrawData.drawPercent}%` }}
-                        transition={{ duration: 1, ease: "easeOut", delay: 0.4 }}
-                      />
+                </motion.div>
+              );
+            })}
+          </div>
+          
+          <div className="space-y-3 relative z-10">
+            {/* Performance Graph with 3D effect */}
+            {winLossDrawData && (
+              <Card3D depth={8} className="mt-5 overflow-hidden">
+                <motion.div 
+                  className="p-4 sm:p-6 bg-gradient-to-b from-soft-black/40 to-soft-black/10 rounded-xl backdrop-blur-sm border border-white/5 overflow-hidden"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4, delay: 0.2 }}
+                >
+                  <div className="flex justify-between items-center mb-5">
+                    <h4 className="text-lg font-medium text-white">{activeGameType} Performance</h4>
+                    <div className="text-xs text-white/60 bg-[#B8E62D]/10 px-3 py-1 rounded-full">
+                      {winLossDrawData.wins + winLossDrawData.losses + winLossDrawData.draws} games
                     </div>
                   </div>
                   
-                  {/* <motion.div 
-                    className="bg-black/20 p-3 rounded-lg mt-4" 
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.5, delay: 0.7 }}
-                  >
-                    <div className="flex items-center gap-2">
-                      <div className="p-1 rounded-full bg-[#B8E62D]/20 flex-shrink-0">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-[#B8E62D]" viewBox="0 0 20 20" fill="currentColor">
-                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
+                  <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8">
+                    {/* Large donut chart */}
+                    <div className="w-full md:w-1/2 flex justify-center overflow-hidden">
+                      <div className="relative w-40 h-40 sm:w-48 sm:h-48">
+                        <svg width="100%" height="100%" viewBox="0 0 100 100" className="transform -rotate-90">
+                          {/* Background circle */}
+                          <circle cx="50" cy="50" r="40" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="10" />
+                          
+                          {/* Win segment */}
+                          <motion.circle
+                            cx="50"
+                            cy="50"
+                            r="40"
+                            fill="none"
+                            stroke="#B8E62D"
+                            strokeWidth="10"
+                            strokeDasharray={2 * Math.PI * 40}
+                            strokeDashoffset={2 * Math.PI * 40 * (1 - winLossDrawData.winPercent / 100)}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ duration: 0.5 }}
+                          />
+                          
+                          {/* Loss segment overlaid with stroke-dashoffset trick */}
+                          <motion.circle
+                            cx="50"
+                            cy="50"
+                            r="40"
+                            fill="none"
+                            stroke="#EF4444"
+                            strokeWidth="10"
+                            strokeDasharray={2 * Math.PI * 40}
+                            strokeDashoffset={2 * Math.PI * 40 * (1 - winLossDrawData.lossPercent / 100)}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ duration: 0.5, delay: 0.2 }}
+                            style={{ 
+                              transformOrigin: 'center',
+                              transform: `rotate(${winLossDrawData.winPercent * 3.6}deg)`
+                            }}
+                          />
+                          
+                          {/* Draw segment */}
+                          <motion.circle
+                            cx="50"
+                            cy="50"
+                            r="40"
+                            fill="none"
+                            stroke="#FBBF24"
+                            strokeWidth="10"
+                            strokeDasharray={2 * Math.PI * 40}
+                            strokeDashoffset={2 * Math.PI * 40 * (1 - winLossDrawData.drawPercent / 100)}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ duration: 0.5, delay: 0.4 }}
+                            style={{ 
+                              transformOrigin: 'center',
+                              transform: `rotate(${(winLossDrawData.winPercent + winLossDrawData.lossPercent) * 3.6}deg)`
+                            }}
+                          />
                         </svg>
-                      </div>
-                      <div className="flex flex-col min-w-0">
-                        <span className="text-xs text-white/60">Time per move</span>
-                        <span className="text-sm text-white truncate">
-                          {Math.round(
-                            ((stats[activeGameType.toLowerCase() as keyof typeof stats] as GameTypeStats)?.record?.time_per_move || 0)
-                          )} seconds
-                        </span>
+                        
+                        {/* Inner circle with total games */}
+                        <div className="absolute inset-0 flex flex-col items-center justify-center rounded-full bg-soft-black/40 m-10">
+                          <motion.p 
+                            className="text-2xl font-bold text-white" 
+                            initial={{ scale: 0.8, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            transition={{ duration: 0.4, delay: 0.6 }}
+                          >
+                            {winLossDrawData.wins + winLossDrawData.losses + winLossDrawData.draws}
+                          </motion.p>
+                          <motion.p 
+                            className="text-xs text-white/60"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ duration: 0.4, delay: 0.7 }}
+                          >
+                            Total Games
+                          </motion.p>
+                        </div>
                       </div>
                     </div>
-                  </motion.div> */}
-                </div>
-              </div>
-            </motion.div>
-          </Card3D>
-        )}
-      </div>
-      </>
+                    
+                    {/* Stats breakdown */}
+                    <div className="w-full md:w-1/2 space-y-6 min-w-0">
+                      <div>
+                        <div className="flex justify-between items-center mb-2">
+                          <div className="flex items-center gap-2">
+                            <div className="w-3 h-3 rounded-full bg-[#B8E62D] flex-shrink-0"></div>
+                            <span className="text-white">Wins</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-[#B8E62D] font-bold">{winLossDrawData.wins}</span>
+                            <span className="text-white/60">({winLossDrawData.winPercent}%)</span>
+                          </div>
+                        </div>
+                        <div className="h-2 bg-black/30 rounded-full overflow-hidden">
+                          <motion.div 
+                            className="h-full bg-[#B8E62D] rounded-full"
+                            initial={{ width: 0 }}
+                            animate={{ width: `${winLossDrawData.winPercent}%` }}
+                            transition={{ duration: 1, ease: "easeOut" }}
+                          />
+                        </div>
+                      </div>
+                      
+                      <div>
+                        <div className="flex justify-between items-center mb-2">
+                          <div className="flex items-center gap-2">
+                            <div className="w-3 h-3 rounded-full bg-[#EF4444] flex-shrink-0"></div>
+                            <span className="text-white">Losses</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-red-400 font-bold">{winLossDrawData.losses}</span>
+                            <span className="text-white/60">({winLossDrawData.lossPercent}%)</span>
+                          </div>
+                        </div>
+                        <div className="h-2 bg-black/30 rounded-full overflow-hidden">
+                          <motion.div 
+                            className="h-full bg-[#EF4444] rounded-full"
+                            initial={{ width: 0 }}
+                            animate={{ width: `${winLossDrawData.lossPercent}%` }}
+                            transition={{ duration: 1, ease: "easeOut", delay: 0.2 }}
+                          />
+                        </div>
+                      </div>
+                      
+                      <div>
+                        <div className="flex justify-between items-center mb-2">
+                          <div className="flex items-center gap-2">
+                            <div className="w-3 h-3 rounded-full bg-[#FBBF24] flex-shrink-0"></div>
+                            <span className="text-white">Draws</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-yellow-400 font-bold">{winLossDrawData.draws}</span>
+                            <span className="text-white/60">({winLossDrawData.drawPercent}%)</span>
+                          </div>
+                        </div>
+                        <div className="h-2 bg-black/30 rounded-full overflow-hidden">
+                          <motion.div 
+                            className="h-full bg-[#FBBF24] rounded-full"
+                            initial={{ width: 0 }}
+                            animate={{ width: `${winLossDrawData.drawPercent}%` }}
+                            transition={{ duration: 1, ease: "easeOut", delay: 0.4 }}
+                          />
+                        </div>
+                      </div>
+                      
+                      {/* <motion.div 
+                        className="bg-black/20 p-3 rounded-lg mt-4" 
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ duration: 0.5, delay: 0.7 }}
+                      >
+                        <div className="flex items-center gap-2">
+                          <div className="p-1 rounded-full bg-[#B8E62D]/20 flex-shrink-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-[#B8E62D]" viewBox="0 0 20 20" fill="currentColor">
+                              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
+                            </svg>
+                          </div>
+                          <div className="flex flex-col min-w-0">
+                            <span className="text-xs text-white/60">Time per move</span>
+                            <span className="text-sm text-white truncate">
+                              {Math.round(
+                                ((stats[activeGameType.toLowerCase() as keyof typeof stats] as GameTypeStats)?.record?.time_per_move || 0)
+                              )} seconds
+                            </span>
+                          </div>
+                        </div>
+                      </motion.div> */}
+                    </div>
+                  </div>
+                </motion.div>
+              </Card3D>
+            )}
+          </div>
+        </>
       )}
     </motion.div>
   );
