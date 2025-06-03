@@ -156,14 +156,14 @@ const ExperiencePage = async () => {
     <div className="min-h-screen py-20">
       <div className="container mx-auto px-4">
         <h1 className="text-5xl md:text-7xl font-bold mb-4 text-white">
-          <span className="text-white">Experience</span>
+          <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600">Experience</span>
         </h1>
         <p className="text-soft-white/70 mb-16 text-xl max-w-2xl">My professional journey and educational background that has shaped my expertise in software development.</p>
         
         {/* Work Experience */}
         <div className="mb-24">
           <h2 className="text-3xl font-bold mb-10 text-white inline-flex items-center">
-            <span className="text-white">Work Experience</span>
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600">Work Experience</span>
             <span className="h-px w-20 bg-gradient-to-r from-[#ccff33] to-[#a3cc29] ml-6 opacity-50"></span>
           </h2>
           
