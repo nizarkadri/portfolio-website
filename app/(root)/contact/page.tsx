@@ -221,7 +221,7 @@ export default function ContactPage() {
   /** Calculate total steps based on user type */
   const getTotalSteps = (): number => {
     if (!userType) return 1; // Initial step to select user type
-    return userType === 'recruiter' ? 8 : 7; // Different steps for each user type
+    return userType === 'recruiter' ? 8 : 7; // Recruiters: 8 steps (0-7), Clients: 7 steps (0-6)
   };
   
   /** Navigate to next step */
@@ -306,7 +306,7 @@ export default function ContactPage() {
               >
                 👋
               </motion.span> 
-              <br />Who do I have the <span className="text-[#B8E62D]">pleasure</span> of meeting?
+              <br />To kick things off, could you tell me a bit about yourself?
             </h2>
             <p className="text-soft-white/70 mb-10">
               This helps me point you in the <span className="text-[#B8E62D]">right</span> direction and make our chat <span className="text-[#B8E62D]">super useful</span>! 
@@ -344,7 +344,7 @@ export default function ContactPage() {
                   </motion.span>
                 </motion.div>
                 <h3 className="text-xl font-semibold text-white mb-2">I'm a Recruiter or Hiring Manager</h3>
-                <p className="text-soft-white/70 text-sm">Looking to fill a role or discuss an <span className="text-[#B8E62D]">awesome</span> opportunity 🤝</p>
+                <p className="text-soft-white/70 text-sm">Looking to fill a role or discuss an <span className="text-[#B8E62D]">awesome</span> opportunity. 🤝</p>
               </motion.button>
               
               <motion.button
@@ -405,7 +405,7 @@ export default function ContactPage() {
                   {...register('name')}
                   type="text"
                   className="w-full p-4 bg-white/5 border border-[#B8E62D]/10 rounded-xl text-white text-xl placeholder-soft-white/50 focus:outline-none focus:ring-2 focus:ring-[#B8E62D]/30 focus:border-transparent transition-all"
-                  placeholder="e.g., Alex Stellar ✨"
+                  placeholder="e.g., Alex Stellar"
                   autoFocus
                 />
                 {clientErrors.name && (
@@ -425,29 +425,29 @@ export default function ContactPage() {
               key="step-1-recruiter"
             >
               <h2 className="text-3xl md:text-4xl font-bold mb-3 text-white">
-                <span className="text-[#B8E62D]">Perfect</span>! What <span className="text-[#B8E62D]">specific</span> role are you looking to fill? 
+                <span className="text-[#B8E62D]">Awesome</span>! And which company are you with? 
                 <motion.span
                   animate={{ 
-                    scale: [1, 1.3, 1],
-                    transition: { duration: 1.2, repeat: Infinity, ease: "easeInOut" }
+                    scale: [1, 1.2, 1],
+                    transition: { duration: 1.5, repeat: Infinity, ease: "easeInOut" }
                   }}
                   className="inline-block ml-2"
                 >
-                  🎯
+                  🏢
                 </motion.span>
               </h2>
-              <p className="text-soft-white/70 mb-10">Tell me about the <span className="text-[#B8E62D]">exciting</span> position you've got! ✨</p>
+              <p className="text-soft-white/70 mb-10">Knowing your company helps me get a <span className="text-[#B8E62D]">better</span> picture. 👍</p>
               
               <div className="space-y-2">
                 <input
-                  {...register('position')}
+                  {...register('company')}
                   type="text"
                   className="w-full p-4 bg-white/5 border border-[#B8E62D]/10 rounded-xl text-white text-xl placeholder-soft-white/50 focus:outline-none focus:ring-2 focus:ring-[#B8E62D]/30 focus:border-transparent transition-all"
-                  placeholder="e.g. Frontend Developer, Full Stack Engineer"
+                  placeholder="e.g., Innovatech Solutions"
                   autoFocus
                 />
-                {recruiterErrors.position && (
-                  <FormFieldError message={recruiterErrors.position.message} />
+                {recruiterErrors.company && (
+                  <FormFieldError message={recruiterErrors.company.message} />
                 )}
               </div>
             </motion.div>
@@ -466,7 +466,7 @@ export default function ContactPage() {
               key="step-2-client"
             >
               <h2 className="text-3xl md:text-4xl font-bold mb-3 text-white">
-                Got it, <span className="text-[#B8E62D] font-bold">{watch('name') || 'friend'}</span>! What's the <span className="text-[#B8E62D]">best</span> email to reach you at? 
+                Got it, <span className="text-[#B8E62D] font-bold">{watch('name')}</span>! What's the <span className="text-[#B8E62D]">best</span> email to reach you at? 
                 <motion.span
                   animate={{ 
                     y: [0, -5, 0],
@@ -477,7 +477,7 @@ export default function ContactPage() {
                   📧
                 </motion.span>
               </h2>
-              <p className="text-soft-white/70 mb-10">This way, I can <span className="text-[#B8E62D]">easily</span> send you updates or follow-ups 📬</p>
+              <p className="text-soft-white/70 mb-10">This way, I can <span className="text-[#B8E62D]">easily</span> send you updates or follow-ups. 📬</p>
               
               <div className="space-y-2">
                 <input
@@ -503,15 +503,26 @@ export default function ContactPage() {
               exit="exit"
               key="step-2-recruiter"
             >
-              <h2 className="text-3xl md:text-4xl font-bold mb-3 text-white">What position are you hiring for?</h2>
-              <p className="text-soft-white/70 mb-10">What role are you looking to fill?</p>
+              <h2 className="text-3xl md:text-4xl font-bold mb-3 text-white">
+                <span className="text-[#B8E62D]">Perfect</span>! What <span className="text-[#B8E62D]">specific</span> role are you looking to fill? 
+                <motion.span
+                  animate={{ 
+                    scale: [1, 1.3, 1],
+                    transition: { duration: 1.2, repeat: Infinity, ease: "easeInOut" }
+                  }}
+                  className="inline-block ml-2"
+                >
+                  🎯
+                </motion.span>
+              </h2>
+              <p className="text-soft-white/70 mb-10">Tell me about the <span className="text-[#B8E62D]">exciting</span> position you've got! ✨</p>
               
               <div className="space-y-2">
                 <input
                   {...register('position')}
                   type="text"
                   className="w-full p-4 bg-white/5 border border-[#B8E62D]/10 rounded-xl text-white text-xl placeholder-soft-white/50 focus:outline-none focus:ring-2 focus:ring-[#B8E62D]/30 focus:border-transparent transition-all"
-                  placeholder="e.g. Frontend Developer, Full Stack Engineer"
+                  placeholder="e.g. Frontend Wizard, Full Stack Ninja"
                   autoFocus
                 />
                 {recruiterErrors.position && (
@@ -546,7 +557,7 @@ export default function ContactPage() {
                 </motion.span>
               </h2>
               <p className="text-soft-white/70 mb-10">
-                Let's dive into the type of services you're after 
+                Let's dive into the type of services you're after. 
                 <motion.span
                   animate={{ 
                     scale: [1, 1.2, 1],
@@ -655,15 +666,26 @@ export default function ContactPage() {
               exit="exit"
               key="step-3-recruiter"
             >
-              <h2 className="text-3xl md:text-4xl font-bold mb-3 text-white">What's your email address?</h2>
-              <p className="text-soft-white/70 mb-10">I'll use this to contact you about the position.</p>
+              <h2 className="text-3xl md:text-4xl font-bold mb-3 text-white">
+                <span className="text-[#B8E62D]">Super</span>. And what's your work email, please? 
+                <motion.span
+                  animate={{ 
+                    y: [0, -5, 0],
+                    transition: { duration: 1, repeat: Infinity, ease: "easeInOut" }
+                  }}
+                  className="inline-block ml-2"
+                >
+                  📨
+                </motion.span>
+              </h2>
+              <p className="text-soft-white/70 mb-10">So I can get in touch about this <span className="text-[#B8E62D]">cool</span> opportunity. 💬</p>
               
               <div className="space-y-2">
                 <input
                   {...register('email')}
                   type="email"
                   className="w-full p-4 bg-white/5 border border-[#B8E62D]/10 rounded-xl text-white text-xl placeholder-soft-white/50 focus:outline-none focus:ring-2 focus:ring-[#B8E62D]/30 focus:border-transparent transition-all"
-                  placeholder="Your email address"
+                  placeholder="e.g., recruiter@company.com"
                   autoFocus
                 />
                 {recruiterErrors.email && (
@@ -685,15 +707,26 @@ export default function ContactPage() {
               exit="exit"
               key="step-4-client"
             >
-              <h2 className="text-3xl md:text-4xl font-bold mb-3 text-white">What's your budget range?</h2>
-              <p className="text-soft-white/70 mb-10">This helps me understand the project scope.</p>
+              <h2 className="text-3xl md:text-4xl font-bold mb-3 text-white">
+                <span className="text-[#B8E62D]">Nearly</span> there! Do you have a budget in mind for this project? 
+                <motion.span
+                  animate={{ 
+                    scale: [1, 1.1, 1],
+                    transition: { duration: 1.5, repeat: Infinity, ease: "easeInOut" }
+                  }}
+                  className="inline-block ml-2"
+                >
+                  💰
+                </motion.span>
+              </h2>
+              <p className="text-soft-white/70 mb-10">This helps me tailor the <span className="text-[#B8E62D]">best</span> solutions for you. (No worries if it's a ballpark figure for now! 😉)</p>
               
               <div className="space-y-2">
                 <input
                   {...register('budget')}
                   type="text"
                   className="w-full p-4 bg-white/5 border border-[#B8E62D]/10 rounded-xl text-white text-xl placeholder-soft-white/50 focus:outline-none focus:ring-2 focus:ring-[#B8E62D]/30 focus:border-transparent transition-all"
-                  placeholder="e.g. $5,000 - $10,000 (optional)"
+                  placeholder="e.g., ~$5k - $10k, or 'Figuring it out!' (Optional 👍)"
                   autoFocus
                   onChange={handleBudgetChange}
                   value={watch('budget') || ''}
@@ -714,15 +747,26 @@ export default function ContactPage() {
               exit="exit"
               key="step-4-recruiter"
             >
-              <h2 className="text-3xl md:text-4xl font-bold mb-3 text-white">Describe the job requirements</h2>
-              <p className="text-soft-white/70 mb-10">What are the key responsibilities and requirements?</p>
+              <h2 className="text-3xl md:text-4xl font-bold mb-3 text-white">
+                Let's talk about the role! What are the <span className="text-[#B8E62D]">key</span> details? 
+                <motion.span
+                  animate={{ 
+                    scale: [1, 1.2, 1],
+                    transition: { duration: 1.5, repeat: Infinity, ease: "easeInOut" }
+                  }}
+                  className="inline-block ml-2"
+                >
+                  📝
+                </motion.span>
+              </h2>
+              <p className="text-soft-white/70 mb-10">A brief rundown of responsibilities and must-have skills would be <span className="text-[#B8E62D]">ace</span>! 🌟</p>
               
               <div className="space-y-2">
                 <textarea
                   {...register('jobDescription')}
                   rows={5}
                   className="w-full p-4 bg-white/5 border border-[#B8E62D]/10 rounded-xl text-white text-xl placeholder-soft-white/50 focus:outline-none focus:ring-2 focus:ring-[#B8E62D]/30 focus:border-transparent transition-all resize-none"
-                  placeholder="Please provide a brief job description"
+                  placeholder="e.g., Key skills, main tasks, cool perks..."
                   autoFocus
                 />
                 {recruiterErrors.jobDescription && (
@@ -744,8 +788,19 @@ export default function ContactPage() {
               exit="exit"
               key="step-5-client"
             >
-              <h2 className="text-3xl md:text-4xl font-bold mb-3 text-white">What's your timeline?</h2>
-              <p className="text-soft-white/70 mb-10">When are you looking to complete this project?</p>
+              <h2 className="text-3xl md:text-4xl font-bold mb-3 text-white">
+                And what's your <span className="text-[#B8E62D]">ideal</span> timeframe for bringing this project to life? 
+                <motion.span
+                  animate={{ 
+                    rotate: [0, 10, -10, 0],
+                    transition: { duration: 2, repeat: Infinity, ease: "easeInOut" }
+                  }}
+                  className="inline-block ml-2"
+                >
+                  ⏳
+                </motion.span>
+              </h2>
+              <p className="text-soft-white/70 mb-10">When are you hoping to <span className="text-[#B8E62D]">launch</span> or get started? 🗓️</p>
               
               <div className="space-y-2">
                 <div className="flex items-center justify-center space-x-4">
@@ -816,8 +871,19 @@ export default function ContactPage() {
               exit="exit"
               key="step-5-recruiter"
             >
-              <h2 className="text-3xl md:text-4xl font-bold mb-3 text-white">What type of employment?</h2>
-              <p className="text-soft-white/70 mb-10">Select the employment type for this position.</p>
+              <h2 className="text-3xl md:text-4xl font-bold mb-3 text-white">
+                What kind of <span className="text-[#B8E62D]">employment</span> arrangement is it? 
+                <motion.span
+                  animate={{ 
+                    rotate: [0, 10, -10, 0],
+                    transition: { duration: 2, repeat: Infinity, ease: "easeInOut" }
+                  }}
+                  className="inline-block ml-2"
+                >
+                  💼
+                </motion.span>
+              </h2>
+              <p className="text-soft-white/70 mb-10">Is this a <span className="text-[#B8E62D]">full-time</span> gig, part-time, contract, or freelance adventure? 🗺️</p>
               
               <div className="space-y-4">
                 {['Full-time', 'Part-time', 'Contract', 'Freelance'].map((type) => (
@@ -866,15 +932,26 @@ export default function ContactPage() {
               exit="exit"
               key="step-6-client"
             >
-              <h2 className="text-3xl md:text-4xl font-bold mb-3 text-white">Any additional details?</h2>
-              <p className="text-soft-white/70 mb-10">Share any other information you'd like me to know.</p>
+              <h2 className="text-3xl md:text-4xl font-bold mb-3 text-white">
+                <span className="text-[#B8E62D]">Almost</span> done! 🎁 Anything else you'd like to share about your project? 
+                <motion.span
+                  animate={{ 
+                    scale: [1, 1.1, 1],
+                    transition: { duration: 1.5, repeat: Infinity, ease: "easeInOut" }
+                  }}
+                  className="inline-block ml-2"
+                >
+                  💬
+                </motion.span>
+              </h2>
+              <p className="text-soft-white/70 mb-10">Feel free to add any <span className="text-[#B8E62D]">extra</span> thoughts, ideas, or links here! 👇</p>
               
               <div className="space-y-2">
                 <textarea
                   {...register('message')}
                   rows={6}
                   className="w-full p-4 bg-white/5 border border-[#B8E62D]/10 rounded-xl text-white text-xl placeholder-soft-white/50 focus:outline-none focus:ring-2 focus:ring-[#B8E62D]/30 focus:border-transparent transition-all resize-none"
-                  placeholder="Your message..."
+                  placeholder="e.g., Specific features, design inspiration, secret sauce... 😉"
                   autoFocus
                 />
                 {clientErrors.message && (
@@ -893,8 +970,19 @@ export default function ContactPage() {
               exit="exit"
               key="step-6-recruiter"
             >
-              <h2 className="text-3xl md:text-4xl font-bold mb-3 text-white">Where is the job located?</h2>
-              <p className="text-soft-white/70 mb-10">Specify the work location arrangement.</p>
+              <h2 className="text-3xl md:text-4xl font-bold mb-3 text-white">
+                Where in the world (or web!) is this role based? 
+                <motion.span
+                  animate={{ 
+                    scale: [1, 1.1, 1],
+                    transition: { duration: 1.8, repeat: Infinity, ease: "easeInOut" }
+                  }}
+                  className="inline-block ml-2"
+                >
+                  🌍💻
+                </motion.span>
+              </h2>
+              <p className="text-soft-white/70 mb-10">Is it fully <span className="text-[#B8E62D]">remote</span>, on-site, or a bit of both (hybrid)?</p>
               
               <div className="space-y-4">
                 {['Remote', 'On-site', 'Hybrid'].map((type) => (
@@ -933,7 +1021,7 @@ export default function ContactPage() {
                       <input
                         {...register('locationDetails')}
                         type="text"
-                        placeholder="Enter location (city, country)"
+                        placeholder="e.g., Remote (Global) / Austin, TX"
                         className="w-full p-4 bg-white/5 border border-[#B8E62D]/10 rounded-xl text-white text-lg placeholder-soft-white/50 focus:outline-none focus:ring-2 focus:ring-[#B8E62D]/30 focus:border-transparent transition-all"
                       />
                     </motion.div>
@@ -948,6 +1036,7 @@ export default function ContactPage() {
         }
         
       case 7:
+        // Only recruiters reach step 7
         return (
           <motion.div 
             className="max-w-lg w-full mx-auto"
@@ -957,15 +1046,26 @@ export default function ContactPage() {
             exit="exit"
             key="step-7-recruiter"
           >
-            <h2 className="text-3xl md:text-4xl font-bold mb-3 text-white">How should we schedule an interview?</h2>
-            <p className="text-soft-white/70 mb-10">Let me know your availability for an interview.</p>
+            <h2 className="text-3xl md:text-4xl font-bold mb-3 text-white">
+              <span className="text-[#B8E62D]">Fantastic</span>! How shall we set up a time to chat further? 
+              <motion.span
+                animate={{ 
+                  rotate: [0, 15, -15, 0],
+                  transition: { duration: 2, repeat: Infinity, ease: "easeInOut" }
+                }}
+                className="inline-block ml-2"
+              >
+                🗓️
+              </motion.span>
+            </h2>
+            <p className="text-soft-white/70 mb-10">Pop in your Calendly, <span className="text-[#B8E62D]">preferred</span> times, or how you'd like to coordinate. Looking forward to it! ✨</p>
             
             <div className="space-y-2">
               <textarea
                 {...register('interview')}
                 rows={4}
                 className="w-full p-4 bg-white/5 border border-[#B8E62D]/10 rounded-xl text-white text-xl placeholder-soft-white/50 focus:outline-none focus:ring-2 focus:ring-[#B8E62D]/30 focus:border-transparent transition-all resize-none"
-                placeholder="Provide interview availability or preferred method to schedule"
+                placeholder='e.g., My Calendly: [link], or "Free next Tues/Thurs afternoon"'
                 autoFocus
               />
               {recruiterErrors.interview && (
@@ -974,12 +1074,12 @@ export default function ContactPage() {
             </div>
             
             <div className="mt-8">
-              <h3 className="text-xl font-bold text-white mb-3">Additional notes or message</h3>
+              <h3 className="text-xl font-bold text-white mb-3">Anything else you'd like to add? ✍️</h3>
               <textarea
                 {...register('message')}
                 rows={4}
                 className="w-full p-4 bg-white/5 border border-[#B8E62D]/10 rounded-xl text-white text-lg placeholder-soft-white/50 focus:outline-none focus:ring-2 focus:ring-[#B8E62D]/30 focus:border-transparent transition-all resize-none"
-                placeholder="Any additional information you'd like to share..."
+                placeholder="e.g., Salary expectations (optional), team culture insights..."
               />
               {recruiterErrors.message && (
                 <FormFieldError message={recruiterErrors.message.message} />
