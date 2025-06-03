@@ -25,6 +25,11 @@
   }
 }
 
+/* Smooth page transitions */
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   color: rgb(var(--foreground-rgb));
   background: linear-gradient(
@@ -35,6 +40,20 @@ body {
     rgb(var(--background-start-rgb));
   @apply antialiased;
   font-feature-settings: "ss01", "ss02", "cv01", "cv02";
+  overflow-x: hidden;
+}
+
+/* Page transition optimizations */
+.page-transition {
+  will-change: transform, opacity, filter;
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+}
+
+/* Prevent layout shift during transitions */
+main {
+  min-height: 100vh;
+  position: relative;
 }
 
 @layer base {
