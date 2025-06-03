@@ -11,7 +11,7 @@ interface ParallaxImageProps {
 }
 
 export default function ParallaxImage({ image, isMobile, children }: ParallaxImageProps) {
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ['start start', 'end start'],
@@ -19,12 +19,12 @@ export default function ParallaxImage({ image, isMobile, children }: ParallaxIma
 
   /* create motion values once, outside JSX */
   const y          = useTransform(scrollYProgress, [0, 1], ['0%', '30%']);
-  const scale      = useTransform(scrollYProgress, [0, 1], ['1', '1.1']);
-  const opacityImg = useTransform(scrollYProgress, [0, 1], ['1', '0.4']);
+  const scale      = useTransform(scrollYProgress, [0, 1], [1, 1.1]);
+  const opacityImg = useTransform(scrollYProgress, [0, 1], [1, 0.4]);
 
   if (isMobile) {
     return (
-      <div ref={ref} className="relative h-screen w-full overflow-hidden">
+      <div ref={ref} className="relative h-screen w-full overflow-hidden" style={{ position: 'relative' }}>
         {/* Background Image */}
         <motion.div 
           className="absolute inset-0 -z-10"
@@ -49,7 +49,7 @@ export default function ParallaxImage({ image, isMobile, children }: ParallaxIma
 
   /* Desktop / tablet version */
   return (
-    <div ref={ref} className="relative h-screen w-full overflow-hidden">
+    <div ref={ref} className="relative h-screen w-full overflow-hidden" style={{ position: 'relative' }}>
       {/* Background Image - Full Width */}
       <motion.div
         className="absolute inset-0 -z-10"
