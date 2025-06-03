@@ -53,19 +53,20 @@ const Home = () => {
   // }, []);
 
   return (
-    <div>
-      {/* Hero Section inspired by NeoCultural Couture */}
+    <div className="page-transition">
       
-      <Hero />
+        {/* Hero Section */}
+        <Hero />
 
-      {/* Skills Section - Inspired by uxdesignerstockholm.se */}
-      <Skills />
+        {/* Skills Section */}
+        <Skills />
 
-      {/* Experience Preview Section */}
-      <Experience />
+        {/* Experience Preview Section */}
+        <Experience />
+        
+        {/* Projects Preview Section */}
+        <Projects />
       
-      {/* Projects Preview Section */}
-      <Projects />
     </div>
   );
 };
