@@ -53,9 +53,9 @@ export const getSkillStyle = (skill: string): SkillStyle => {
   if (majorSkills.includes(skill)) {
     return { fontSize: '2.2rem', fontWeight: 700 };
   } else if (mediumSkills.includes(skill)) {
-    return { fontSize: '1.5rem', fontWeight: 600 };
+    return { fontSize: '1.5rem', fontWeight: 700 };
   } else {
-    return { fontSize: '1rem', fontWeight: 400 };
+    return { fontSize: '1rem', fontWeight: 700 };
   }
 };
 

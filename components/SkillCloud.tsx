@@ -51,7 +51,7 @@ const MobileSkillCloud: React.FC<{ skills: string[] }> = ({ skills }) => {
 
     // Rotate skills every 5 seconds (increased for smoother experience)
     const interval = setInterval(() => {
-      setIsTransitioning(true);
+      // setIsTransitioning(true);
       
       // Small delay before changing skills to allow exit animation
       setTimeout(() => {
