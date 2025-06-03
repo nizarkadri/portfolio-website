@@ -709,3 +709,13 @@ html.lenis, html.lenis body {
 .lenis.lenis-scrolling iframe {
   pointer-events: none;
 }
+
+/* Custom styles for webkit text stroke to fix Framer Motion compatibility */
+.hero-title-stroke {
+  -webkit-text-stroke: 2px rgba(184, 230, 45, 0.3);
+}
+
+/* Transform style preserve-3d for 3D animations */
+.preserve-3d {
+  transform-style: preserve-3d;
+}
