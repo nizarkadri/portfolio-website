@@ -7,10 +7,10 @@ const Experience = () => {
     return (
         <section className="relative pt-24 pb-26 md:pb-36">
           <motion.h2 
-            className="huge-text absolute top-6 md:-top-16 left-[7%] md:left-0 md:translate-x-0 opacity-80 text-[#B8E62D]/90 font-bold select-none"
+            className="huge-text absolute top-6 md:-top-16 left-[7%] md:left-[20%] md:translate-x-0 opacity-80 text-[#B8E62D]/90 font-bold select-none"
             initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 0.8, x: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
+            whileInView={{ opacity: 0.8, x: 0 }}
+            transition={{ duration: 2, ease: "easeOut" }}
           >
             EXPERIENCE
           </motion.h2>
