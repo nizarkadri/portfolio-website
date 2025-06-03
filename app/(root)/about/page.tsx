@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { motion, useScroll, useTransform, useInView, Variants } from 'framer-motion';
 import dynamic from 'next/dynamic';
 import ParallaxImage from '../../../components/ParallaxImage';  
@@ -48,6 +48,11 @@ const itemVariants: Variants = {
 };
 
 const floatingVariants: Variants = {
+  initial: {
+    y: 0,
+    rotate: 0,
+    opacity: 1
+  },
   animate: {
     y: [-10, 10, -10],
     rotate: [-1, 1, -1],
@@ -62,13 +67,11 @@ const floatingVariants: Variants = {
 const profileCardVariants: Variants = {
   hidden: { 
     opacity: 0, 
-    y: 50,
-    rotateX: -15
+    y: 50
   },
   visible: {
     opacity: 1,
     y: 0,
-    rotateX: 0,
     transition: {
       duration: 0.8,
       ease: [0.25, 0.46, 0.45, 0.94]
@@ -76,7 +79,6 @@ const profileCardVariants: Variants = {
   },
   hover: {
     y: -10,
-    rotateX: 5,
     scale: 1.02,
     transition: {
       duration: 0.3,
@@ -148,17 +150,15 @@ const AboutPage: React.FC = () => {
           >
             <div className="text-center px-4">
               <motion.h1 
-                className="text-6xl md:text-8xl lg:text-9xl font-black text-white mb-4 tracking-tight"
-                initial={{ opacity: 0, y: 50, rotateX: -20 }}
-                animate={{ opacity: 1, y: 0, rotateX: 0 }}
+                className="text-6xl md:text-8xl lg:text-9xl font-black text-white mb-4 tracking-tight hero-title-stroke"
+                initial={{ opacity: 0, y: 50 }}
+                animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
                 style={{
                   textShadow: '0 0 30px rgba(0,0,0,0.8), 0 0 60px rgba(0,0,0,0.6)',
-                  WebkitTextStroke: '2px rgba(184, 230, 45, 0.3)',
                 }}
                 whileHover={{ 
                   scale: 1.05,
-                  textShadow: '0 0 40px rgba(184, 230, 45, 0.4), 0 0 80px rgba(184, 230, 45, 0.2)',
                   transition: { duration: 0.3 }
                 }}
               >
@@ -177,8 +177,6 @@ const AboutPage: React.FC = () => {
                   }}
                   whileHover={{ 
                     scale: 1.05,
-                    rotate: 1,
-                    textShadow: '0 0 30px rgba(184, 230, 45, 0.7), 0 0 60px rgba(184, 230, 45, 0.4)',
                     transition: { duration: 0.3 }
                   }}
                 >
@@ -336,13 +334,14 @@ const AboutPage: React.FC = () => {
               variants={containerVariants}
             >
               <motion.div
+                className="preserve-3d"
                 variants={profileCardVariants}
                 whileHover="hover"
                 whileTap={{ scale: 0.98 }}
-                style={{ transformStyle: "preserve-3d" }}
               >
                 <motion.div
                   variants={floatingVariants}
+                  initial="initial"
                   animate="animate"
                 >
                   <ChessProfile />
@@ -350,13 +349,14 @@ const AboutPage: React.FC = () => {
               </motion.div>
               
               <motion.div
+                className="preserve-3d"
                 variants={profileCardVariants}
                 whileHover="hover"
                 whileTap={{ scale: 0.98 }}
-                style={{ transformStyle: "preserve-3d" }}
               >
                 <motion.div
                   variants={floatingVariants}
+                  initial="initial"
                   animate="animate"
                   transition={{ delay: 2 }}
                 >
@@ -365,14 +365,14 @@ const AboutPage: React.FC = () => {
               </motion.div>
               
               <motion.div
+                className="md:col-span-2 lg:col-span-1 preserve-3d"
                 variants={profileCardVariants}
                 whileHover="hover"
                 whileTap={{ scale: 0.98 }}
-                className="md:col-span-2 lg:col-span-1"
-                style={{ transformStyle: "preserve-3d" }}
               >
                 <motion.div
                   variants={floatingVariants}
+                  initial="initial"
                   animate="animate"
                   transition={{ delay: 4 }}
                 >
