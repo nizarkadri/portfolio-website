@@ -208,15 +208,16 @@ const ResumeRequestModal = ({ isOpen, onClose }: ResumeRequestModalProps) => {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            className="fixed inset-0 z-[100] flex items-center justify-center p-4"
+            className="fixed inset-0 z-[9999] flex items-center justify-center p-4"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
+            style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}
           >
             {/* Backdrop */}
             <motion.div
-              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+              className="absolute inset-0 bg-black/80 backdrop-blur-sm"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -225,7 +226,7 @@ const ResumeRequestModal = ({ isOpen, onClose }: ResumeRequestModalProps) => {
             
             {/* Modal Content */}
             <motion.div
-              className="relative w-full max-w-md bg-[#1a1a1a]/90 backdrop-blur-lg border border-[#B8E62D]/20 rounded-2xl p-8 shadow-2xl"
+              className="relative w-full max-w-md bg-[#1a1a1a]/95 backdrop-blur-lg border border-[#B8E62D]/20 rounded-2xl p-8 shadow-2xl"
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
@@ -262,23 +263,6 @@ const ResumeRequestModal = ({ isOpen, onClose }: ResumeRequestModalProps) => {
                   <p className="text-white/70 text-xs">
                     Your request has been received. You will receive my resume at the provided email address shortly.
                   </p>
-                  {/* Keep original download/copy buttons for future resume generation feature */}
-                  {/*
-                  <div className="flex gap-2">
-                    <button
-                      onClick={handleDownload}
-                      className="flex-1 px-3 py-2 bg-[#B8E62D] text-black text-xs font-medium rounded hover:bg-[#a3cc29] transition-colors"
-                    >
-                      Download .tex
-                    </button>
-                    <button
-                      onClick={handleCopy}
-                      className="flex-1 px-3 py-2 bg-transparent border border-[#B8E62D] text-[#B8E62D] text-xs font-medium rounded hover:bg-[#B8E62D]/10 transition-colors"
-                    >
-                      Copy LaTeX
-                    </button>
-                  </div>
-                  */}
                 </motion.div>
               )}
 
