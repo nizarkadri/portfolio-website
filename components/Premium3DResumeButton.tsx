@@ -1,8 +1,8 @@
 'use client'
 
-import { motion, TargetAndTransition, Transition as FMTransition } from 'framer-motion'; // Import specific types if needed for clarity
+import { motion, Transition as FMTransition } from 'framer-motion'; // Import specific types if needed for clarity
 import React from 'react'; // Import React for CSSProperties
-
+import { useIsMobile } from '../app/hooks/useMobile';
 // Define a more specific type for style objects if complex, though React.CSSProperties usually suffices
 interface ExtendedCSSProperties extends React.CSSProperties {
   WebkitBackgroundClip?: string; // Ensure non-standard props are known
@@ -16,7 +16,7 @@ interface Premium3DResumeButtonProps {
 const Premium3DResumeButton = ({ onClick }: Premium3DResumeButtonProps) => {
   // Color variables for easy customization
   const primaryRgb: string = "0, 0, 0"; // Base for black/dark backgrounds
-  const primaryHex: string = "#000000";
+  
 
   const accentGreenRgb: string = "184, 230, 45"; // The prominent green color (original green)
   const accentGreenHex: string = "#B8E62D";
@@ -64,7 +64,7 @@ const Premium3DResumeButton = ({ onClick }: Premium3DResumeButtonProps) => {
 
   return (
     <motion.div
-      className="relative group cursor-pointer w-[60%] mx-auto " // User's class
+      className="relative group cursor-pointer md:w-[60%] mx-auto " // User's class
       initial={{ opacity: 0, y: 90, rotateX: -25, scale: 0.8 }}
       animate={{ opacity: 1, y: 0, rotateX: 0, scale: 1 }}
       transition={rootTransition}
