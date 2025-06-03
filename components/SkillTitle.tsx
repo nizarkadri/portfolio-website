@@ -11,7 +11,7 @@ const SkillTitle = () => {
       <motion.div
         initial="initial"
         whileInView="animate"
-        viewport={{ once: true, margin: "-100px" }}
+        viewport={{ once: false, margin: "-100px" }}
         className="relative"
       >
         <motion.h2 
