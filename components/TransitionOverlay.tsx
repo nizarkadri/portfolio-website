@@ -25,7 +25,7 @@ const TransitionOverlay: React.FC = () => {
       // Clear the exiting route after transition completes
       const timer = setTimeout(() => {
         setExitingRoute(null);
-      }, 2500); // Much longer to match extended transition
+      }, 2800); // Increased to match new timing
       
       return () => clearTimeout(timer);
     }
@@ -63,51 +63,58 @@ const TransitionOverlay: React.FC = () => {
 
   return (
     <AnimatePresence mode="wait">
+      {/* Combined overlay and route name container */}
       <motion.div
         key={`transition-${exitingRoute}-to-${pathname}`}
         className="fixed inset-0 z-[9999] pointer-events-none"
         initial={{ opacity: 1 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        transition={{ duration: 3.5, ease: "easeInOut" }}
+        transition={{ duration: 2.8, ease: "easeInOut" }}
       >
-        {/* Main colored overlay */}
+        {/* Main overlay with route name - single animated element */}
         <motion.div
-          className="absolute inset-0"
+          className="absolute inset-0 flex items-center justify-center"
           style={{
             background: `linear-gradient(135deg, ${routeInfo.color}, ${routeInfo.color}dd)`
           }}
-          initial={{ clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0 100%)' }}
-          animate={{ clipPath: 'polygon(0 0, 0 0, 0 100%, 0 100%)' }}
-          transition={{
-            duration: 2.5,
-            ease: [0.22, 1, 0.36, 1],
-            delay: 1.0
+          initial={{ 
+            clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0 100%)',
+            opacity: 1 
           }}
-        />
-
-        {/* Route name display */}
-        <motion.div
-          className="absolute inset-0 flex items-center justify-center"
-          initial={{ opacity: 1, scale: 1, y: 0 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.8, y: -20 }}
+          animate={{ 
+            clipPath: 'polygon(0 0, 0 0, 0 100%, 0 100%)',
+            opacity: 1 
+          }}
+          exit={{ 
+            clipPath: 'polygon(0 0, 0 0, 0 100%, 0 100%)',
+            opacity: 0 
+          }}
           transition={{
-            duration: 0.8,
-            delay: 0,
-            ease: [0.22, 1, 0.36, 1]
+            duration: 2.8,
+            ease: [0.22, 1, 0.36, 1],
+            delay: 1.2
           }}
         >
+          {/* Route name inside the overlay */}
           <motion.h1 
             className="text-6xl md:text-8xl font-black text-black tracking-tighter"
-            initial={{ letterSpacing: '0.2em', scale: 0.8, opacity: 0 }}
-            animate={{ letterSpacing: '0.05em', scale: 1, opacity: 1 }}
-            exit={{ opacity: 0, scale: 0.5, y: -30 }}
+            initial={{ 
+              letterSpacing: '0.3em', 
+              scale: 0.7, 
+              opacity: 0,
+              y: 30
+            }}
+            animate={{ 
+              letterSpacing: ['0.3em', '0.05em', '0.05em', '0.05em'],
+              scale: [0.7, 1, 1, 1],
+              opacity: [0, 1, 1, 0],
+              y: [30, 0, 0, -20]
+            }}
             transition={{ 
-              duration: 1, 
-              delay: 0.2, 
-              ease: "easeOut",
-              exit: { duration: 0.6, delay: 0, ease: "easeIn" }
+              duration: 2.8,
+              ease: [0.22, 1, 0.36, 1],
+              times: [0, 0.3, 0.7, 1]
             }}
           >
             {routeInfo.name}
@@ -135,7 +142,7 @@ const TransitionOverlay: React.FC = () => {
                 }}
                 transition={{
                   duration: 2.8,
-                  delay: 0.3 + i * 0.15,
+                  delay: 0.2 + i * 0.12,
                   ease: "easeInOut",
                   times: [0, 0.3, 0.7, 1]
                 }}
@@ -149,9 +156,10 @@ const TransitionOverlay: React.FC = () => {
           className="absolute inset-0 bg-black/20"
           initial={{ x: '100%', skewX: 0 }}
           animate={{ x: '-100%', skewX: 15 }}
+          exit={{ x: '-100%', skewX: 15 }}
           transition={{
-            duration: 1.5,
-            delay: 1.8,
+            duration: 1.2,
+            delay: 1.4,
             ease: [0.83, 0, 0.17, 1]
           }}
         />
@@ -162,11 +170,12 @@ const TransitionOverlay: React.FC = () => {
           style={{ backgroundColor: routeInfo.color }}
           initial={{ scaleX: 0, originX: 0 }}
           animate={{ scaleX: [0, 1, 1, 0] }}
+          exit={{ scaleX: 0, opacity: 0 }}
           transition={{
-            duration: 2.0,
+            duration: 1.8,
             delay: 0.2,
             ease: [0.22, 1, 0.36, 1],
-            times: [0, 0.4, 0.8, 1]
+            times: [0, 0.3, 0.6, 1]
           }}
         />
 
@@ -181,8 +190,9 @@ const TransitionOverlay: React.FC = () => {
             opacity: [0, 0.6, 0.6, 0],
             scale: [0.5, 1.2, 1.2, 1.5]
           }}
+          exit={{ opacity: 0, scale: 1.5 }}
           transition={{
-            duration: 3.0,
+            duration: 2.8,
             delay: 0.1,
             ease: "easeInOut",
             times: [0, 0.3, 0.7, 1]
