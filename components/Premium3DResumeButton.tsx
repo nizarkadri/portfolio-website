@@ -2,7 +2,7 @@
 
 import { motion, Transition as FMTransition } from 'framer-motion'; // Import specific types if needed for clarity
 import React from 'react'; // Import React for CSSProperties
-import { useIsMobile } from '../app/hooks/useMobile';
+
 // Define a more specific type for style objects if complex, though React.CSSProperties usually suffices
 interface ExtendedCSSProperties extends React.CSSProperties {
   WebkitBackgroundClip?: string; // Ensure non-standard props are known
