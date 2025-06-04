@@ -22,14 +22,14 @@ const PageTransition: React.FC<PageTransitionProps> = ({ children }) => {
   };
 
   // Get color for each route
-  const getRouteColor = (path: string) => {
-    if (path === '/') return '#B8E62D'; // Lime green for home
-    if (path.includes('/projects')) return '#8fba1f'; // Darker lime for projects
-    if (path.includes('/experience')) return '#a3cc29'; // Medium lime for experience
-    if (path.includes('/about')) return '#9dd127'; // Bright lime for about
-    if (path.includes('/contact')) return '#7aa61c'; // Deep lime for contact
-    return '#B8E62D'; // Default lime
-  };
+  // const getRouteColor = (path: string) => {
+  //   if (path === '/') return '#B8E62D'; // Lime green for home
+  //   if (path.includes('/projects')) return '#8fba1f'; // Darker lime for projects
+  //   if (path.includes('/experience')) return '#a3cc29'; // Medium lime for experience
+  //   if (path.includes('/about')) return '#9dd127'; // Bright lime for about
+  //   if (path.includes('/contact')) return '#7aa61c'; // Deep lime for contact
+  //   return '#B8E62D'; // Default lime
+  // };
 
   const transitionVariants = {
     fade: {
@@ -65,43 +65,43 @@ const PageTransition: React.FC<PageTransitionProps> = ({ children }) => {
   };
 
   // Overlay transition variants
-  const overlayVariants = {
-    fade: {
-      initial: { opacity: 0, scale: 1.1 },
-      animate: { opacity: 0.15, scale: 1 },
-      exit: { opacity: 0, scale: 0.9 }
-    },
-    fadeUp: {
-      initial: { opacity: 0, y: '100%' },
-      animate: { opacity: 0.2, y: '0%' },
-      exit: { opacity: 0, y: '-100%' }
-    },
-    slideLeft: {
-      initial: { opacity: 0, x: '100%', skewX: 15 },
-      animate: { opacity: 0.15, x: '0%', skewX: 0 },
-      exit: { opacity: 0, x: '-100%', skewX: -15 }
-    },
-    slideRight: {
-      initial: { opacity: 0, x: '-100%', skewX: -15 },
-      animate: { opacity: 0.15, x: '0%', skewX: 0 },
-      exit: { opacity: 0, x: '100%', skewX: 15 }
-    },
-    scale: {
-      initial: { opacity: 0, scale: 0, rotate: -180 },
-      animate: { opacity: 0.1, scale: 1, rotate: 0 },
-      exit: { opacity: 0, scale: 2, rotate: 180 }
-    },
-    curtain: {
-      initial: { opacity: 0, clipPath: 'polygon(0 0, 0 0, 0 100%, 0% 100%)' },
-      animate: { opacity: 0.2, clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0% 100%)' },
-      exit: { opacity: 0, clipPath: 'polygon(100% 0, 100% 0, 100% 100%, 100% 100%)' }
-    }
-  };
+  // const overlayVariants = {
+  //   fade: {
+  //     initial: { opacity: 0, scale: 1.1 },
+  //     animate: { opacity: 0.15, scale: 1 },
+  //     exit: { opacity: 0, scale: 0.9 }
+  //   },
+  //   fadeUp: {
+  //     initial: { opacity: 0, y: '100%' },
+  //     animate: { opacity: 0.2, y: '0%' },
+  //     exit: { opacity: 0, y: '-100%' }
+  //   },
+  //   slideLeft: {
+  //     initial: { opacity: 0, x: '100%', skewX: 15 },
+  //     animate: { opacity: 0.15, x: '0%', skewX: 0 },
+  //     exit: { opacity: 0, x: '-100%', skewX: -15 }
+  //   },
+  //   slideRight: {
+  //     initial: { opacity: 0, x: '-100%', skewX: -15 },
+  //     animate: { opacity: 0.15, x: '0%', skewX: 0 },
+  //     exit: { opacity: 0, x: '100%', skewX: 15 }
+  //   },
+  //   scale: {
+  //     initial: { opacity: 0, scale: 0, rotate: -180 },
+  //     animate: { opacity: 0.1, scale: 1, rotate: 0 },
+  //     exit: { opacity: 0, scale: 2, rotate: 180 }
+  //   },
+  //   curtain: {
+  //     initial: { opacity: 0, clipPath: 'polygon(0 0, 0 0, 0 100%, 0% 100%)' },
+  //     animate: { opacity: 0.2, clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0% 100%)' },
+  //     exit: { opacity: 0, clipPath: 'polygon(100% 0, 100% 0, 100% 100%, 100% 100%)' }
+  //   }
+  // };
 
   const variant = getTransitionVariant(pathname);
-  const routeColor = getRouteColor(pathname);
+  // const routeColor = getRouteColor(pathname);
   const variants = transitionVariants[variant as keyof typeof transitionVariants];
-  const overlayVariant = overlayVariants[variant as keyof typeof overlayVariants];
+  // const overlayVariant = overlayVariants[variant as keyof typeof overlayVariants];
 
   // Custom transition settings for different effects
   const getTransitionConfig = (variant: string) => {
