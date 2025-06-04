@@ -3,7 +3,7 @@ import type { Metadata } from 'next'
 import Navbar from '../components/Navbar';
 import NewFooter from '../components/NewFooter';
 import GlobalResumeButton, { ResumeModalProvider } from '../components/GlobalResumeButton';
-import Analytics from '../components/Analytics';
+// import Analytics from '../components/Analytics';
 import './globals.css';
 import { Inter } from 'next/font/google'; 
 
@@ -151,7 +151,7 @@ export default function RootLayout({
         />
       </head>
       <body className="bg-black text-white overflow-x-hidden">
-        <Analytics />
+        {/* <Analytics /> */}
         <ResumeModalProvider>
           <SmoothScroll>
             <Navbar />
