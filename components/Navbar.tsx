@@ -129,11 +129,11 @@ const Navbar: React.FC = () => {
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.3, delay: 0.1 }}
-              className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 p-8 w-[90%] max-w-sm"
+              className="fixed top-[20%] left-[0%] transform -translate-x-1/4 -translate-y-1/4 p-8 w-[90%] max-w-sm"
             >
-              <div className="flex justify-between items-center mb-10">
+              <div className="flex justify-between items-center text-center mb-10">
                 <motion.span 
-                  className="text-2xl font-black text-white tracking-tighter"
+                  className="text-2xl font-black text-white  tracking-tighter"
                   animate={{ 
                     x: [0, 5, 0],
                     transition: { duration: 1, repeat: Infinity, repeatType: "reverse" }
