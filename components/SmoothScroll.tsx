@@ -10,9 +10,16 @@ declare global {
   }
 }
 
+interface LenisScrollToOptions {
+  offset?: number;
+  duration?: number;
+  easing?: (t: number) => number;
+  immediate?: boolean;
+  lock?: boolean;
+}
 // Utility functions to control Lenis
 export const lenisUtils = {
-  scrollTo: (target: string | number | HTMLElement, options?: any) => {
+  scrollTo: (target: string | number | HTMLElement, options?: LenisScrollToOptions) => {
     if (typeof window !== 'undefined' && window.lenis) {
       window.lenis.scrollTo(target, options);
     }
@@ -77,10 +84,10 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
     requestAnimationFrame(raf)
 
     // Optional: Add scroll event listener for debugging
-    lenis.on('scroll', ({ scroll, limit, velocity, direction, progress }) => {
-      // You can use these values to create effects
-      // console.log({ scroll, limit, velocity, direction, progress })
-    })
+    // lenis.on('scroll', ({ scroll, limit, velocity, direction, progress }) => {
+    //   // You can use these values to create effects
+    //   // console.log({ scroll, limit, velocity, direction, progress })
+    // })
 
     // Cleanup function
     return () => {
