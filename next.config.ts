@@ -11,6 +11,9 @@ const nextConfig: NextConfig = {
       ...config.resolve.alias,
       'three/addons/': 'three/examples/jsm/'
     };
+    if (isServer) {
+      // do soemthing 
+    }
 
     return config;
   },
