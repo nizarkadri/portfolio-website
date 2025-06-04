@@ -18,14 +18,14 @@ const SPHERE_RADIUS = 200;
 interface SkillCloudProps {
   availableSkills: string[];
   mousePosition: { x: number; y: number };
-  activeSkill: string | null;
+  
 }
 
 // Mobile Corporate Typography Component
 const MobileSkillCloud: React.FC<{ skills: string[] }> = ({ skills }) => {
   const [visibleSkills, setVisibleSkills] = React.useState<string[]>([]);
   const [currentIndex, setCurrentIndex] = React.useState(0);
-  const [isTransitioning, setIsTransitioning] = React.useState(false);
+  // const [isTransitioning, setIsTransitioning] = React.useState(false);
 
   // Show only 50% of skills at once
   const skillsToShow = Math.ceil(skills.length * 0.5);
@@ -56,7 +56,7 @@ const MobileSkillCloud: React.FC<{ skills: string[] }> = ({ skills }) => {
       // Small delay before changing skills to allow exit animation
       setTimeout(() => {
         setCurrentIndex((prev) => (prev + Math.ceil(skillsToShow * 0.3)) % skills.length);
-        setIsTransitioning(false);
+        // setIsTransitioning(false);
       }, 300);
     }, 5000);
 
@@ -254,7 +254,7 @@ const DesktopSkillCloud: React.FC<{ skills: string[]; mousePosition: { x: number
 const SkillCloud: React.FC<SkillCloudProps> = ({
   availableSkills,
   mousePosition,
-  activeSkill,
+  
 }) => {
   const isMobile = useIsMobile();
 

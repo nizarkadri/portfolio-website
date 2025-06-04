@@ -282,7 +282,7 @@ const Skills = () => {
               <SkillCloud
                 availableSkills={filteredAvailableSkills}
                 mousePosition={uiState.mousePosition}
-                activeSkill={skillsState.active}
+                // activeSkill={skillsState.active}
                 // onSkillClick={handleSkillClick}
               />
             </div>
