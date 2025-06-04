@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef, useEffect } from 'react';
+import React, { useRef } from 'react';
 import { motion, useScroll, useTransform, useInView, Variants } from 'framer-motion';
 import dynamic from 'next/dynamic';
 import ParallaxImage from '../../../components/ParallaxImage';  
