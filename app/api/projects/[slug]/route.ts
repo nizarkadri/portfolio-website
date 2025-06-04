@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server'; // Import NextRequest
+import { NextRequest, NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
@@ -8,9 +8,9 @@ import html from 'remark-html';
 const projectsDirectory = path.join(process.cwd(), 'data/projects');
 
 export async function GET(
-  request: NextRequest, // Changed to NextRequest
+  request: NextRequest,
   { params }: { params: Promise<{ slug: string }> }
-): Promise<NextResponse> { // Added explicit return type for good measure
+): Promise<NextResponse> {
   const { slug } = await params;
 
   try {
