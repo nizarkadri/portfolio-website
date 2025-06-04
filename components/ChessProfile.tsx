@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, useMotionValue, useTransform, useSpring } from 'framer-motion';
 import { useIsMobile } from '../app/hooks/useMobile';
 import Image from 'next/image';
@@ -43,62 +43,62 @@ interface ChessStats {
   fideRating?: number;
 }
 
-// 3D Card wrapper component
-const Card3D = ({ children, depth = 10, className = "" }: { children: React.ReactNode, depth?: number, className?: string }) => {
-  const [rotateX, setRotateX] = useState(0);
-  const [rotateY, setRotateY] = useState(0);
-  const [scale, setScale] = useState(1);
-  const cardRef = useRef<HTMLDivElement>(null);
+// // 3D Card wrapper component
+// const Card3D = ({ children, depth = 10, className = "" }: { children: React.ReactNode, depth?: number, className?: string }) => {
+//   const [rotateX, setRotateX] = useState(0);
+//   const [rotateY, setRotateY] = useState(0);
+//   const [scale, setScale] = useState(1);
+//   const cardRef = useRef<HTMLDivElement>(null);
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!cardRef.current) return;
+//   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+//     if (!cardRef.current) return;
     
-    const rect = cardRef.current.getBoundingClientRect();
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
+//     const rect = cardRef.current.getBoundingClientRect();
+//     const centerX = rect.left + rect.width / 2;
+//     const centerY = rect.top + rect.height / 2;
     
-    const mouseX = e.clientX;
-    const mouseY = e.clientY;
+//     const mouseX = e.clientX;
+//     const mouseY = e.clientY;
     
-    const rotateXValue = ((mouseY - centerY) / (rect.height / 2)) * -depth;
-    const rotateYValue = ((mouseX - centerX) / (rect.width / 2)) * depth;
+//     const rotateXValue = ((mouseY - centerY) / (rect.height / 2)) * -depth;
+//     const rotateYValue = ((mouseX - centerX) / (rect.width / 2)) * depth;
     
-    setRotateX(rotateXValue);
-    setRotateY(rotateYValue);
-    setScale(1.02);
-  };
+//     setRotateX(rotateXValue);
+//     setRotateY(rotateYValue);
+//     setScale(1.02);
+//   };
 
-  const handleMouseLeave = () => {
-    setRotateX(0);
-    setRotateY(0);
-    setScale(1);
-  };
+//   const handleMouseLeave = () => {
+//     setRotateX(0);
+//     setRotateY(0);
+//     setScale(1);
+//   };
 
-  return (
-    <motion.div
-      ref={cardRef}
-      className={`relative transform-gpu ${className}`}
-      style={{ 
-        perspective: "1200px",
-        transformStyle: "preserve-3d"
-      }}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
-    >
-      <motion.div
-        style={{ 
-          rotateX,
-          rotateY,
-          scale,
-          transformStyle: "preserve-3d",
-          transition: "all 0.15s ease-out"
-        }}
-      >
-        {children}
-      </motion.div>
-    </motion.div>
-  );
-};
+//   return (
+//     <motion.div
+//       ref={cardRef}
+//       className={`relative transform-gpu ${className}`}
+//       style={{ 
+//         perspective: "1200px",
+//         transformStyle: "preserve-3d"
+//       }}
+//       onMouseMove={handleMouseMove}
+//       onMouseLeave={handleMouseLeave}
+//     >
+//       <motion.div
+//         style={{ 
+//           rotateX,
+//           rotateY,
+//           scale,
+//           transformStyle: "preserve-3d",
+//           transition: "all 0.15s ease-out"
+//         }}
+//       >
+//         {children}
+//       </motion.div>
+//     </motion.div>
+//   );
+// };
 
 // const GameTypeCard = ({ type, stats, isActive, onClick, index }: { 
 //   type: string; 
@@ -228,16 +228,16 @@ const Card3D = ({ children, depth = 10, className = "" }: { children: React.Reac
 // );
 
 // Utility functions for chess rating colors
-const getRatingColor = (rating: number | string): string => {
-  if (typeof rating === 'string') return 'text-white';
-  if (rating < 1000) return 'text-gray-300';
-  if (rating < 1200) return 'text-green-400';
-  if (rating < 1400) return 'text-blue-400';
-  if (rating < 1600) return 'text-purple-400';
-  if (rating < 1800) return 'text-orange-400';
-  if (rating < 2000) return 'text-amber-400';
-  return 'text-red-400';
-};
+// const getRatingColor = (rating: number | string): string => {
+//   if (typeof rating === 'string') return 'text-white';
+//   if (rating < 1000) return 'text-gray-300';
+//   if (rating < 1200) return 'text-green-400';
+//   if (rating < 1400) return 'text-blue-400';
+//   if (rating < 1600) return 'text-purple-400';
+//   if (rating < 1800) return 'text-orange-400';
+//   if (rating < 2000) return 'text-amber-400';
+//   return 'text-red-400';
+// };
 
 // Game type icons
 // const GameTypeIcons = {
@@ -337,92 +337,92 @@ const useParallaxMotion = (options: {
 };
 
 // Donut chart component for stat visualizations
-interface DonutChartProps {
-  percent: number;
-  size?: number;
-  strokeWidth?: number;
-  color?: string;
-  label: string;
-  value: string | number;
-  animate?: boolean;
-  index?: number;
-}
+// interface DonutChartProps {
+//   percent: number;
+//   size?: number;
+//   strokeWidth?: number;
+//   color?: string;
+//   label: string;
+//   value: string | number;
+//   animate?: boolean;
+//   index?: number;
+// }
 
-const DonutChart = ({ 
-  percent, 
-  size = 120, 
-  strokeWidth = 8, 
-  color = "#B8E62D",
-  label, 
-  value,
-  animate = true,
-  index = 0
-}: DonutChartProps) => {
-  const radius = (size - strokeWidth) / 2;
-  const circumference = radius * 2 * Math.PI;
-  const strokeDashoffset = circumference - (percent / 100) * circumference;
+// const DonutChart = ({ 
+//   percent, 
+//   size = 120, 
+//   strokeWidth = 8, 
+//   color = "#B8E62D",
+//   label, 
+//   value,
+//   animate = true,
+//   index = 0
+// }: DonutChartProps) => {
+//   const radius = (size - strokeWidth) / 2;
+//   const circumference = radius * 2 * Math.PI;
+//   const strokeDashoffset = circumference - (percent / 100) * circumference;
   
-  return (
-    <Card3D depth={5}>
-      <motion.div 
-        className="bg-gradient-to-b from-black/40 to-black/10 p-4 rounded-xl backdrop-blur-sm border border-white/5 hover:border-white/10 transition-all duration-300 flex flex-col items-center overflow-hidden"
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, delay: index * 0.1 }}
-      >
-        <div className="relative w-full flex justify-center mb-2 overflow-hidden">
-          <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="transform -rotate-90">
-            {/* Background circle */}
-            <circle
-              cx={size / 2}
-              cy={size / 2}
-              r={radius}
-              fill="none"
-              stroke="rgba(255,255,255,0.1)"
-              strokeWidth={strokeWidth}
-            />
+//   return (
+//     <Card3D depth={5}>
+//       <motion.div 
+//         className="bg-gradient-to-b from-black/40 to-black/10 p-4 rounded-xl backdrop-blur-sm border border-white/5 hover:border-white/10 transition-all duration-300 flex flex-col items-center overflow-hidden"
+//         initial={{ opacity: 0, y: 10 }}
+//         animate={{ opacity: 1, y: 0 }}
+//         transition={{ duration: 0.4, delay: index * 0.1 }}
+//       >
+//         <div className="relative w-full flex justify-center mb-2 overflow-hidden">
+//           <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="transform -rotate-90">
+//             {/* Background circle */}
+//             <circle
+//               cx={size / 2}
+//               cy={size / 2}
+//               r={radius}
+//               fill="none"
+//               stroke="rgba(255,255,255,0.1)"
+//               strokeWidth={strokeWidth}
+//             />
             
-            {/* Progress circle */}
-            <motion.circle
-              cx={size / 2}
-              cy={size / 2}
-              r={radius}
-              fill="none"
-              stroke={color}
-              strokeWidth={strokeWidth}
-              strokeDasharray={circumference}
-              initial={{ strokeDashoffset: circumference }}
-              animate={{ strokeDashoffset: animate ? strokeDashoffset : circumference }}
-              transition={{ duration: 1.5, ease: "easeOut", delay: index * 0.2 }}
-              strokeLinecap="round"
-            />
-          </svg>
+//             {/* Progress circle */}
+//             <motion.circle
+//               cx={size / 2}
+//               cy={size / 2}
+//               r={radius}
+//               fill="none"
+//               stroke={color}
+//               strokeWidth={strokeWidth}
+//               strokeDasharray={circumference}
+//               initial={{ strokeDashoffset: circumference }}
+//               animate={{ strokeDashoffset: animate ? strokeDashoffset : circumference }}
+//               transition={{ duration: 1.5, ease: "easeOut", delay: index * 0.2 }}
+//               strokeLinecap="round"
+//             />
+//           </svg>
           
-          {/* Inner content */}
-          <div className="max-w-full absolute inset-0 flex flex-col items-center justify-center">
-            <motion.p 
-              className={`text-3xl font-bold ${getRatingColor(value)}`}
-              initial={{ scale: 0.5, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ duration: 0.5, delay: 0.3 + index * 0.2 }}
-            >
-              {value}
-            </motion.p>
-          </div>
-        </div>
+//           {/* Inner content */}
+//           <div className="max-w-full absolute inset-0 flex flex-col items-center justify-center">
+//             <motion.p 
+//               className={`text-3xl font-bold ${getRatingColor(value)}`}
+//               initial={{ scale: 0.5, opacity: 0 }}
+//               animate={{ scale: 1, opacity: 1 }}
+//               transition={{ duration: 0.5, delay: 0.3 + index * 0.2 }}
+//             >
+//               {value}
+//             </motion.p>
+//           </div>
+//         </div>
         
-        <motion.p 
-          className="text-sm text-white/80 text-center mt-2"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5, delay: 0.5 + index * 0.2 }}
-        >
-          {label}
-        </motion.p>
-      </motion.div>
-    </Card3D>
-  );
-};
+//         <motion.p 
+//           className="text-sm text-white/80 text-center mt-2"
+//           initial={{ opacity: 0 }}
+//           animate={{ opacity: 1 }}
+//           transition={{ duration: 0.5, delay: 0.5 + index * 0.2 }}
+//         >
+//           {label}
+//         </motion.p>
+//       </motion.div>
+//     </Card3D>
+//   );
+// };
 
 export default function ChessProfile() {
   const [stats, setStats] = useState<ChessStats | null>(null);
@@ -528,25 +528,6 @@ export default function ChessProfile() {
   if (!stats) return null;
 
   // Calculate overall stats
-  const calculateOverallRating = () => {
-    const ratings = [];
-    if (stats.rapid?.last.rating) ratings.push(stats.rapid.last.rating);
-    if (stats.blitz?.last.rating) ratings.push(stats.blitz.last.rating);
-    if (stats.bullet?.last.rating) ratings.push(stats.bullet.last.rating);
-    
-    if (ratings.length === 0) return 'N/A';
-    return Math.round(ratings.reduce((a, b) => a + b, 0) / ratings.length);
-  };
-  
-  const getBestRating = () => {
-    const ratings = [];
-    if (stats.rapid?.best.rating) ratings.push(stats.rapid.best.rating);
-    if (stats.blitz?.best.rating) ratings.push(stats.blitz.best.rating);
-    if (stats.bullet?.best.rating) ratings.push(stats.bullet.best.rating);
-    
-    if (ratings.length === 0) return 'N/A';
-    return Math.max(...ratings);
-  };
 
   // const totalGames = 
   //   (stats.rapid?.record.win || 0) + (stats.rapid?.record.loss || 0) + (stats.rapid?.record.draw || 0) +
@@ -556,28 +537,28 @@ export default function ChessProfile() {
   // const tacticRating = stats.tactics?.highest?.rating || 'N/A';
 
   // Create pie chart data for win/loss/draw distribution
-  const getWinLossDrawData = () => {
-    const activeStats = 
-    activeGameType === "Bullet" ? stats.bullet :
-    activeGameType === "Rapid" ? stats.rapid :
-    activeGameType === "Blitz" ? stats.blitz :
-    stats.bullet;
+  // const getWinLossDrawData = () => {
+  //   const activeStats = 
+  //   activeGameType === "Bullet" ? stats.bullet :
+  //   activeGameType === "Rapid" ? stats.rapid :
+  //   activeGameType === "Blitz" ? stats.blitz :
+  //   stats.bullet;
     
-    if (!activeStats) return null;
+  //   if (!activeStats) return null;
     
-    const wins = activeStats.record.win;
-    const losses = activeStats.record.loss;
-    const draws = activeStats.record.draw;
-    const total = wins + losses + draws;
+  //   const wins = activeStats.record.win;
+  //   const losses = activeStats.record.loss;
+  //   const draws = activeStats.record.draw;
+  //   const total = wins + losses + draws;
     
-    const winPercent = Math.round((wins / total) * 100);
-    const lossPercent = Math.round((losses / total) * 100);
-    const drawPercent = 100 - winPercent - lossPercent;
+  //   const winPercent = Math.round((wins / total) * 100);
+  //   const lossPercent = Math.round((losses / total) * 100);
+  //   const drawPercent = 100 - winPercent - lossPercent;
     
-    return { wins, losses, draws, winPercent, lossPercent, drawPercent };
-  };
+  //   return { wins, losses, draws, winPercent, lossPercent, drawPercent };
+  // };
 
-  const winLossDrawData = getWinLossDrawData();
+  // const winLossDrawData = getWinLossDrawData();
 
   return (
     <motion.div 
