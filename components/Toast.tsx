@@ -25,7 +25,7 @@ const Toast = ({ message, type, isVisible, onClose, duration = 3000 }: ToastProp
     <AnimatePresence>
       {isVisible && (
         <motion.div
-          className="fixed top-20 left-1/3 transform -translate-x-1/3 z-[200] max-w-md w-full mx-5"
+          className="fixed top-20 md:left-1/3 transform -translate-x-1/3 z-[200] max-w-md md:w-full mx-5 w-[90%]"
           initial={{ opacity: 0, y: -50, scale: 0.9 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: -50, scale: 0.9 }}
@@ -93,7 +93,7 @@ const Toast = ({ message, type, isVisible, onClose, duration = 3000 }: ToastProp
             />
           </div>
         </motion.div>
-      )}
+       )} 
     </AnimatePresence>
   );
 };
