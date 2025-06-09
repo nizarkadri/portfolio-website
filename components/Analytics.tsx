@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { usePathname, useSearchParams } from 'next/navigation';
 
 // Google Analytics tracking ID
@@ -67,19 +67,27 @@ export const reportWebVitals = (metric: WebVitalMetric) => {
 const Analytics = () => {
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const [isClient, setIsClient] = useState(false);
+
+  // Ensure component only renders on client to prevent hydration mismatch
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   useEffect(() => {
-    if (GA_TRACKING_ID) {
+    if (GA_TRACKING_ID && isClient) {
       const url = pathname + searchParams.toString();
       pageview(url);
     }
-  }, [pathname, searchParams]);
+  }, [pathname, searchParams, isClient]);
 
   useEffect(() => {
+    if (!isClient) return;
+
     // Track performance metrics using modern Performance API
-    if (typeof window !== 'undefined' && 'performance' in window) {
+    if ('performance' in window) {
       // Track page load time using modern API
-      window.addEventListener('load', () => {
+      const handleLoad = () => {
         // Use performance.now() and performance.getEntriesByType for modern approach
         const navigationEntries = performance.getEntriesByType('navigation') as PerformanceNavigationTiming[];
         if (navigationEntries.length > 0) {
@@ -94,7 +102,7 @@ const Analytics = () => {
             });
           }
         }
-      });
+      };
 
       // Track time to first byte using PerformanceObserver
       const observer = new PerformanceObserver((list) => {
@@ -114,14 +122,23 @@ const Analytics = () => {
         }
       });
 
+      if (document.readyState === 'complete') {
+        handleLoad();
+      } else {
+        window.addEventListener('load', handleLoad);
+      }
+
       observer.observe({ entryTypes: ['navigation'] });
 
-      return () => observer.disconnect();
+      return () => {
+        window.removeEventListener('load', handleLoad);
+        observer.disconnect();
+      };
     }
-  }, []);
+  }, [isClient]);
 
-  // Only render script tags on client side
-  if (typeof window === 'undefined' || !GA_TRACKING_ID) {
+  // Only render on client side and when GA_TRACKING_ID is available
+  if (!isClient || !GA_TRACKING_ID) {
     return null;
   }
 
