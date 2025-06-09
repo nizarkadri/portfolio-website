@@ -1,9 +1,14 @@
 // app/layout.tsx
+import type { NextWebVitalsMetric } from 'next/app';
+import { Suspense } from 'react';
+import Script from 'next/script';
 import type { Metadata } from 'next'
 import Navbar from '../components/Navbar';
 import NewFooter from '../components/NewFooter';
 import GlobalResumeButton, { ResumeModalProvider } from '../components/GlobalResumeButton';
 // import Analytics from '../components/Analytics';
+import AnalyticsTracker from '../components/AnalyticsTracker';
+import { GA_TRACKING_ID } from './lib/gtag';
 import './globals.css';
 import { Inter } from 'next/font/google'; 
 
@@ -13,6 +18,25 @@ const inter = Inter({
   subsets: ['latin'],
   variable: '--font-inter', 
 });
+
+export function reportWebVitals(metric: NextWebVitalsMetric) {
+  // Check if GA is configured
+  if (!GA_TRACKING_ID) {
+    return;
+  }
+  
+  // Use the gtag function to send event
+  window.gtag('event', metric.name, {
+    event_category: 'Web Vitals',
+    // The value must be a non-negative integer.
+    value: Math.round(metric.name === 'CLS' ? metric.value * 1000 : metric.value),
+    // The event label should be unique for each page load.
+    event_label: metric.id,
+    // Use a non-interaction event to avoid affecting bounce rate.
+    non_interaction: true,
+  });
+}
+
 
 // Base metadata that can be extended by individual pages
 export const metadata: Metadata = {
@@ -151,7 +175,32 @@ export default function RootLayout({
         />
       </head>
       <body className="bg-black text-white overflow-x-hidden">
-        {/* <Analytics /> */}
+      {GA_TRACKING_ID && (
+          <>
+            <Script
+              strategy="afterInteractive"
+              src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`}
+            />
+            <Script
+              id="gtag-init"
+              strategy="afterInteractive"
+              dangerouslySetInnerHTML={{
+                __html: `
+                  window.dataLayer = window.dataLayer || [];
+                  function gtag(){dataLayer.push(arguments);}
+                  gtag('js', new Date());
+                  gtag('config', '${GA_TRACKING_ID}', {
+                    page_path: window.location.pathname,
+                  });
+                `,
+              }}
+            />
+          </>
+        )}
+         {/* <Analytics />  */}
+         <Suspense fallback={null}>
+          <AnalyticsTracker />
+        </Suspense>
         <ResumeModalProvider>
           <SmoothScroll>
             <Navbar />

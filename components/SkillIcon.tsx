@@ -51,7 +51,7 @@ const SkillIcon: React.FC<SkillIconProps> = ({
   return (
     <motion.div
       key={skillId}
-      className="absolute flex flex-col items-center cursor-pointer"
+      className="absolute flex flex-col items-center"
       style={{
         left: position.x,
         top: position.y,

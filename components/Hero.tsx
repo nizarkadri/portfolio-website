@@ -87,7 +87,7 @@ const Hero = () => {
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
             <h1
               className="text-[clamp(30vw,20vw,20vw)] sm:text-[25vw] font-black text-transparent select-none tracking-tighter"
-              style={{ WebkitTextStroke: '3px rgba(184,230,45,0.08)' }}
+              style={{ WebkitTextStroke: '3px rgba(184, 230, 45, 0.39)' }}
             >
               NIZAR
             </h1>
@@ -119,13 +119,13 @@ const Hero = () => {
           className="absolute inset-0 flex items-center justify-center pointer-events-none z-0"
           style={{
             y: shouldReduceMotion ? 0 : backgroundY,
-            opacity: shouldReduceMotion ? 0.8 : backgroundOpacity,
+            opacity: shouldReduceMotion ? 0.2 : backgroundOpacity,
             scale: shouldReduceMotion ? 1 : backgroundScale,
           }}
         >
           <motion.h1
             className="text-[clamp(30vw,20vw,20vw)] sm:text-[25vw] font-black text-transparent select-none tracking-tighter"
-            style={{ WebkitTextStroke: '3px rgba(184,230,45,0.08)' }}
+            style={{ WebkitTextStroke: '3px rgba(184, 230, 45, 0.39)' }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 1.5, delay: 0.5 }}
