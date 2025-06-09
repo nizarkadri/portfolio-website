@@ -12,6 +12,10 @@ RUN npm ci --omit=dev
 ############################################
 FROM node:20-slim AS build
 WORKDIR /app
+
+ARG NEXT_PUBLIC_GA_ID
+ENV NEXT_PUBLIC_GA_ID=${NEXT_PUBLIC_GA_ID}
+
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 # adds dev deps temporarily
