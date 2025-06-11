@@ -180,6 +180,10 @@ export default function RootLayout({
             <Script
               strategy="afterInteractive"
               src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`}
+              onLoad={() => {
+                // This signals that the gtag function is now available
+                window.dispatchEvent(new Event('gtag_ready'));
+              }}
             />
             <Script
               id="gtag-init"
