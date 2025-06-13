@@ -1,4 +1,12 @@
-// Type definitions
+/**
+ * This file serves as a shared library for Google Analytics constants and helper functions.
+ * It is used by `layout.tsx` for reporting web vitals and can be used by any other
+ * component to send custom analytics events.
+ *
+ * Pageview tracking is handled automatically by the dedicated `GoogleAnalytics.tsx` component.
+ */
+
+// Type definition for custom event parameters.
 export type GtagEvent = {
   action: string;
   category: string;
@@ -7,12 +15,9 @@ export type GtagEvent = {
 };
 
 /**
- * These overloads provide strong typing for the most common gtag commands.
- * They ensure that the command name and required parameters are correct.
- * 
- * The use of `[key: string]: unknown` in the options/params objects is a pragmatic
- * choice. It allows for the flexibility of custom Gtag parameters while still
- * typing the known, standard ones.
+ * These global type declarations provide strong typing for `window.gtag`,
+ * which is used directly in `layout.tsx` for `reportWebVitals`. The function
+ * overloads ensure that calls to `gtag` are type-safe.
  */
 declare global {
   interface Window {
@@ -22,7 +27,7 @@ declare global {
       targetId: string,
       options?: {
         page_path?: string;
-        [key: string]: unknown; // Allows for other config options
+        [key: string]: unknown;
       }
     ): void;
 
@@ -34,27 +39,33 @@ declare global {
         event_category?: string;
         event_label?: string;
         value?: number;
-        [key: string]: unknown; // Allows for custom event parameters
+        [key: string]: unknown;
       }
     ): void;
   }
 }
 
+// The shared Google Analytics Tracking ID, imported from environment variables.
 export const GA_TRACKING_ID = process.env.NEXT_PUBLIC_GA_ID;
 
-export const pageview = (url: string) => {
-  if (!GA_TRACKING_ID || typeof window.gtag !== 'function') return;
-  
-  // This call is now strongly typed by the 'config' overload
-  window.gtag('config', GA_TRACKING_ID, {
-    page_path: url,
-  });
-};
-
+/**
+ * Sends a custom event to Google Analytics.
+ * This is the primary way other components should send analytics data.
+ *
+ * @example
+ * event({
+ *   action: 'download_resume',
+ *   category: 'engagement',
+ *   label: 'Header Button',
+ *   value: 1
+ * })
+ */
 export const event = ({ action, category, label, value }: GtagEvent) => {
-  if (!GA_TRACKING_ID || typeof window.gtag !== 'function') return;
-  
-  // This call is now strongly typed by the 'event' overload
+  if (!GA_TRACKING_ID || typeof window.gtag !== 'function') {
+    return;
+  }
+
+  // This call is strongly typed by the 'event' overload in the global declaration.
   window.gtag('event', action, {
     event_category: category,
     event_label: label,
