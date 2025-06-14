@@ -1,60 +1,105 @@
-
 # Personal Portfolio Website
 
-A modern, dynamic portfolio website built with Next.js 13, React, and Tailwind CSS, featuring a futuristic design with interactive elements and smooth animations.
+A modern, dynamic portfolio website built with Next.js 15.2.2, React 19, and Tailwind CSS, featuring a futuristic design with interactive 3D elements, smooth animations, and advanced performance optimizations.
 
 ## Features
 
 - 🎨 Modern, futuristic UI design with animated backgrounds and grid patterns
-- 💫 Interactive floating skill icons with dynamic animations
-- 📱 Fully responsive layout
+- 💫 Interactive 3D elements using Three.js and React Three Fiber
+- 🎭 Smooth animations powered by Framer Motion
+- 📱 Fully responsive layout with mobile-first approach
 - 🚀 Server-side rendering and API routes using Next.js 15.2.2
 - 📂 Dynamic project showcase with detailed case studies
 - ⚡ Optimized performance with next/image and static assets
+- 📧 Contact form with email integration using Resend
+- 🔍 SEO optimized with dynamic sitemap and robots.txt
+- 🎯 Type-safe development with TypeScript
+- 🐳 Docker support for containerized deployment
 
 ## Tech Stack
 
+### Core Technologies
 - **Frontend Framework:** Next.js 15.2.2 (App Router)
 - **UI Library:** React 19
-- **Styling:** Tailwind CSS
-- **Icons:** SVG icons with dynamic loading
+- **Styling:** Tailwind CSS with Typography plugin
+- **Language:** TypeScript
+
+### Key Libraries
+- **3D Rendering:** Three.js, React Three Fiber, Drei
+- **Animations:** Framer Motion
+- **Form Handling:** React Hook Form with Zod validation
+- **Email:** Resend, Nodemailer
+- **Content Processing:** Gray Matter, Remark
+- **UI Utilities:** clsx, tailwind-merge
+- **Smooth Scrolling:** Lenis
+
+### Development Tools
+- **Package Manager:** npm
+- **Linting:** ESLint
+- **Containerization:** Docker
 - **Deployment:** Vercel
-
-
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
 
-First, run the development server:
+1. Clone the repository:
+```bash
+git clone [your-repo-url]
+cd portfolio-website
+```
 
+2. Install dependencies:
+```bash
+npm install
+```
+
+3. Run the development server:
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Development
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- The project uses Turbopack for faster development builds
+- TypeScript for type safety
+- ESLint for code quality
+- Tailwind CSS for styling
+- Docker for containerization
+
+## Performance & SEO
+
+Check out the [PERFORMANCE_SEO_GUIDE.md](./PERFORMANCE_SEO_GUIDE.md) for detailed information about performance optimizations and SEO best practices implemented in this project.
+
+## Deployment
+
+The project can be deployed in multiple ways:
+
+1. **Google Cloud Platform (GCP) - Current Deployment**
+   - Deployed on Google Cloud Run for containerized applications
+   - Benefits:
+     - Auto-scaling capabilities
+     - Pay-per-use pricing
+     - Global load balancing
+     - Integrated monitoring and logging
+  
+
+2. **Vercel (Alternative)**
+   - Zero-config deployment
+   - Automatic preview deployments
+   - Edge network optimization
+
+3. **Docker (Local)**
+   - Build the container: `docker build -t portfolio-website .`
+   - Run the container: `docker run -p 3000:3000 portfolio-website`
 
 ## Learn More
 
-To learn more about Next.js, take a look at the following resources:
+- [Next.js Documentation](https://nextjs.org/docs)
+- [React Documentation](https://react.dev)
+- [Tailwind CSS Documentation](https://tailwindcss.com/docs)
+- [Three.js Documentation](https://threejs.org/docs)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## License
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
->>>>>>> production
+This project is licensed under the MIT License - see the LICENSE file for details.
