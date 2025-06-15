@@ -2,7 +2,6 @@
 title: 'Fiera Capital Corp.'
 company: 'Fiera Capital Corp.'
 position: 'Cloud Administrator'
-period: 'Sept 2021 - May 2022'
 location: 'Toronto, Canada'
 description: 'Managed cloud infrastructure and optimized operations.'
 achievements:
