@@ -6,7 +6,7 @@ import { Suspense } from 'react';
 import type { Metadata } from 'next';
 import Navbar from '../components/Navbar';
 import NewFooter from '../components/NewFooter';
-import GlobalResumeButton, { ResumeModalProvider } from '../components/GlobalResumeButton';
+import GlobalResumeButton from '../components/GlobalResumeButton';
 
 // --- KEY CHANGES ---
 // 1. Import the new GoogleAnalytics component
@@ -71,14 +71,12 @@ export default function RootLayout({
           <GoogleAnalytics />
         </Suspense>
 
-        <ResumeModalProvider>
-          <SmoothScroll>
-            <Navbar />
-            <main>{children}</main>
-            <NewFooter />
-          </SmoothScroll>
-          <GlobalResumeButton />
-        </ResumeModalProvider>
+        <SmoothScroll>
+          <Navbar />
+          <main>{children}</main>
+          <NewFooter />
+        </SmoothScroll>
+        <GlobalResumeButton />
       </body>
     </html>
   );

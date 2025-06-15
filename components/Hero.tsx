@@ -3,7 +3,7 @@
 import { useRef, useState, useLayoutEffect } from 'react';
 import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion';
 import Premium3DResumeButton from './Premium3DResumeButton';
-import { useResumeModal } from './GlobalResumeButton';
+import { useRouter } from 'next/navigation';
 
 // Add type declaration for window.lenis
 // declare global {
@@ -17,7 +17,7 @@ const Hero = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [isClient, setIsClient] = useState(false);
   const shouldReduceMotion = useReducedMotion();
-  const { openModal } = useResumeModal();
+  const router = useRouter();
   
   // Initialize mobile detection immediately to prevent flash
   useLayoutEffect(() => {
@@ -79,6 +79,10 @@ const Hero = () => {
     isMobile ? [1, 1.1] : [1, 1.2]
   );
 
+  const handleResumeClick = () => {
+    router.push('/contact');
+  };
+
   // Don't render animations until client-side hydration is complete
   if (!isClient) {
     return (
@@ -103,7 +107,7 @@ const Hero = () => {
               </span>
             </h1>
             <div className="mt-12">
-              <Premium3DResumeButton onClick={openModal} />
+              <Premium3DResumeButton onClick={handleResumeClick} />
             </div>
           </div>
         </div>
@@ -173,7 +177,7 @@ const Hero = () => {
                 opacity: shouldReduceMotion ? 1 : opacityForBoth,
               }}
             >
-              <Premium3DResumeButton onClick={openModal} />
+              <Premium3DResumeButton onClick={handleResumeClick} />
             </motion.div>
           </div>
         </div>
