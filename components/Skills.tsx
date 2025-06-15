@@ -257,7 +257,7 @@ const Skills = () => {
 
   return (
     <section className="relative py-24 md:mb-10" id="skills">
-      <h2 className="huge-text absolute -top-8 left-0 opacity-40 text-[#B8E62D]/10 font-bold select-none">SKILLS</h2>
+      
       
       <SkillTitle />
       

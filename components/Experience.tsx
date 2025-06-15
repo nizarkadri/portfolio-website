@@ -32,7 +32,7 @@ const Experience = () => {
           </div>
           
           {/* Experience Preview */}
-          <div className="relative mb-20 mx-5 md:mx-0 ">
+          <div className="relative mb-20 mx-5 md:mx-10 ">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {/* Experience Details - Left Side */}
               <div className="bg-gradient-to-b from-soft-black/40 to-soft-black/10 p-8 rounded-2xl backdrop-blur-sm border border-white/5 hover:border-[#B8E62D]/20 transition-all duration-500 shadow-lg shadow-black/40">
