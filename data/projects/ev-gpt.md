@@ -93,7 +93,7 @@ EV-GPT is a sophisticated question-answering system that leverages Google's Gene
 
 ## 🔗 Project Links
 
-**📁 [GitHub Repository](https://github.com/yourusername/EV-GPT)** - Complete source code and documentation  
+**📁 [GitHub Repository](https://github.com/nizarkadri/EV-GPT)** - Complete source code and documentation  
 **🌐 [Live Demo](https://your-demo-link.com)** - Try the application yourself  
 
 ---

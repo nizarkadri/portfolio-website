@@ -248,14 +248,14 @@ const ExperiencePage = async () => {
                         <p className="text-soft-white mb-6 leading-relaxed">{exp.description}</p>
                         
                         <div className="mb-6">
-                          <h4 className="text-white font-medium mb-3 flex items-center">
+                          {/* <h4 className="text-white font-medium mb-3 flex items-center">
                             <span className="text-[#ccff33]">
                               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
                                 <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                               </svg>
                             </span>
                             Key Achievements
-                          </h4>
+                          </h4> */}
                           <ul className="list-none pl-0 space-y-3">
                             {exp.achievements.map((achievement: string, idx: number) => (
                               <li key={idx} className="text-soft-white flex items-start">
@@ -396,11 +396,11 @@ const ExperiencePage = async () => {
         
         {/* Education */}
         <div>
-          <h2 className="text-3xl font-bold mb-10 text-white inline-flex items-center">
-            <span className="text-white">Education</span>
+        <h2 className="text-3xl font-bold mb-10 text-white inline-flex items-center">
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600">Education</span>
             <span className="h-px w-20 bg-gradient-to-r from-[#ccff33] to-[#a3cc29] ml-6 opacity-50"></span>
           </h2>
-          
+         
           <div className="space-y-8 relative">
             {/* Timeline line */}
             <div className="absolute left-0 top-0 bottom-0 w-px bg-gradient-to-b from-[#ccff33]/50 via-[#a3cc29]/30 to-transparent hidden md:block"></div>
