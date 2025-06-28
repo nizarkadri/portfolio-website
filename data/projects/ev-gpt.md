@@ -1,100 +1,102 @@
-# EV-GPT
+---
+title: EV-GPT - AI-Powered Electric Vehicle Expert
+description: An intelligent web application that provides AI-powered insights about electric vehicles using Google's Gemini 1.5 Flash model and advanced document retrieval capabilities.
+imageUrl: /images/Projects/ev-gpt.jpg
+slug: ev-gpt
+technologies: ['Python', 'Streamlit', 'Google Gemini', 'LangChain', 'ChromaDB', 'AWS', 'Docker', 'Git']
+---
 
-[![GitHub](https://img.shields.io/badge/GitHub-Repository-black?style=for-the-badge&logo=github)](https://github.com/nizarkadri/EV-GPT)
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-Try%20It-blue?style=for-the-badge&logo=streamlit)](http://18.117.102.197:8501/)
+## 🔬 Project Overview
 
-An intelligent web application that provides AI-powered insights about electric vehicles using Google's Gemini 1.5 Flash model and advanced document retrieval capabilities.
+An intelligent AI-powered assistant for Electric Vehicle information, leveraging Google's Generative AI and advanced document retrieval to provide detailed insights about electric vehicles.
 
-## 🎯 Problem Statement
+**🎯 Problem**: Limited access to comprehensive, up-to-date information about electric vehicles and difficulty in finding specific answers from technical documentation.
 
-Limited access to comprehensive, up-to-date information about electric vehicles and difficulty in finding specific answers from technical documentation.
+---
 
-## ✨ Features
+## ✨ Key Features
 
-- 🤖 **AI-Powered Intelligence**: Leverages Google Gemini 1.5 Flash for expert-level automotive analysis
-- 📄 **Smart Document Processing**: Handles PDF and TXT files with intelligent text chunking
-- 🔍 **Advanced Search**: Vector-based semantic search using ChromaDB for precise document retrieval
-- 🎨 **Modern Interface**: Clean, responsive Streamlit web interface
-- 🏢 **Enterprise Ready**: AWS integration, Docker support, and production-grade security
+🤖 **AI-Powered Intelligence** - Leverages Google Gemini 1.5 Flash for expert-level automotive analysis  
+📄 **Smart Document Processing** - Handles PDF and TXT files with intelligent text chunking  
+🔍 **Advanced Search** - Vector-based semantic search using ChromaDB for precise document retrieval  
+🎨 **Modern Interface** - Clean, responsive Streamlit web interface  
+🏢 **Enterprise Ready** - AWS integration, Docker support, and production-grade security  
 
-## 🛠️ Technology Stack
+---
 
-- **🧠 AI & ML**: Google Gemini 1.5 Flash, LangChain RAG framework
-- **🗄️ Database**: ChromaDB vector database, SQLite persistence
-- **🌐 Web Framework**: Streamlit, Python 3.11+
-- **☁️ Infrastructure**: AWS Secrets Manager, Docker containerization
+## 🛠️ Technical Implementation
 
-## 🎯 Use Cases
+**Frontend**: Streamlit, Python 3.11+ - Interactive web interface with real-time updates  
+**Backend**: Python, LangChain - Robust RAG implementation with modular design  
+**AI/ML**: Google Gemini 1.5, Vector Embeddings - Advanced language processing with context-aware responses  
+**Database**: ChromaDB, SQLite - Efficient vector storage and retrieval with persistent data  
 
-- 🚗 **EV Enthusiasts**: Compare vehicle models, get specifications, understand technology
-- 🏢 **Automotive Professionals**: Access documentation, generate comparisons, analyze specs
-- 👨‍💻 **Developers**: Learn RAG implementation, vector database integration
-
-## 💡 Example Questions
-
-- "How does the cargo space of the Ioniq 5 compare to the Model Y?"
-- "What are the charging capabilities of the latest Tesla models?"
-- "Which EVs have the best range for long-distance travel?"
+---
 
 ## 🚀 Performance Metrics
 
 | Metric | Achievement |
 |--------|-------------|
-| ⚡ Response Time | < 2 seconds average |
-| 📄 Document Processing | Multi-threaded for optimal speed |
-| 🎯 Search Accuracy | Context-aware responses with source tracking |
-| 📈 System Scalability | Efficient handling of large document sets |
-
-## 🔧 Technical Challenges & Solutions
-
-### 📄 Document Processing
-**Challenge**: Efficiently processing and chunking large technical documents  
-**Solution**: Implemented multi-threaded processing with configurable chunking parameters
-
-### ⚡ AI Integration
-**Challenge**: Maintaining context while providing accurate responses  
-**Solution**: Leveraged Google's Gemini 1.5 with vector embeddings for context-aware responses
-
-### 🏗️ System Architecture
-**Challenge**: Building a scalable and maintainable system  
-**Solution**: Modular design with clear separation of concerns using LangChain
-
-## ⚙️ Configuration
-
-### 🔧 Environment Variables
-- `🔑 GOOGLE_API_KEY`: Google AI API key (required)
-- `🌍 AWS_REGION`: AWS region for secrets (optional, default: us-east-2)
-
-### ⚡ Application Settings
-- 📏 Chunk Size: 1200 characters
-- 🔄 Chunk Overlap: 200 characters
-- 📚 Retrieval Count: 7 documents per query
-- 🌡️ Model Temperature: 0.1 for consistency
-
-## 🚀 Performance
-
-- ⚡ Sub-second response times with context-aware analysis
-- 📄 Handles thousands of pages efficiently
-- 👥 Supports multiple concurrent users
-- 🏭 Optimized for production deployment
-
-## 🔮 Future Development Roadmap
-
-- 🔗 Integration with real-time EV data sources
-- 📊 Advanced analytics dashboard
-- 🔌 API endpoints for third-party integration
-
-## 🤝 Contributing
-
-1. 🍴 Fork the repository
-2. 🌿 Create a feature branch
-3. ✅ Make your changes with proper testing
-4. 🔄 Submit a pull request
-
-## 📝 License
-
-MIT License - see [LICENSE](LICENSE) file for details.
+| **Response Time** | < 2 seconds average |
+| **Document Processing** | Multi-threaded for optimal speed |
+| **Search Accuracy** | Context-aware responses with source tracking |
+| **System Scalability** | Efficient handling of large document sets |
 
 ---
 
-**Made with ❤️ by Nizar**
+## 🔧 Technical Challenges & Solutions
+
+**📄 Document Processing**  
+*Challenge*: Efficiently processing and chunking large technical documents  
+*Solution*: Implemented multi-threaded processing with configurable chunking parameters
+
+**⚡ AI Integration**  
+*Challenge*: Maintaining context while providing accurate responses  
+*Solution*: Leveraged Google's Gemini 1.5 with vector embeddings for context-aware responses
+
+**🏗️ System Architecture**  
+*Challenge*: Building a scalable and maintainable system  
+*Solution*: Modular design with clear separation of concerns using LangChain
+
+---
+
+## 🎨 User Experience Journey
+
+1. **🏠 Landing** → Clear interface with document upload capabilities
+2. **📤 Upload** → Simple file upload for PDF and TXT documents  
+3. **🔄 Processing** → Real-time document processing with progress indicators
+4. **💬 Query** → Natural language questions about electric vehicles
+5. **📋 Results** → Context-aware responses with source attribution
+
+---
+
+## 🔮 Future Development Roadmap
+
+### Phase 1 (Short-term)
+- Integration with real-time EV data sources
+- Advanced analytics dashboard with vehicle comparisons
+- Multi-language support for global accessibility
+
+### Phase 2 (Long-term)
+- API endpoints for third-party integration
+- Mobile application for iOS and Android
+- Advanced AI features with image recognition for vehicle identification
+
+---
+
+## 🏆 Project Impact
+
+**Knowledge Accessibility** → Making EV information more accessible and searchable  
+**Technical Innovation** → Advancing practical applications of RAG in automotive domain  
+**User Experience** → Simplifying complex technical information retrieval  
+
+---
+
+## 🔗 Project Links
+
+**📁 [GitHub Repository](https://github.com/nizarkadri/EV-GPT)** - Complete source code and documentation  
+**🌐 [Live Demo](http://18.117.102.197:8501/)** - Try the application yourself  
+
+---
+
+> **⚠️ Note**: This project requires a Google API key for Generative AI services (Gemini and Embeddings) to function properly.
