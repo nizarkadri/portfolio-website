@@ -57,7 +57,8 @@ Thumbs.db
 # Markdown data files (if you want to exclude them)
 # /data/projects/*.md
 
-
+# Documentation files (local reference only)
+PERFORMANCE_SEO_GUIDE.md
 
 # testing
 /coverage
