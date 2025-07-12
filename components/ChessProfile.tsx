@@ -447,13 +447,7 @@ export default function ChessProfile() {
   const rightEyeX = useTransform(heroParallax.mouseX, [-200, 200], [-3, 3]);
   const rightEyeY = useTransform(heroParallax.mouseY, [-200, 200], [-3, 3]);
   
-  // Chessboard background parallax
-  // const boardParallax = useParallaxMotion({
-  //   transformRange: [5, -5],
-  //   stiffness: 40,
-  //   damping: 25
-  // });
-
+ 
   useEffect(() => {
     const fetchChessData = async () => {
       try {
