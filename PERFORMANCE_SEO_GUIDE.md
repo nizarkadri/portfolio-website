@@ -37,17 +37,23 @@
 ### 1. Environment Variables
 Create a `.env.local` file with:
 ```bash
+# Site Configuration
+NEXT_PUBLIC_SITE_URL=https://nizarsway.com
+
 # Analytics
 NEXT_PUBLIC_GA_ID=G-XXXXXXXXXX
-NEXT_PUBLIC_SITE_URL=https://your-domain.com
+
+# Social Media Links
+NEXT_PUBLIC_GITHUB_URL=https://github.com/nizarkadri
+NEXT_PUBLIC_LINKEDIN_URL=https://linkedin.com/in/nizarkadri
+
 
 # SEO
-GOOGLE_VERIFICATION_CODE=your-verification-code
+GOOGLE_VERIFICATION_CODE=your-google-verification-code
 
-# Social Links
-LINKEDIN_URL=https://linkedin.com/in/your-profile
-TWITTER_URL=https://twitter.com/your-handle
-GITHUB_URL=https://github.com/your-username
+# Email Service (for contact form)
+NEXT_PUBLIC_FROM_EMAIL=contact@nizarsway.com
+RESEND_API_KEY=re_xxxxxxxx
 ```
 
 ### 2. Required Assets
@@ -67,123 +73,96 @@ Create these files in `/public/`:
 │   ├── icon-192x192.png
 │   ├── icon-384x384.png
 │   └── icon-512x512.png
-└── /screenshots/
-    ├── desktop-home.png
-    └── mobile-home.png
+└── manifest.json
 ```
 
 ### 3. Google Analytics Setup
 1. Create a Google Analytics 4 property
 2. Get your tracking ID (G-XXXXXXXXXX)
 3. Add it to your environment variables
-4. Verify tracking in GA dashboard
 
 ### 4. Google Search Console
 1. Add your domain to Google Search Console
-2. Verify ownership using the meta tag method
-3. Submit your sitemap: `https://your-domain.com/sitemap.xml`
-4. Monitor indexing and performance
+2. Verify ownership using the verification code
+3. Submit your sitemap: `https://nizarsway.com/sitemap.xml`
 
-## 📊 Performance Metrics to Monitor
+## 📊 Performance Monitoring
 
-### Core Web Vitals
+### Core Web Vitals Targets:
 - **LCP (Largest Contentful Paint)**: < 2.5s
 - **FID (First Input Delay)**: < 100ms
 - **CLS (Cumulative Layout Shift)**: < 0.1
 
-### Additional Metrics
-- **TTFB (Time to First Byte)**: < 600ms
-- **Page Load Time**: < 3s
-- **Mobile PageSpeed Score**: > 90
-- **Desktop PageSpeed Score**: > 95
+### Performance Features:
+- **Image optimization** with next/image
+- **Code splitting** for reduced bundle size
+- **Lazy loading** for images and components
+- **Caching strategies** for static assets
 
-## 🎯 SEO Best Practices Implemented
+## 🔍 SEO Checklist
 
-### Technical SEO
-- ✅ Semantic HTML structure
-- ✅ Proper heading hierarchy (H1, H2, H3)
-- ✅ Alt text for all images
-- ✅ Meta descriptions under 160 characters
-- ✅ Title tags under 60 characters
-- ✅ Clean URL structure
-- ✅ Mobile-first responsive design
+### ✅ Technical SEO
+- [x] **Sitemap.xml** generation
+- [x] **Robots.txt** configuration
+- [x] **Meta robots** tags
+- [x] **Canonical URLs**
+- [x] **Open Graph** tags
+- [x] **Twitter Cards**
+- [x] **Schema markup** (JSON-LD)
+- [x] **Page speed optimization**
 
-### Content SEO
-- ✅ Keyword-optimized content
-- ✅ Internal linking structure
-- ✅ Unique content for each page
-- ✅ Regular content updates
-- ✅ Professional portfolio presentation
+### ✅ Content SEO
+- [x] **Title tags** optimization
+- [x] **Meta descriptions**
+- [x] **Header structure** (H1, H2, H3)
+- [x] **Alt text** for images
+- [x] **Internal linking**
+- [x] **Mobile-first** design
 
-### Performance SEO
-- ✅ Fast loading times
-- ✅ Optimized images
-- ✅ Minimal JavaScript bundles
-- ✅ Efficient CSS delivery
-- ✅ Browser caching strategies
+### ✅ Monitoring
+- [x] **Google Analytics** integration
+- [x] **Search Console** setup
+- [x] **Performance monitoring**
+- [x] **Error tracking**
 
-## 🔍 Testing & Validation
+## 🛠️ Development Tools
 
-### Performance Testing Tools
-- **Google PageSpeed Insights**: Test Core Web Vitals
-- **GTmetrix**: Comprehensive performance analysis
-- **WebPageTest**: Detailed loading analysis
-- **Lighthouse**: Built-in Chrome DevTools audit
-
-### SEO Testing Tools
-- **Google Search Console**: Monitor search performance
-- **SEMrush**: Keyword and competitor analysis
-- **Ahrefs**: Backlink and SEO analysis
-- **Screaming Frog**: Technical SEO audit
-
-### Validation Tools
-- **W3C Markup Validator**: HTML validation
+### SEO Testing:
+- **Google PageSpeed Insights**: Performance analysis
+- **GTmetrix**: Detailed performance metrics
 - **Schema.org Validator**: Structured data testing
 - **Open Graph Debugger**: Social media preview testing
-- **Mobile-Friendly Test**: Google's mobile usability test
 
-## 📈 Expected Improvements
+### Analytics:
+- **Google Analytics**: Traffic and user behavior
+- **Google Search Console**: Search performance
+- **Hotjar**: User interaction heatmaps
 
-### Search Engine Rankings
-- **Better keyword rankings** for relevant terms
-- **Increased organic traffic** from search engines
-- **Enhanced search result appearance** with rich snippets
-- **Improved local search visibility**
+## 📈 Optimization Roadmap
 
-### User Experience
-- **Faster page load times** (30-50% improvement)
-- **Better mobile experience** with PWA features
-- **Reduced bounce rate** from performance improvements
-- **Increased engagement** from optimized content
+### Phase 1: Foundation ✅
+- [x] Basic SEO implementation
+- [x] Performance optimization
+- [x] Analytics setup
 
-### Technical Benefits
-- **Better crawlability** for search engines
-- **Improved accessibility** for all users
-- **Enhanced monitoring** with analytics
-- **Future-proof architecture** with modern standards
+### Phase 2: Enhancement
+- [ ] Advanced structured data
+- [ ] Enhanced monitoring with analytics
+- [ ] A/B testing implementation
 
-## 🚀 Next Steps
-
-### Immediate Actions
-1. Replace placeholder URLs with your actual domain
+### Phase 3: Advanced
+1. Replace placeholder URLs with nizarsway.com
 2. Add your Google Analytics tracking ID
-3. Create and upload required image assets
-4. Verify Google Search Console setup
+3. Configure social media links
+4. Set up Google Search Console
+5. Add structured data for specific project types
 
-### Ongoing Optimization
-1. Monitor Core Web Vitals monthly
-2. Update content regularly for freshness
-3. Build quality backlinks to your portfolio
-4. Optimize images as you add new projects
-5. Test performance after each deployment
+## 🎯 Key Metrics to Track
 
-### Advanced Optimizations
-1. Implement service worker for offline functionality
-2. Add structured data for specific project types
-3. Create blog section for content marketing
-4. Implement advanced analytics events
-5. Add A/B testing for conversion optimization
+- **Organic traffic** growth
+- **Page load times** (< 3 seconds)
+- **Core Web Vitals** scores
+- **Search rankings** for target keywords
+- **User engagement** metrics
 
----
-
-**Note**: Remember to replace all placeholder values (your-domain.com, tracking IDs, social links) with your actual information before deploying to production. 
+**Note**: All configurations are now set up for nizarsway.com. Make sure to add your actual Google Analytics tracking ID and social media profile URLs to your environment variables before deploying to production. 

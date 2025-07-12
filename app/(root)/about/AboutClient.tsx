@@ -118,6 +118,7 @@ const AboutClient: React.FC = () => {
   
   const { scrollYProgress } = useScroll();
   const backgroundY = useTransform(scrollYProgress, [0, 1], ['0%', '50%']);
+  const cityBackgroundY = useTransform(scrollYProgress, [0, 1], ['0%', '30%']);
   
   const isMainContentInView = useInView(mainContentRef, { once: true, margin: "-100px" });
   const isProfilesInView = useInView(profilesRef, { once: true, margin: "-100px" });
@@ -140,122 +141,167 @@ const AboutClient: React.FC = () => {
 
       {/* Hero Section with Parallax Image and Overlay Title */}
       <section className="relative h-screen overflow-hidden">
-        <ParallaxImage image="/images/Potraits/IMG-20250411-WA0021.jpg" isMobile={isMobile}>
-          {/* Hero Title Overlay */}
-          <motion.div 
-            className="absolute inset-0 flex items-center justify-center z-10"
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 1.2, delay: 1, ease: [0.25, 0.46, 0.45, 0.94] }}
-          >
-            <div className="text-center px-4">
-              <motion.h1 
-                className="text-6xl md:text-8xl lg:text-9xl font-black text-white mb-4 tracking-tight hero-title-stroke"
-                initial={{ opacity: 0, y: 50 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
-                style={{
-                  textShadow: '0 0 30px rgba(0,0,0,0.8), 0 0 60px rgba(0,0,0,0.6)',
-                }}
-                whileHover={{ 
-                  scale: 1.05,
-                  transition: { duration: 0.3 }
-                }}
-              >
-                About
-              </motion.h1>
-              <motion.div
-                className="relative"
-                initial={{ opacity: 0, y: 30, scale: 0.9 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                transition={{ duration: 0.8, delay: 0.9, ease: [0.25, 0.46, 0.45, 0.94] }}
-              >
-                <motion.h2 
-                  className="text-5xl md:text-7xl lg:text-8xl font-black text-[#B8E62D] tracking-tight"
+        {/* City Map Parallax Background */}
+        <motion.div
+          className="absolute inset-0 w-full h-full z-0"
+          style={{
+            y: cityBackgroundY,
+            backgroundImage: "url('/images/about-bg.png')",
+            backgroundAttachment: 'fixed',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+            backgroundSize: 'cover',
+          }}
+        />
+        
+        {/* Dark overlay for better contrast */}
+        <motion.div 
+          className="absolute inset-0 bg-black/40 z-[1]"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1.5 }}
+        />
+        
+        {/* Portrait Image with Parallax */}
+        <div className="relative z-[2]">
+          <ParallaxImage image="/images/Potraits/IMG-20250411-WA0021.jpg" isMobile={isMobile}>
+            {/* Hero Title Overlay */}
+            <motion.div 
+              className="absolute inset-0 flex items-center justify-center z-10"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 1.2, delay: 1, ease: [0.25, 0.46, 0.45, 0.94] }}
+            >
+              <div className="text-center px-4">
+                <motion.h1 
+                  className="text-6xl md:text-8xl lg:text-9xl font-black text-white mb-4 tracking-tight hero-title-stroke"
+                  initial={{ opacity: 0, y: 50 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8, delay: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
                   style={{
-                    textShadow: '0 0 20px rgba(184, 230, 45, 0.5), 0 0 40px rgba(184, 230, 45, 0.3)',
+                    textShadow: '0 0 30px rgba(0,0,0,0.8), 0 0 60px rgba(0,0,0,0.6)',
                   }}
                   whileHover={{ 
                     scale: 1.05,
                     transition: { duration: 0.3 }
                   }}
                 >
-                  Me
-                </motion.h2>
-                <motion.div 
-                  className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-16 h-1 bg-[#B8E62D] rounded-full"
-                  initial={{ width: 0, opacity: 0 }}
-                  animate={{ width: 64, opacity: 1 }}
-                  transition={{ duration: 0.6, delay: 1.2, ease: "easeOut" }}
-                />
-              </motion.div>
-              
-              {/* Subtitle */}
-              <motion.p 
-                className="mt-8 text-lg md:text-xl text-gray-200 max-w-2xl mx-auto leading-relaxed font-light"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 1.1, ease: [0.25, 0.46, 0.45, 0.94] }}
-                style={{
-                  textShadow: '0 2px 10px rgba(0,0,0,0.8)',
-                }}
-                whileHover={{ 
-                  scale: 1.02,
-                  transition: { duration: 0.3 }
-                }}
-              >
-                <motion.span
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 1.3, duration: 0.5 }}
+                  About
+                </motion.h1>
+                <motion.div
+                  className="relative"
+                  initial={{ opacity: 0, y: 30, scale: 0.9 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  transition={{ duration: 0.8, delay: 0.9, ease: [0.25, 0.46, 0.45, 0.94] }}
                 >
-                  Developer
-                </motion.span>
-                <motion.span
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 1.5, duration: 0.5 }}
+                  <motion.h2 
+                    className="text-5xl md:text-7xl lg:text-8xl font-black text-[#B8E62D] tracking-tight"
+                    style={{
+                      textShadow: '0 0 20px rgba(184, 230, 45, 0.5), 0 0 40px rgba(184, 230, 45, 0.3)',
+                    }}
+                    whileHover={{ 
+                      scale: 1.05,
+                      transition: { duration: 0.3 }
+                    }}
+                  >
+                    Me
+                  </motion.h2>
+                  <motion.div 
+                    className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-16 h-1 bg-[#B8E62D] rounded-full"
+                    initial={{ width: 0, opacity: 0 }}
+                    animate={{ width: 64, opacity: 1 }}
+                    transition={{ duration: 0.6, delay: 1.2, ease: "easeOut" }}
+                  />
+                </motion.div>
+                
+                {/* Subtitle */}
+                <motion.p 
+                  className="mt-8 text-lg md:text-xl text-gray-200 max-w-2xl mx-auto leading-relaxed font-light"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8, delay: 1.1, ease: [0.25, 0.46, 0.45, 0.94] }}
+                  style={{
+                    textShadow: '0 2px 10px rgba(0,0,0,0.8)',
+                  }}
+                  whileHover={{ 
+                    scale: 1.02,
+                    transition: { duration: 0.3 }
+                  }}
                 >
-                  {" • "}
-                </motion.span>
-                <motion.span
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 1.7, duration: 0.5 }}
-                >
-                  Problem Solver
-                </motion.span>
-                <motion.span
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 1.9, duration: 0.5 }}
-                >
-                  {" • "}
-                </motion.span>
-                <motion.span
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 2.1, duration: 0.5 }}
-                >
-                  Lifelong Learner
-                </motion.span>
-              </motion.p>
-            </div>
-          </motion.div>
-          
-          {/* Enhanced Gradient Overlay */}
-          <motion.div 
-            className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/30 pointer-events-none" 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1, delay: 0.3 }}
-          />
-        </ParallaxImage>
+                  <motion.span
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 1.3, duration: 0.5 }}
+                  >
+                    Developer
+                  </motion.span>
+                  <motion.span
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 1.5, duration: 0.5 }}
+                  >
+                    {" • "}
+                  </motion.span>
+                  <motion.span
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 1.7, duration: 0.5 }}
+                  >
+                    Problem Solver
+                  </motion.span>
+                  <motion.span
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 1.9, duration: 0.5 }}
+                  >
+                    {" • "}
+                  </motion.span>
+                  <motion.span
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 2.1, duration: 0.5 }}
+                  >
+                    Lifelong Learner
+                  </motion.span>
+                </motion.p>
+              </div>
+            </motion.div>
+            
+            {/* Enhanced Gradient Overlay */}
+            <motion.div 
+              className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/30 pointer-events-none" 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 1, delay: 0.3 }}
+            />
+          </ParallaxImage>
+        </div>
       </section>
 
       {/* Main Content Section */}
-      <section className="relative bg-black min-h-screen">
-        <div className="container mx-auto px-4 py-20">
+      <section className="relative min-h-screen overflow-hidden">
+        {/* City Map Background for Main Content */}
+        <motion.div
+          className="absolute inset-0 w-full h-full z-0"
+          style={{
+            backgroundImage: "url('/images/about-bg.png')",
+            backgroundAttachment: 'fixed',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+            backgroundSize: 'cover',
+          }}
+        />
+        
+        {/* Dark overlay for text readability */}
+        <motion.div 
+          className="absolute inset-0 bg-black/75 z-[1]"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1.5 }}
+        />
+        
+        {/* Content Container */}
+        <div className="relative z-[2] container mx-auto px-4 py-20">
           
           {/* About Introduction */}
           <motion.div 
