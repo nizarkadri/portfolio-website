@@ -141,9 +141,9 @@ const AboutClient: React.FC = () => {
 
       {/* Hero Section with Parallax Image and Overlay Title */}
       <section className="relative h-screen overflow-hidden">
-        {/* City Map Parallax Background */}
+        {/* City Map Parallax Background with Ken Burns Effect - Right Panel */}
         <motion.div
-          className="absolute inset-0 w-full h-full z-0"
+          className="absolute inset-0 w-full h-full z-0 origin-center"
           style={{
             y: cityBackgroundY,
             backgroundImage: "url('/images/about-bg.png')",
@@ -152,6 +152,35 @@ const AboutClient: React.FC = () => {
             backgroundRepeat: 'no-repeat',
             backgroundSize: 'cover',
           }}
+          initial={{ 
+            scale: 1,
+            x: '100%',
+            opacity: 0 
+          }}
+          animate={{ 
+            scale: 1.1,
+            x: '0%',
+            opacity: 1 
+          }}
+          transition={{ 
+            scale: {
+              duration: 20,
+              repeat: Infinity,
+              repeatType: "reverse",
+              ease: "easeInOut",
+              delay: 2
+            },
+            x: {
+              duration: 1.2,
+              ease: [0.25, 0.46, 0.45, 0.94],
+              delay: 0.3
+            },
+            opacity: {
+              duration: 1.2,
+              ease: "easeOut",
+              delay: 0.3
+            }
+          }}
         />
         
         {/* Dark overlay for better contrast */}
@@ -159,25 +188,53 @@ const AboutClient: React.FC = () => {
           className="absolute inset-0 bg-black/40 z-[1]"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 1.5 }}
+          transition={{ duration: 1.5, delay: 0.8 }}
         />
         
-        {/* Portrait Image with Parallax */}
-        <div className="relative z-[2]">
+        {/* Portrait Image with Parallax - Left Panel */}
+        <motion.div 
+          className="relative z-[2]"
+          initial={{ 
+            x: '-100%',
+            opacity: 0 
+          }}
+          animate={{ 
+            x: '0%',
+            opacity: 1 
+          }}
+          transition={{ 
+            duration: 1.2,
+            ease: [0.25, 0.46, 0.45, 0.94],
+            delay: 0
+          }}
+        >
           <ParallaxImage image="/images/Potraits/IMG-20250411-WA0021.jpg" isMobile={isMobile}>
             {/* Hero Title Overlay */}
             <motion.div 
-              className="absolute inset-0 flex items-center justify-center z-10"
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 1.2, delay: 1, ease: [0.25, 0.46, 0.45, 0.94] }}
+              className="absolute inset-0 flex items-center justify-end z-10"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5, delay: 1.8 }}
             >
-              <div className="text-center px-4">
+              <div className="text-center px-40">
+                {/* Staggered Text Reveal - "About" */}
                 <motion.h1 
                   className="text-6xl md:text-8xl lg:text-9xl font-black text-white mb-4 tracking-tight hero-title-stroke"
-                  initial={{ opacity: 0, y: 50 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, delay: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
+                  initial={{ 
+                    opacity: 0, 
+                    y: 80,
+                    scale: 0.7
+                  }}
+                  animate={{ 
+                    opacity: 1, 
+                    y: 0,
+                    scale: 1
+                  }}
+                  transition={{ 
+                    duration: 0.9, 
+                    delay: 2.0, 
+                    ease: [0.25, 0.46, 0.45, 0.94] 
+                  }}
                   style={{
                     textShadow: '0 0 30px rgba(0,0,0,0.8), 0 0 60px rgba(0,0,0,0.6)',
                   }}
@@ -188,11 +245,25 @@ const AboutClient: React.FC = () => {
                 >
                   About
                 </motion.h1>
+                
+                {/* Staggered Text Reveal - "Me" */}
                 <motion.div
                   className="relative"
-                  initial={{ opacity: 0, y: 30, scale: 0.9 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  transition={{ duration: 0.8, delay: 0.9, ease: [0.25, 0.46, 0.45, 0.94] }}
+                  initial={{ 
+                    opacity: 0, 
+                    y: 80, 
+                    scale: 0.7 
+                  }}
+                  animate={{ 
+                    opacity: 1, 
+                    y: 0, 
+                    scale: 1 
+                  }}
+                  transition={{ 
+                    duration: 0.9, 
+                    delay: 2.4, 
+                    ease: [0.25, 0.46, 0.45, 0.94] 
+                  }}
                 >
                   <motion.h2 
                     className="text-5xl md:text-7xl lg:text-8xl font-black text-[#B8E62D] tracking-tight"
@@ -210,60 +281,76 @@ const AboutClient: React.FC = () => {
                     className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-16 h-1 bg-[#B8E62D] rounded-full"
                     initial={{ width: 0, opacity: 0 }}
                     animate={{ width: 64, opacity: 1 }}
-                    transition={{ duration: 0.6, delay: 1.2, ease: "easeOut" }}
+                    transition={{ duration: 0.8, delay: 2.9, ease: "easeOut" }}
                   />
                 </motion.div>
                 
-                {/* Subtitle */}
-                <motion.p 
-                  className="mt-8 text-lg md:text-xl text-gray-200 max-w-2xl mx-auto leading-relaxed font-light"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, delay: 1.1, ease: [0.25, 0.46, 0.45, 0.94] }}
-                  style={{
-                    textShadow: '0 2px 10px rgba(0,0,0,0.8)',
+                {/* Staggered Text Reveal - Tagline */}
+                <motion.div
+                  className="mt-8"
+                  initial={{ 
+                    opacity: 0, 
+                    y: 60,
+                    scale: 0.8 
                   }}
-                  whileHover={{ 
-                    scale: 1.02,
-                    transition: { duration: 0.3 }
+                  animate={{ 
+                    opacity: 1, 
+                    y: 0,
+                    scale: 1 
+                  }}
+                  transition={{ 
+                    duration: 0.9, 
+                    delay: 3.2, 
+                    ease: [0.25, 0.46, 0.45, 0.94] 
                   }}
                 >
-                  <motion.span
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 1.3, duration: 0.5 }}
+                  <motion.p 
+                    className="text-lg md:text-xl text-gray-200 max-w-2xl mx-auto leading-relaxed font-light"
+                    style={{
+                      textShadow: '0 2px 10px rgba(0,0,0,0.8)',
+                    }}
+                    whileHover={{ 
+                      scale: 1.02,
+                      transition: { duration: 0.3 }
+                    }}
                   >
-                    Developer
-                  </motion.span>
-                  <motion.span
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 1.5, duration: 0.5 }}
-                  >
-                    {" • "}
-                  </motion.span>
-                  <motion.span
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 1.7, duration: 0.5 }}
-                  >
-                    Problem Solver
-                  </motion.span>
-                  <motion.span
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 1.9, duration: 0.5 }}
-                  >
-                    {" • "}
-                  </motion.span>
-                  <motion.span
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 2.1, duration: 0.5 }}
-                  >
-                    Lifelong Learner
-                  </motion.span>
-                </motion.p>
+                    <motion.span
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 3.6, duration: 0.4 }}
+                    >
+                      Developer
+                    </motion.span>
+                    <motion.span
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 3.8, duration: 0.4 }}
+                    >
+                      {" • "}
+                    </motion.span>
+                    <motion.span
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 4.0, duration: 0.4 }}
+                    >
+                      Problem Solver
+                    </motion.span>
+                    <motion.span
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 4.2, duration: 0.4 }}
+                    >
+                      {" • "}
+                    </motion.span>
+                    <motion.span
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 4.4, duration: 0.4 }}
+                    >
+                      Lifelong Learner
+                    </motion.span>
+                  </motion.p>
+                </motion.div>
               </div>
             </motion.div>
             
@@ -272,10 +359,10 @@ const AboutClient: React.FC = () => {
               className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/30 pointer-events-none" 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ duration: 1, delay: 0.3 }}
+              transition={{ duration: 1, delay: 1.5 }}
             />
           </ParallaxImage>
-        </div>
+        </motion.div>
       </section>
 
       {/* Main Content Section */}
