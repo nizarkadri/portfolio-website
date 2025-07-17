@@ -118,7 +118,6 @@ const AboutClient: React.FC = () => {
   
   const { scrollYProgress } = useScroll();
   const backgroundY = useTransform(scrollYProgress, [0, 1], ['0%', '50%']);
-  const cityBackgroundY = useTransform(scrollYProgress, [0, 1], ['0%', '30%']);
   
   const isMainContentInView = useInView(mainContentRef, { once: true, margin: "-100px" });
   const isProfilesInView = useInView(profilesRef, { once: true, margin: "-100px" });
@@ -128,7 +127,7 @@ const AboutClient: React.FC = () => {
     <div className="relative overflow-hidden">
       {/* Animated Background Elements */}
       <motion.div 
-        className="fixed inset-0 pointer-events-none z-0"
+        className="fixed inset-0 pointer-events-none z-10"
         style={{ y: backgroundY }}
       >
         <FloatingDecoration delay={0} size="w-6 h-6" position="top-20 left-[10%]" />
@@ -139,52 +138,31 @@ const AboutClient: React.FC = () => {
         <FloatingDecoration delay={5} size="w-4 h-4" position="top-[70%] right-[5%]" />
       </motion.div>
 
-      {/* Hero Section with Parallax Image and Overlay Title */}
-      <section className="relative h-screen overflow-hidden">
-        {/* City Map Parallax Background with Ken Burns Effect - Right Panel */}
+    
+
+      {/* Main Content Section */}
+      <section className="relative min-h-screen overflow-hidden ">
+
+        {/* City Map Background for Main Content */}
         <motion.div
-          className="absolute inset-0 w-full h-full z-0 origin-center"
+          className="absolute inset-0"
           style={{
-            y: cityBackgroundY,
             backgroundImage: "url('/images/about-bg.png')",
             backgroundAttachment: 'fixed',
-            backgroundPosition: 'center',
+            backgroundPosition: 'right',
             backgroundRepeat: 'no-repeat',
-            backgroundSize: 'cover',
-          }}
-          initial={{ 
-            scale: 1,
-            x: '100%',
-            opacity: 0 
-          }}
-          animate={{ 
-            scale: 1.1,
-            x: '0%',
-            opacity: 1 
-          }}
-          transition={{ 
-            scale: {
-              duration: 20,
-              repeat: Infinity,
-              repeatType: "reverse",
-              ease: "easeInOut",
-              delay: 2
-            },
-            x: {
-              duration: 1.2,
-              ease: [0.25, 0.46, 0.45, 0.94],
-              delay: 0.3
-            },
-            opacity: {
-              duration: 1.2,
-              ease: "easeOut",
-              delay: 0.3
-            }
+            backgroundSize: 'contain',
           }}
         />
         
-        {/* Dark overlay for better contrast */}
+        {/* Dark overlay for text readability */}
         <motion.div 
+          className="absolute inset-0 bg-black/75 z-[1]"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1.5 }}
+        />
+         <motion.div 
           className="absolute inset-0 bg-black/40 z-[1]"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -363,32 +341,8 @@ const AboutClient: React.FC = () => {
             />
           </ParallaxImage>
         </motion.div>
-      </section>
-
-      {/* Main Content Section */}
-      <section className="relative min-h-screen overflow-hidden">
-        {/* City Map Background for Main Content */}
-        <motion.div
-          className="absolute inset-0 w-full h-full z-0"
-          style={{
-            backgroundImage: "url('/images/about-bg.png')",
-            backgroundAttachment: 'fixed',
-            backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat',
-            backgroundSize: 'cover',
-          }}
-        />
-        
-        {/* Dark overlay for text readability */}
-        <motion.div 
-          className="absolute inset-0 bg-black/75 z-[1]"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1.5 }}
-        />
-        
         {/* Content Container */}
-        <div className="relative z-[2] container mx-auto px-4 py-20">
+        <div className="relative z-[2] mt-20 container mx-auto px-4 py-20">
           
           {/* About Introduction */}
           <motion.div 

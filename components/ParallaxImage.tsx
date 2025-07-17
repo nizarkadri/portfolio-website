@@ -18,8 +18,8 @@ export default function ParallaxImage({ image, isMobile, children }: ParallaxIma
   });
 
   /* create motion values once, outside JSX */
-  const y          = useTransform(scrollYProgress, [0, 1], ['0%', '30%']);
-  const scale      = useTransform(scrollYProgress, [0, 1], [1, 1.1]);
+  const y          = useTransform(scrollYProgress, [0, 1], ['0%', '50%']);
+  const scale      = useTransform(scrollYProgress, [0, 1], [1, 1]);
   const opacityImg = useTransform(scrollYProgress, [0, 1], [1, 0.4]);
 
   if (isMobile) {
