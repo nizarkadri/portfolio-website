@@ -147,7 +147,7 @@ const AboutClient: React.FC = () => {
         <motion.div
           className="absolute inset-0"
           style={{
-            backgroundImage: "url('/images/about-bg.png')",
+            backgroundImage: isMobile ? "url('/images/about-bg-mobile.png')" : "url('/images/about-bg.png')",
             backgroundAttachment: 'fixed',
             backgroundPosition: 'right',
             backgroundRepeat: 'no-repeat',
@@ -194,7 +194,7 @@ const AboutClient: React.FC = () => {
               animate={{ opacity: 1 }}
               transition={{ duration: 0.5, delay: 1.8 }}
             >
-              <div className="text-center px-40">
+              <div className="text-center px-10 pt-60 md:pt-0 md:px-40 ">
                 {/* Staggered Text Reveal - "About" */}
                 <motion.h1 
                   className="text-6xl md:text-8xl lg:text-9xl font-black text-white mb-4 tracking-tight hero-title-stroke"
