@@ -11,13 +11,18 @@ import { GA_TRACKING_ID } from './lib/gtag';
 import { siteMetadata } from './lib/metadata';
 import './globals.css';
 import { Inter } from 'next/font/google';
+import { Montserrat } from 'next/font/google';
 import SmoothScroll from '../components/SmoothScroll';
 
 const inter = Inter({
   subsets: ['latin'],
   variable: '--font-inter',
 });
-
+const montserrat = Montserrat({
+  subsets: ['latin'],
+  variable: '--font-montserrat',
+  weight: '900', // This is the 'Black' weight
+});
 export function reportWebVitals(metric: NextWebVitalsMetric) {
   if (!GA_TRACKING_ID || typeof window.gtag !== 'function') {
     return;
@@ -40,7 +45,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={inter.variable}>
+    <html lang="en" className={`${inter.variable} ${montserrat.variable}`}>
       <head>
         {/* All your head tags are correct and should remain */}
         {/* ... */}

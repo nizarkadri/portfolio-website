@@ -5,6 +5,8 @@ import { motion, useScroll, useTransform, useInView, Variants } from 'framer-mot
 import dynamic from 'next/dynamic';
 import ParallaxImage from '../../../components/ParallaxImage';  
 import { useIsMobile } from "../../../app/hooks/useMobile";
+import AnimatedText from '../../../components/AnimatedText';
+import Image from 'next/image';
 
 // Dynamically import the components with SSR disabled since they use browser APIs
 const ChessProfile = dynamic(() => import('../../../components/ChessProfile'), { ssr: false });
@@ -110,6 +112,9 @@ const FloatingDecoration: React.FC<FloatingDecorationProps> = ({
   />
 );
 
+
+
+
 const AboutClient: React.FC = () => {
   const isMobile = useIsMobile();
   const mainContentRef = useRef<HTMLDivElement>(null);
@@ -120,10 +125,23 @@ const AboutClient: React.FC = () => {
   const backgroundY = useTransform(scrollYProgress, [0, 1], ['0%', '50%']);
   
   const isMainContentInView = useInView(mainContentRef, { once: true, margin: "-100px" });
-  const isProfilesInView = useInView(profilesRef, { once: true, margin: "-100px" });
-  const isPhilosophyInView = useInView(philosophyRef, { once: true, margin: "-100px" });
+  const isProfilesInView = useInView(profilesRef, { once: false, margin: "-100px" });
+  const isPhilosophyInView = useInView(philosophyRef, { once: false, margin: "-100px" });
   
   return (
+    <>
+    <div className="fixed inset-0 z-[-1] w-full h-full">
+          <Image
+            src={isMobile ? "/images/about-bg-mobile.png" : "/images/about-bg.png"}
+            alt="City skyline background"
+            fill
+            
+            className="object-contain object-top"
+            
+            quality={100}
+            priority={true} // <-- This is the key to preventing the loading glitch
+          />
+        </div>
     <div className="relative overflow-hidden">
       {/* Animated Background Elements */}
       <motion.div 
@@ -144,16 +162,7 @@ const AboutClient: React.FC = () => {
       <section className="relative min-h-screen overflow-hidden ">
 
         {/* City Map Background for Main Content */}
-        <motion.div
-          className="absolute inset-0"
-          style={{
-            backgroundImage: isMobile ? "url('/images/about-bg-mobile.png')" : "url('/images/about-bg.png')",
-            backgroundAttachment: 'fixed',
-            backgroundPosition: 'right',
-            backgroundRepeat: 'no-repeat',
-            backgroundSize: 'contain',
-          }}
-        />
+        
         
         {/* Dark overlay for text readability */}
         <motion.div 
@@ -170,6 +179,7 @@ const AboutClient: React.FC = () => {
         />
         
         {/* Portrait Image with Parallax - Left Panel */}
+        
         <motion.div 
           className="relative z-[2]"
           initial={{ 
@@ -186,7 +196,9 @@ const AboutClient: React.FC = () => {
             delay: 0
           }}
         >
-          <ParallaxImage image="/images/Potraits/IMG-20250411-WA0021.jpg" isMobile={isMobile}>
+          
+          <ParallaxImage image="/images/Potraits/potrait-2.png" isMobile={isMobile} />
+          
             {/* Hero Title Overlay */}
             <motion.div 
               className="absolute inset-0 flex items-center justify-end z-10"
@@ -196,139 +208,18 @@ const AboutClient: React.FC = () => {
             >
               <div className="text-center px-10 pt-60 md:pt-0 md:px-40 ">
                 {/* Staggered Text Reveal - "About" */}
-                <motion.h1 
-                  className="text-6xl md:text-8xl lg:text-9xl font-black text-white mb-4 tracking-tight hero-title-stroke"
-                  initial={{ 
-                    opacity: 0, 
-                    y: 80,
-                    scale: 0.7
-                  }}
-                  animate={{ 
-                    opacity: 1, 
-                    y: 0,
-                    scale: 1
-                  }}
-                  transition={{ 
-                    duration: 0.9, 
-                    delay: 2.0, 
-                    ease: [0.25, 0.46, 0.45, 0.94] 
-                  }}
-                  style={{
-                    textShadow: '0 0 30px rgba(0,0,0,0.8), 0 0 60px rgba(0,0,0,0.6)',
-                  }}
-                  whileHover={{ 
-                    scale: 1.05,
-                    transition: { duration: 0.3 }
-                  }}
-                >
-                  About
-                </motion.h1>
                 
-                {/* Staggered Text Reveal - "Me" */}
-                <motion.div
-                  className="relative"
-                  initial={{ 
-                    opacity: 0, 
-                    y: 80, 
-                    scale: 0.7 
-                  }}
-                  animate={{ 
-                    opacity: 1, 
-                    y: 0, 
-                    scale: 1 
-                  }}
-                  transition={{ 
-                    duration: 0.9, 
-                    delay: 2.4, 
-                    ease: [0.25, 0.46, 0.45, 0.94] 
-                  }}
-                >
-                  <motion.h2 
-                    className="text-5xl md:text-7xl lg:text-8xl font-black text-[#B8E62D] tracking-tight"
-                    style={{
-                      textShadow: '0 0 20px rgba(184, 230, 45, 0.5), 0 0 40px rgba(184, 230, 45, 0.3)',
-                    }}
-                    whileHover={{ 
-                      scale: 1.05,
-                      transition: { duration: 0.3 }
-                    }}
-                  >
-                    Me
-                  </motion.h2>
+                  <AnimatedText text="Hello! I'm" className=" text-6xl md:text-8xl lg:text-9xl font-black text-white mb-4 tracking-tight hero-title-stroke" delay={1.5} />
+                  <AnimatedText text="Nizar" className=" text-6xl md:text-8xl lg:text-8xl font-black text-[#B8E62D] tracking-tight" delay={3.0} />
                   <motion.div 
-                    className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-16 h-1 bg-[#B8E62D] rounded-full"
+                    className="absolute  right-[22%] transform bg-[#B8E62D] rounded-full"
                     initial={{ width: 0, opacity: 0 }}
                     animate={{ width: 64, opacity: 1 }}
-                    transition={{ duration: 0.8, delay: 2.9, ease: "easeOut" }}
+                    transition={{ duration: 1, delay: 3.0, ease: "easeIn" }}
                   />
-                </motion.div>
                 
-                {/* Staggered Text Reveal - Tagline */}
-                <motion.div
-                  className="mt-8"
-                  initial={{ 
-                    opacity: 0, 
-                    y: 60,
-                    scale: 0.8 
-                  }}
-                  animate={{ 
-                    opacity: 1, 
-                    y: 0,
-                    scale: 1 
-                  }}
-                  transition={{ 
-                    duration: 0.9, 
-                    delay: 3.2, 
-                    ease: [0.25, 0.46, 0.45, 0.94] 
-                  }}
-                >
-                  <motion.p 
-                    className="text-lg md:text-xl text-gray-200 max-w-2xl mx-auto leading-relaxed font-light"
-                    style={{
-                      textShadow: '0 2px 10px rgba(0,0,0,0.8)',
-                    }}
-                    whileHover={{ 
-                      scale: 1.02,
-                      transition: { duration: 0.3 }
-                    }}
-                  >
-                    <motion.span
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ delay: 3.6, duration: 0.4 }}
-                    >
-                      Developer
-                    </motion.span>
-                    <motion.span
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ delay: 3.8, duration: 0.4 }}
-                    >
-                      {" • "}
-                    </motion.span>
-                    <motion.span
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ delay: 4.0, duration: 0.4 }}
-                    >
-                      Problem Solver
-                    </motion.span>
-                    <motion.span
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ delay: 4.2, duration: 0.4 }}
-                    >
-                      {" • "}
-                    </motion.span>
-                    <motion.span
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ delay: 4.4, duration: 0.4 }}
-                    >
-                      Lifelong Learner
-                    </motion.span>
-                  </motion.p>
-                </motion.div>
+                  <AnimatedText text = "Developer • Problem Solver • Lifelong Learner" className="text-lg md:text-2xl pt-10 text-gray-200 max-w-2xl mx-auto leading-relaxed font-light" delay={3.5} staggerAmount={0.05} />
+                
               </div>
             </motion.div>
             
@@ -339,7 +230,7 @@ const AboutClient: React.FC = () => {
               animate={{ opacity: 1 }}
               transition={{ duration: 1, delay: 1.5 }}
             />
-          </ParallaxImage>
+          {/* </ParallaxImage> */}
         </motion.div>
         {/* Content Container */}
         <div className="relative z-[2] mt-20 container mx-auto px-4 py-20">
@@ -354,7 +245,7 @@ const AboutClient: React.FC = () => {
           >
             <motion.h3 
               className="text-2xl md:text-3xl font-semibold text-white mb-6"
-              variants={itemVariants}
+              // variants={itemVariants}
               whileHover={{ 
                 scale: 1.05,
                 color: "#B8E62D",
@@ -365,7 +256,7 @@ const AboutClient: React.FC = () => {
             </motion.h3>
             <motion.p 
               className="text-lg md:text-xl text-gray-300 leading-relaxed"
-              variants={itemVariants}
+              // variants={itemVariants}
               whileHover={{ 
                 scale: 1.02,
                 color: "#ffffff",
@@ -550,6 +441,7 @@ const AboutClient: React.FC = () => {
         </div>
       </section>
     </div>
+    </>
   );
 };
 
