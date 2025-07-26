@@ -12,6 +12,7 @@ module.exports = {
       extend: {
         fontFamily: {
           sans: ['var(--font-inter)'], // Use the CSS variable
+          montserrat: ['var(--font-montserrat)', 'sans-serif'],
         },
         colors: {
           transparent: 'transparent',
