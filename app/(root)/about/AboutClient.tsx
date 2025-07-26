@@ -123,16 +123,31 @@ const AboutClient: React.FC = () => {
   
   const { scrollYProgress } = useScroll();
   const backgroundY = useTransform(scrollYProgress, [0, 1], ['0%', '50%']);
-  
+  const backgroundImageFixed = useTransform(scrollYProgress, [0,1], ['0%', '100%']);
   const isMainContentInView = useInView(mainContentRef, { once: true, margin: "-100px" });
   const isProfilesInView = useInView(profilesRef, { once: false, margin: "-100px" });
   const isPhilosophyInView = useInView(philosophyRef, { once: false, margin: "-100px" });
   
   return (
     <>
-    <div className="fixed inset-0 z-[-1] w-full h-full">
+    {isMobile? (
+     <motion.div
+     className="absolute inset-0"
+     style={{
+       backgroundImage: "url('/images/about-bg-mobile.png')" ,
+       backgroundAttachment: 'fixed',
+       backgroundPosition: 'right',
+       backgroundRepeat: 'no-repeat',
+       backgroundSize: 'contain',
+     }}
+   />
+    ):(
+      <motion.div 
+    className="fixed inset-0 z-[-1] w-full h-full"
+    style={{ y: backgroundImageFixed }}
+    >
           <Image
-            src={isMobile ? "/images/about-bg-mobile.png" : "/images/about-bg.png"}
+            src="/images/about-bg.png"
             alt="City skyline background"
             fill
             
@@ -141,7 +156,9 @@ const AboutClient: React.FC = () => {
             quality={100}
             priority={true} // <-- This is the key to preventing the loading glitch
           />
-        </div>
+        </motion.div>
+     
+    )}
     <div className="relative overflow-hidden">
       {/* Animated Background Elements */}
       <motion.div 
@@ -197,7 +214,7 @@ const AboutClient: React.FC = () => {
           }}
         >
           
-          <ParallaxImage image="/images/Potraits/potrait-2.png" isMobile={isMobile} />
+          <ParallaxImage image={isMobile ? "/images/Potraits/potrait-1.jpg" : "/images/Potraits/potrait-2.png"} isMobile={isMobile} />
           
             {/* Hero Title Overlay */}
             <motion.div 

@@ -59,9 +59,9 @@ export default function ParallaxImage({ image, isMobile, children }: ParallaxIma
           src={image}
           alt="Portrait"
           width={1000}
-          height={1000}
+          height={500}
           priority
-          className="object-cover object-center"
+          
         />
       </motion.div>
 
