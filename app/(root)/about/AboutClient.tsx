@@ -13,6 +13,12 @@ const ChessProfile = dynamic(() => import('../../../components/ChessProfile'), {
 const DuolingoProfile = dynamic(() => import('../../../components/DuolingoProfile'), { ssr: false });
 const LeetCodeProfile = dynamic(() => import('../../../components/LeetCodeProfile'), { ssr: false });
 
+const titles = [
+  "Hello! I am",
+  "Nizar",
+  "Full Stack Software Engineer",
+  "Based IN TORONTO, CANADA",
+]
 // TypeScript interfaces
 interface FloatingDecorationProps {
   delay?: number;
@@ -200,17 +206,17 @@ const AboutClient: React.FC = () => {
         <motion.div 
           className="relative z-[2]"
           initial={{ 
-            x: '-100%',
+            
             opacity: 0 
           }}
           animate={{ 
-            x: '0%',
             opacity: 1 
           }}
           transition={{ 
-            duration: 1.2,
-            ease: [0.25, 0.46, 0.45, 0.94],
-            delay: 0
+            duration: 1.5,
+            ease:"easeInOut",
+            // ease: [0.25, 0.46, 0.45, 0.94],
+            delay: 1.0
           }}
         >
           
@@ -223,19 +229,57 @@ const AboutClient: React.FC = () => {
               animate={{ opacity: 1 }}
               transition={{ duration: 0.5, delay: 1.8 }}
             >
-              <div className="text-center px-10 pt-60 md:pt-0 md:px-40 ">
+              <div className="text-center pr-20 pt-80 md:pt-0 md:px-40 md:grid md:grid-cols-2 md:gap-10">
+                <div className="col-span-1"></div>
                 {/* Staggered Text Reveal - "About" */}
+                <motion.div className="col-span-1">
+                <AnimatedText
+                  el="h1"
+                  className="text-6xl md:text-8xl lg:text-9xl font-montserrat text-[#B0B0A7] mb-4 tracking-tight hello-title-stroke "
+                  delay={1.5}
+                  stagger={0.16}
+                >
+                  Hello<span className="text-[#B8E62D]">! </span> 
+                </AnimatedText>
                 
-                  <AnimatedText text="Hello! I'm" className=" text-6xl md:text-8xl lg:text-9xl font-black text-white mb-4 tracking-tight hero-title-stroke" delay={1.5} />
-                  <AnimatedText text="Nizar" className=" text-6xl md:text-8xl lg:text-8xl font-black text-[#B8E62D] tracking-tight" delay={3.0} />
+                <AnimatedText  
+                el="h1" 
+                className=" text-6xl md:text-8xl lg:text-9xl font-montserrat text-[#B0B0A7] mb-4 tracking-tight hello-title-stroke" 
+                delay={2.0} 
+                stagger={0.20}
+                >
+                  I am
+                </AnimatedText>
+                <AnimatedText  
+                el="h1" 
+                className=" text-6xl md:text-9xl lg:text-9xl font-montserrat text-[#B8E62D] tracking-tight hello-title-stroke" 
+                delay={2.3} 
+                stagger={0.08} >
+                  Nizar
+                </AnimatedText>
+                  
                   <motion.div 
                     className="absolute  right-[22%] transform bg-[#B8E62D] rounded-full"
                     initial={{ width: 0, opacity: 0 }}
                     animate={{ width: 64, opacity: 1 }}
                     transition={{ duration: 1, delay: 3.0, ease: "easeIn" }}
                   />
-                
-                  <AnimatedText text = "Developer • Problem Solver • Lifelong Learner" className="text-lg md:text-2xl pt-10 text-gray-200 max-w-2xl mx-auto leading-relaxed font-light" delay={3.5} staggerAmount={0.05} />
+                {isMobile?
+                <>
+                <AnimatedText el="p" className="text-lg md:text-2xl pt-10 text-gray-200 max-w-2xl mx-auto leading-relaxed font-light" delay={3.5} stagger={0.05} >
+                  Full Stack Software Engineer
+                </AnimatedText>
+                <AnimatedText el="p" className="text-lg md:text-2xl text-gray-200 max-w-2xl mx-auto leading-relaxed font-light" delay={3.5} stagger={0.05} >
+                  Based in Toronto, Canada
+                </AnimatedText>
+                </>
+                :
+                <AnimatedText el="p" className="text-lg md:text-2xl pt-20 text-gray-200 max-w-2xl mx-auto leading-relaxed font-light" delay={3.5} stagger={0.05} >
+                Full Stack Software Engineer • Based in Toronto, Canada
+                </AnimatedText>
+                }
+                </motion.div>
+                  
                 
               </div>
             </motion.div>

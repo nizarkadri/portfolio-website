@@ -1,60 +1,84 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { ElementType } from 'react'; // Import ElementType
+import { motion, Variants } from 'framer-motion';
 
-// Letter variants remain unchanged as they are not dynamic
-const letterVariants = {
-  hidden: {
-    opacity: 0,
-    y: 20,
-  },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      type: 'spring',
-      damping: 12,
-      stiffness: 100,
-    },
-  },
+/**
+ * Props for the AnimatedText component.
+ */
+type AnimatedTextProps = {
+  children: React.ReactNode;
+  /**
+   * The component or HTML tag to use for the wrapper.
+   * Can be 'h1', 'p', or even a custom component.
+   * @default 'p'
+   */
+  el?: ElementType; // This is the key change
+  className?: string;
+  delay?: number;
+  stagger?: number;
 };
 
-const AnimatedTypography = ({ text, className, delay = 0, staggerAmount = 0.15 }: { text: string, className: string, delay?: number, staggerAmount?: number }) => {
-  // Move container variants inside the component to access the delay prop
-  const containerVariants = {
+/**
+ * A component that reveals text character by character.
+ */
+const AnimatedText = ({
+  children,
+  el: Wrapper = 'p', // Default to a <p> tag
+  className,
+  delay = 0,
+  stagger = 0.05,
+}: AnimatedTextProps) => {
+
+  const containerVariants: Variants = {
     hidden: {},
     visible: {
       transition: {
-        staggerChildren: staggerAmount,
-        delayChildren: delay, // Use the delay prop here
+        delayChildren: delay,
+        staggerChildren: stagger,
       },
     },
   };
 
-  const letters = Array.from(text);
+  const characterVariants: Variants = {
+    hidden: {
+      opacity: 0,
+      y: '0.5em',
+    },
+    visible: {
+      opacity: 1,
+      y: '0em',
+      transition: {
+        type: 'spring',
+        damping: 42,
+        stiffness: 10,
+      },
+    },
+  };
+
+  const characters = React.Children.toArray(children).flatMap((child) =>
+    typeof child === 'string' ? child.split('') : child
+  );
 
   return (
-    <motion.h1
-      className={className}
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
-      aria-label={text}
-    >
-      {letters.map((letter, index) => (
-        <motion.span
-          key={index}
-          variants={letterVariants}
-          className="inline-block"
-        >
-          {letter === ' ' ? '\u00A0' : letter}
-        </motion.span>
-      ))}
-    </motion.h1>
+    <Wrapper className={className}>
+      <span className="sr-only">{children}</span>
+      <motion.span
+        aria-hidden
+        initial="hidden"
+        animate="visible"
+        variants={containerVariants}
+      >
+        {characters.map((char, index) => (
+          <motion.span
+            key={index}
+            className="inline-block"
+            variants={characterVariants}
+          >
+            {char === ' ' ? '\u00A0' : char}
+          </motion.span>
+        ))}
+      </motion.span>
+    </Wrapper>
   );
 };
 
-// EXAMPLE USAGE:
-// import AnimatedTypography from './AnimatedTypography';
-// <AnimatedTypography text="This animation starts after 1.5 seconds." delay={1.5} />
-
-export default AnimatedTypography;
+export default AnimatedText;
