@@ -41,16 +41,20 @@ const AnimatedText = ({
   const characterVariants: Variants = {
     hidden: {
       opacity: 0,
-      y: '0.5em',
+      // y: '0.5em',
+      x: '-0.7em',
     },
     visible: {
       opacity: 1,
-      y: '0em',
-      transition: {
-        type: 'spring',
-        damping: 42,
-        stiffness: 10,
-      },
+      x: '0em',
+
+      // y: '0em',
+      transition: {transform: '0.6s cubic-bezier(0.5, 1, 0.89, 1)'},
+      // transition: {
+      //   type: 'spring',
+      //   damping: 10,
+      //   stiffness: 150,
+      // },
     },
   };
 

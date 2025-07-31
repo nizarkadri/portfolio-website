@@ -13,12 +13,7 @@ const ChessProfile = dynamic(() => import('../../../components/ChessProfile'), {
 const DuolingoProfile = dynamic(() => import('../../../components/DuolingoProfile'), { ssr: false });
 const LeetCodeProfile = dynamic(() => import('../../../components/LeetCodeProfile'), { ssr: false });
 
-const titles = [
-  "Hello! I am",
-  "Nizar",
-  "Full Stack Software Engineer",
-  "Based IN TORONTO, CANADA",
-]
+
 // TypeScript interfaces
 interface FloatingDecorationProps {
   delay?: number;
@@ -128,12 +123,15 @@ const AboutClient: React.FC = () => {
   const philosophyRef = useRef<HTMLDivElement>(null);
   
   const { scrollYProgress } = useScroll();
+  const fadeOpacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
+  const scaleTitle = useTransform(scrollYProgress, [0, 0.5, 1], [1, 0.3, 1]);
+  const yTitle = useTransform(scrollYProgress, [0, 0.2], [0, 300]);
   const backgroundY = useTransform(scrollYProgress, [0, 1], ['0%', '50%']);
   const backgroundImageFixed = useTransform(scrollYProgress, [0,1], ['0%', '100%']);
   const isMainContentInView = useInView(mainContentRef, { once: true, margin: "-100px" });
   const isProfilesInView = useInView(profilesRef, { once: false, margin: "-100px" });
   const isPhilosophyInView = useInView(philosophyRef, { once: false, margin: "-100px" });
-  
+
   return (
     <>
     {isMobile? (
@@ -193,6 +191,7 @@ const AboutClient: React.FC = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1.5 }}
+         
         />
          <motion.div 
           className="absolute inset-0 bg-black/40 z-[1]"
@@ -218,7 +217,9 @@ const AboutClient: React.FC = () => {
             // ease: [0.25, 0.46, 0.45, 0.94],
             delay: 1.0
           }}
+          
         >
+
           
           <ParallaxImage image={isMobile ? "/images/Potraits/potrait-1.jpg" : "/images/Potraits/potrait-2.png"} isMobile={isMobile} />
           
@@ -228,55 +229,88 @@ const AboutClient: React.FC = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.5, delay: 1.8 }}
+              // style={{ opacity: fadeOpacity,
+              //    scale: scaleTitle }}
+
             >
               <div className="text-center pr-20 pt-80 md:pt-0 md:px-40 md:grid md:grid-cols-2 md:gap-10">
                 <div className="col-span-1"></div>
                 {/* Staggered Text Reveal - "About" */}
                 <motion.div className="col-span-1">
-                <AnimatedText
-                  el="h1"
-                  className="text-6xl md:text-8xl lg:text-9xl font-montserrat text-[#B0B0A7] mb-4 tracking-tight hello-title-stroke "
-                  delay={1.5}
-                  stagger={0.16}
-                >
-                  Hello<span className="text-[#B8E62D]">! </span> 
-                </AnimatedText>
+                  <motion.div
+                  style={{ opacity: fadeOpacity,
+                    scale: scaleTitle,
+                    y: yTitle,
+                   }}
+                  >
+                    <AnimatedText
+                      el="h1"
+                      className="text-6xl md:text-8xl lg:text-9xl font-montserrat text-[#B0B0A7] mb-4 tracking-tight  "
+                      delay={1.5}
+                      stagger={0.16}
+                    >
+                      Hello<span className="text-[#B8E62D]">! </span> 
+                    </AnimatedText>
+                  </motion.div>
                 
+                  <motion.div
+                  style={{ opacity: fadeOpacity,
+                    scale: scaleTitle,
+                    y: yTitle }}
+                  >
                 <AnimatedText  
                 el="h1" 
-                className=" text-6xl md:text-8xl lg:text-9xl font-montserrat text-[#B0B0A7] mb-4 tracking-tight hello-title-stroke" 
+                className=" text-6xl md:text-8xl lg:text-9xl font-montserrat text-[#B0B0A7] mb-4 tracking-tight" 
                 delay={2.0} 
                 stagger={0.20}
                 >
                   I am
                 </AnimatedText>
+                </motion.div>
+                <motion.div
+                  style={{ opacity: fadeOpacity,
+                    scale: scaleTitle,
+                    y: yTitle }}
+                  > 
                 <AnimatedText  
                 el="h1" 
-                className=" text-6xl md:text-9xl lg:text-9xl font-montserrat text-[#B8E62D] tracking-tight hello-title-stroke" 
+                className=" text-6xl md:text-9xl lg:text-9xl font-montserrat text-[#B8E62D] tracking-tight " 
                 delay={2.3} 
                 stagger={0.08} >
                   Nizar
                 </AnimatedText>
-                  
-                  <motion.div 
-                    className="absolute  right-[22%] transform bg-[#B8E62D] rounded-full"
-                    initial={{ width: 0, opacity: 0 }}
-                    animate={{ width: 64, opacity: 1 }}
-                    transition={{ duration: 1, delay: 3.0, ease: "easeIn" }}
-                  />
+                </motion.div>
                 {isMobile?
                 <>
-                <AnimatedText el="p" className="text-lg md:text-2xl pt-10 text-gray-200 max-w-2xl mx-auto leading-relaxed font-light" delay={3.5} stagger={0.05} >
+                <motion.div
+                  style={{ opacity: fadeOpacity,
+                    scale: scaleTitle,
+                    y: yTitle }}
+                  > 
+                <AnimatedText el="p" className="text-lg md:text-2xl pt-10 text-[#B0B0A7]   max-w-2xl mx-auto leading-relaxed font-light" 
+                 delay={2.0} 
+                stagger={0.02} >
                   Full Stack Software Engineer
                 </AnimatedText>
-                <AnimatedText el="p" className="text-lg md:text-2xl text-gray-200 max-w-2xl mx-auto leading-relaxed font-light" delay={3.5} stagger={0.05} >
+                <AnimatedText el="p" className="text-lg md:text-2xl text-[#B0B0A7] max-w-2xl mx-auto leading-relaxed font-light"
+                 delay={2.0} 
+                stagger={0.02} >
                   Based in Toronto, Canada
                 </AnimatedText>
+                </motion.div>
                 </>
                 :
-                <AnimatedText el="p" className="text-lg md:text-2xl pt-20 text-gray-200 max-w-2xl mx-auto leading-relaxed font-light" delay={3.5} stagger={0.05} >
-                Full Stack Software Engineer • Based in Toronto, Canada
+                <motion.div
+                  style={{ opacity: fadeOpacity,
+                    scale: scaleTitle,
+                    y: yTitle }}
+                  > 
+                <AnimatedText el="p" className="text-lg md:text-2xl pt-20 text-[#B0B0A7] max-w-2xl mx-auto leading-relaxed font-light" 
+                delay={2.0} 
+                stagger={0.02} >
+                Full Stack Software Engineer<span className="text-[#B8E62D]"> • </span>Based in Toronto, Canada
                 </AnimatedText>
+                </motion.div>
                 }
                 </motion.div>
                   
