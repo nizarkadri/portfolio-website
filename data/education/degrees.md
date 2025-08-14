@@ -4,7 +4,7 @@ degrees:
     degree: 'Master of Applied Computing (Specialized in AI/ML)'
     
   
-  - institution: 'Ganpat University' 
+  - institution: 'IBM' 
     degree: 'B.Tech in Computer Science (IBM Cloud Certified)'
     
 ---
