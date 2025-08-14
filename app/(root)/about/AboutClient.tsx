@@ -7,6 +7,7 @@ import ParallaxImage from '../../../components/ParallaxImage';
 import { useIsMobile } from "../../../app/hooks/useMobile";
 import AnimatedText from '../../../components/AnimatedText';
 import Image from 'next/image';
+import MyStory from '../../../components/MyStory';
 
 // Dynamically import the components with SSR disabled since they use browser APIs
 const ChessProfile = dynamic(() => import('../../../components/ChessProfile'), { ssr: false });
@@ -317,7 +318,7 @@ const AboutClient: React.FC = () => {
                 
               </div>
             </motion.div>
-            
+                
             {/* Enhanced Gradient Overlay */}
             <motion.div 
               className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/30 pointer-events-none" 
@@ -327,212 +328,15 @@ const AboutClient: React.FC = () => {
             />
           {/* </ParallaxImage> */}
         </motion.div>
+        
         {/* Content Container */}
-        <div className="relative z-[2] mt-20 container mx-auto px-4 py-20">
+        <div className="relative mt-20 container mx-auto px-4 py-20">
           
           {/* About Introduction */}
-          <motion.div 
-            ref={mainContentRef}
-            className="max-w-4xl mx-auto text-center mb-20"
-            variants={containerVariants}
-            initial="hidden"
-            animate={isMainContentInView ? "visible" : "hidden"}
-          >
-            <motion.h3 
-              className="text-2xl md:text-3xl font-semibold text-white mb-6"
-              // variants={itemVariants}
-              whileHover={{ 
-                scale: 1.05,
-                color: "#B8E62D",
-                transition: { duration: 0.3 }
-              }}
-            >
-              Who <span className="text-[#B8E62D]">I Am</span>
-            </motion.h3>
-            <motion.p 
-              className="text-lg md:text-xl text-gray-300 leading-relaxed"
-              // variants={itemVariants}
-              whileHover={{ 
-                scale: 1.02,
-                color: "#ffffff",
-                transition: { duration: 0.3 }
-              }}
-            >
-              I&apos;m a passionate developer who believes in continuous learning and growth. 
-              When I&apos;m not coding, you&apos;ll find me exploring new challenges and pushing my limits 
-              in various pursuits.
-            </motion.p>
-          </motion.div>
+          <MyStory />
+         
 
-          {/* Beyond Work Section */}
-          <motion.div
-            ref={profilesRef}
-            variants={containerVariants}
-            initial="hidden"
-            animate={isProfilesInView ? "visible" : "hidden"}
-          >
-            {/* Section Header */}
-            <motion.div className="text-center mb-16" variants={itemVariants}>
-              <motion.h2 
-                className="text-3xl md:text-5xl font-bold text-white mb-4"
-                whileHover={{ 
-                  scale: 1.05,
-                  textShadow: "0 0 20px rgba(184, 230, 45, 0.3)",
-                  transition: { duration: 0.3 }
-                }}
-              >
-                Beyond <span className="text-[#B8E62D]">Work</span>
-              </motion.h2>
-              <motion.div 
-                className="w-24 h-1 bg-[#B8E62D] mx-auto mb-6 rounded-full"
-                initial={{ width: 0, opacity: 0 }}
-                animate={isProfilesInView ? { width: 96, opacity: 1 } : { width: 0, opacity: 0 }}
-                transition={{ duration: 0.8, delay: 0.5, ease: "easeOut" }}
-              />
-              <motion.p 
-                className="text-gray-400 text-lg max-w-2xl mx-auto"
-                variants={itemVariants}
-                whileHover={{ 
-                  color: "#ffffff",
-                  transition: { duration: 0.3 }
-                }}
-              >
-                Here&apos;s what keeps me motivated and challenged outside of development
-              </motion.p>
-            </motion.div>
-
-            {/* Profiles Grid with Enhanced Animations */}
-            <motion.div 
-              className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto"
-              variants={containerVariants}
-            >
-              <motion.div
-                className="preserve-3d"
-                variants={profileCardVariants}
-                whileHover="hover"
-                whileTap={{ scale: 0.98 }}
-              >
-                <motion.div
-                  variants={floatingVariants}
-                  initial="initial"
-                  animate="animate"
-                >
-                  <ChessProfile />
-                </motion.div>
-              </motion.div>
-              
-              <motion.div
-                className="preserve-3d"
-                variants={profileCardVariants}
-                whileHover="hover"
-                whileTap={{ scale: 0.98 }}
-              >
-                <motion.div
-                  variants={floatingVariants}
-                  initial="initial"
-                  animate="animate"
-                  transition={{ delay: 2 }}
-                >
-                  <DuolingoProfile />
-                </motion.div>
-              </motion.div>
-              
-              <motion.div
-                className="md:col-span-2 lg:col-span-1 preserve-3d"
-                variants={profileCardVariants}
-                whileHover="hover"
-                whileTap={{ scale: 0.98 }}
-              >
-                <motion.div
-                  variants={floatingVariants}
-                  initial="initial"
-                  animate="animate"
-                  transition={{ delay: 4 }}
-                >
-                  <LeetCodeProfile />
-                </motion.div>
-              </motion.div>
-            </motion.div>
-          </motion.div>
-
-          {/* Personal Philosophy Section */}
-          <motion.div 
-            ref={philosophyRef}
-            className="max-w-4xl mx-auto text-center mt-20 pt-20 border-t border-gray-800 relative"
-            variants={containerVariants}
-            initial="hidden"
-            animate={isPhilosophyInView ? "visible" : "hidden"}
-          >
-            {/* Decorative elements around philosophy section */}
-            <motion.div
-              className="absolute -top-5 left-1/2 transform -translate-x-1/2 w-20 h-1 bg-gradient-to-r from-transparent via-[#B8E62D] to-transparent rounded-full"
-              initial={{ width: 0, opacity: 0 }}
-              animate={isPhilosophyInView ? { width: 80, opacity: 1 } : { width: 0, opacity: 0 }}
-              transition={{ duration: 1, delay: 0.3 }}
-            />
-            
-            <motion.h3 
-              className="text-2xl md:text-3xl font-semibold text-white mb-6"
-              variants={itemVariants}
-              whileHover={{ 
-                scale: 1.05,
-                textShadow: "0 0 15px rgba(184, 230, 45, 0.3)",
-                transition: { duration: 0.3 }
-              }}
-            >
-              My <span className="text-[#B8E62D]">Philosophy</span>
-            </motion.h3>
-            <motion.p 
-              className="text-gray-300 text-lg leading-relaxed"
-              variants={itemVariants}
-              whileHover={{ 
-                scale: 1.02,
-                color: "#ffffff",
-                transition: { duration: 0.3 }
-              }}
-            >
-              I believe that growth happens at the intersection of challenge and curiosity. 
-              Whether it&apos;s solving complex algorithms, mastering a new language, or calculating 
-              the perfect chess move, each pursuit teaches me something valuable that I bring 
-              back to my development work.
-            </motion.p>
-            
-            {/* Animated quote marks */}
-            <motion.div
-              className="flex justify-center mt-8 space-x-4"
-              variants={itemVariants}
-            >
-              <motion.div
-                className="text-[#B8E62D] text-4xl opacity-30"
-                animate={{ 
-                  rotate: [0, 5, 0],
-                  scale: [1, 1.1, 1]
-                }}
-                transition={{ 
-                  duration: 4,
-                  repeat: Infinity,
-                  ease: "easeInOut"
-                }}
-              >
-                &ldquo;
-              </motion.div>
-              <motion.div
-                className="text-[#B8E62D] text-4xl opacity-30"
-                animate={{ 
-                  rotate: [0, -5, 0],
-                  scale: [1, 1.1, 1]
-                }}
-                transition={{ 
-                  duration: 4,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                  delay: 2
-                }}
-              >
-                &rdquo;
-              </motion.div>
-            </motion.div>
-          </motion.div>
+          {/* Beyond Work & Philosophy moved into MyStory to keep single scroll context */}
         </div>
       </section>
     </div>
