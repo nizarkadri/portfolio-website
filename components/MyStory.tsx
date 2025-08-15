@@ -3,20 +3,18 @@
 'use client';
 
 import React, { useRef } from 'react';
-import { motion, useScroll, useTransform, useInView } from 'framer-motion';
+import { motion, useScroll, useTransform, useInView, MotionValue } from 'framer-motion';
 import dynamic from 'next/dynamic';
 import { storyData, StoryChapter } from './StoryData';
 
 // --- COMPONENTS ---
 
-const Starfield: React.FC = () => (
-	<div className="absolute inset-0 -z-20">
-		<div className="absolute inset-0 bg-stars" />
-		<div className="absolute inset-0 bg-twinkling" />
-	</div>
-);
 
-const TimelineConnector: React.FC<{ isLast: boolean; progress: any }> = ({ isLast, progress }) => {
+
+
+const TimelineConnector: React.FC<{ isLast: boolean; progress: MotionValue<number> }> = ({ isLast, progress }) => {
+
+	const dotProgress = useTransform(progress, [0, 1], ['0%', '100%']);
 	if (isLast) return null;
 	
 	return (
@@ -24,12 +22,12 @@ const TimelineConnector: React.FC<{ isLast: boolean; progress: any }> = ({ isLas
 			<div className="w-0.5 h-20 bg-gradient-to-b from-[#B8E62D]/60 via-[#B8E62D]/30 to-transparent relative">
 				<motion.div 
 					className="absolute top-0 left-0 w-full bg-[#B8E62D] shadow-[0_0_8px_rgba(184,230,45,0.6)]"
-					style={{ height: useTransform(progress, [0, 1], ['0%', '100%']) }}
+					style={{ height: dotProgress }}
 				/>
 				{/* Animated dot */}
 				<motion.div 
 					className="absolute w-2 h-2 bg-[#B8E62D] rounded-full left-1/2 -translate-x-1/2 shadow-[0_0_12px_rgba(184,230,45,0.8)]"
-					style={{ top: useTransform(progress, [0, 1], ['0%', '100%']) }}
+					style={{ top: dotProgress }}
 					animate={{ scale: [1, 1.2, 1] }}
 					transition={{ duration: 2, repeat: Infinity }}
 				/>

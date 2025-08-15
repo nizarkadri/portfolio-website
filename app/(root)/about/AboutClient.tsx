@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useRef } from 'react';
-import { motion, useScroll, useTransform, useInView, Variants } from 'framer-motion';
-import dynamic from 'next/dynamic';
+import React from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
+
 import ParallaxImage from '../../../components/ParallaxImage';  
 import { useIsMobile } from "../../../app/hooks/useMobile";
 import AnimatedText from '../../../components/AnimatedText';
@@ -10,9 +10,6 @@ import Image from 'next/image';
 import MyStory from '../../../components/MyStory';
 
 // Dynamically import the components with SSR disabled since they use browser APIs
-const ChessProfile = dynamic(() => import('../../../components/ChessProfile'), { ssr: false });
-const DuolingoProfile = dynamic(() => import('../../../components/DuolingoProfile'), { ssr: false });
-const LeetCodeProfile = dynamic(() => import('../../../components/LeetCodeProfile'), { ssr: false });
 
 
 // TypeScript interfaces
@@ -23,73 +20,6 @@ interface FloatingDecorationProps {
 }
 
 // Animation variants with proper typing
-const containerVariants: Variants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.2,
-      delayChildren: 0.1
-    }
-  }
-};
-
-const itemVariants: Variants = {
-  hidden: { 
-    opacity: 0, 
-    y: 30,
-    scale: 0.95
-  },
-  visible: {
-    opacity: 1,
-    y: 0,
-    scale: 1,
-    transition: {
-      duration: 0.6,
-      ease: [0.25, 0.46, 0.45, 0.94]
-    }
-  }
-};
-
-const floatingVariants: Variants = {
-  initial: {
-    y: 0,
-    rotate: 0,
-    opacity: 1
-  },
-  animate: {
-    y: [-10, 10, -10],
-    rotate: [-1, 1, -1],
-    transition: {
-      duration: 6,
-      repeat: Infinity,
-      ease: "easeInOut"
-    }
-  }
-};
-
-const profileCardVariants: Variants = {
-  hidden: { 
-    opacity: 0, 
-    y: 50
-  },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.8,
-      ease: [0.25, 0.46, 0.45, 0.94]
-    }
-  },
-  hover: {
-    y: -10,
-    scale: 1.02,
-    transition: {
-      duration: 0.3,
-      ease: "easeOut"
-    }
-  }
-};
 
 // Floating decoration component with proper TypeScript
 const FloatingDecoration: React.FC<FloatingDecorationProps> = ({ 
@@ -119,9 +49,6 @@ const FloatingDecoration: React.FC<FloatingDecorationProps> = ({
 
 const AboutClient: React.FC = () => {
   const isMobile = useIsMobile();
-  const mainContentRef = useRef<HTMLDivElement>(null);
-  const profilesRef = useRef<HTMLDivElement>(null);
-  const philosophyRef = useRef<HTMLDivElement>(null);
   
   const { scrollYProgress } = useScroll();
   const fadeOpacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
@@ -129,9 +56,7 @@ const AboutClient: React.FC = () => {
   const yTitle = useTransform(scrollYProgress, [0, 0.2], [0, 300]);
   const backgroundY = useTransform(scrollYProgress, [0, 1], ['0%', '50%']);
   const backgroundImageFixed = useTransform(scrollYProgress, [0,1], ['0%', '100%']);
-  const isMainContentInView = useInView(mainContentRef, { once: true, margin: "-100px" });
-  const isProfilesInView = useInView(profilesRef, { once: false, margin: "-100px" });
-  const isPhilosophyInView = useInView(philosophyRef, { once: false, margin: "-100px" });
+
 
   return (
     <>
