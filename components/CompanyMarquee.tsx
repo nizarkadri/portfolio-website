@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 
 interface Company {
   name: string;
@@ -13,7 +14,7 @@ const companies: Company[] = [
   { name: 'CGI', color: '#DC2626', logo: '/images/companies/CGI.svg' }, // red-600
   { name: 'Fiera Capital', color: '#2563EB', logo: '/images/companies/Fiera_Capital.svg' }, // blue-600
   { name: 'Bell', color: '#1D4ED8', logo: '/images/companies/Bell.svg' }, // blue-700
-  { name: 'Canadian Securities Administrators', color: '#FFFFFF', logo: '/images/companies/csa.png' }, // white
+  { name: 'Canadian Securities Administrators', color: '#FFFFFF', logo: '' }, // white
   { name: 'TechSym Solutions', color: '#FFFFFF', logo: '' }, // white
 ];
 
@@ -74,6 +75,10 @@ const CompanyMarquee: React.FC = () => {
                 className="inline-flex items-center mx-8 md:mx-16 lg:mx-20 flex-shrink-0 hover:scale-105 transition-transform duration-200 ease-out"
               >
                 {company.logo ? (
+                  <Link 
+                  href="/experience" 
+                  aria-label={`View experience related to ${company.name}`}
+                >
                   <div className="relative group cursor-pointer">
                     <Image
                       src={company.logo}
@@ -81,10 +86,14 @@ const CompanyMarquee: React.FC = () => {
                       width={120}
                       height={40}
                       className="h-8 md:h-10 lg:h-12 w-auto object-contain opacity-80 group-hover:opacity-100 transition-all duration-300"
-                    
                     />
                   </div>
+                </Link> 
                 ) : (
+                  <Link 
+                  href="/experience" 
+                  aria-label={`View experience related to ${company.name}`}
+                >
                   <span
                     className="text-xl md:text-2xl lg:text-3xl font-thin tracking-[0.15em] transition-all duration-500 cursor-pointer relative hover:tracking-[0.2em]"
                     style={{ 
@@ -97,6 +106,7 @@ const CompanyMarquee: React.FC = () => {
                     {/* Subtle underline on hover */}
                     <div className="absolute -bottom-1 left-0 h-px bg-current opacity-0 w-0 hover:w-full hover:opacity-60 transition-all duration-400 ease-out" />
                   </span>
+                  </Link>
                 )}
 
                 {/* Refined separator with hover effects */}

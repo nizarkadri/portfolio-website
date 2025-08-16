@@ -45,13 +45,20 @@ export const siteMetadata: Metadata = {
     title: 'Nizar Kadri - Full Stack Developer & Software Engineer',
     description: 'Full Stack Developer specializing in React, Node.js, Python, and cloud technologies. Building innovative web applications and AI-powered solutions.',
     siteName: 'Nizar Kadri Portfolio',
-    // Removed images until og-image.jpg is created
+    images: [
+      {
+        url: '/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'Nizar Kadri - Full Stack Developer & Software Engineer',
+      }
+    ],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Nizar Kadri - Full Stack Developer & Software Engineer',
     description: 'Full Stack Developer specializing in React, Node.js, Python, and cloud technologies.',
-    // Removed images until og-image.jpg is created
+    images: ['/og-image.png'],
   },
   robots: {
     index: true,
@@ -65,7 +72,18 @@ export const siteMetadata: Metadata = {
     },
   },
   manifest: '/manifest.json',
-  // Removed icon references until actual icon files are created
+  icons: {
+    icon: [
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+      { url: '/favicon.ico', sizes: '32x32', type: 'image/x-icon' },
+    ],
+    apple: [
+      { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
+    ],
+    other: [
+      { rel: 'mask-icon', url: '/safari-pinned-tab.svg', color: '#B8E62D' },
+    ],
+  },
   verification: {
     google: process.env.GOOGLE_VERIFICATION_CODE,
   },
