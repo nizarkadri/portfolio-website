@@ -6,7 +6,8 @@ import React from 'react';
 import Skills from '../../components/Skills';
 import Hero from '../../components/Hero';
 import Projects from '../../components/Projects';
-import Experience from '../../components/Experience';
+// import Experience from '../../components/Experience';
+import CompanyMarquee from '../../components/CompanyMarquee';
 
 
 const Home = () => {
@@ -61,8 +62,11 @@ const Home = () => {
         {/* Skills Section */}
         <Skills />
 
+        {/* Company Marquee Section */}
+        <CompanyMarquee />
+
         {/* Experience Preview Section */}
-        <Experience />
+        {/* <Experience /> */}
         
         {/* Projects Preview Section */}
         <Projects />

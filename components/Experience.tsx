@@ -38,7 +38,7 @@ const Experience = () => {
               <div className="bg-gradient-to-b from-soft-black/40 to-soft-black/10 p-8 rounded-2xl backdrop-blur-sm border border-white/5 hover:border-[#B8E62D]/20 transition-all duration-500 shadow-lg shadow-black/40">
                 <h3 className="text-2xl font-bold text-white mb-1">Software Engineer</h3>
                 <p className="text-xl text-white/80 font-medium">CGI</p>
-                <p className="text-[#B8E62D] text-sm mb-2">Jun 2022 - Dec 2024</p>
+                {/* <p className="text-[#B8E62D] text-sm mb-2">Jun 2022 - Dec 2024</p> */}
                 <p className="text-soft-white/60 text-sm mb-4">Toronto, Canada</p>
                 
                 <p className="text-soft-white mb-6 leading-relaxed">Led development of high-performance applications and optimized existing systems.</p>

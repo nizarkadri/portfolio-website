@@ -97,6 +97,23 @@ module.exports = {
           'rotate-3d': 'rotate3d 8s linear infinite',
           'pulse-subtle': 'pulseSubtle 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
           'glow': 'glow 3s ease-in-out infinite alternate',
+          'scroll': 'scroll 30s linear infinite',
+          'pause': 'scroll 30s linear infinite paused',
+          'slide-in': 'slideIn 1.5s ease-out forwards',
+        },
+        keyframes: {
+          scroll: {
+            '0%': { transform: 'translateX(0%)' },
+            '100%': { transform: 'translateX(-100%)' },
+          },
+          fadeIn: {
+            '0%': { opacity: '0', transform: 'translateY(20px)' },
+            '100%': { opacity: '1', transform: 'translateY(0)' },
+          },
+          slideIn: {
+            '0%': { transform: 'scaleX(0)' },
+            '100%': { transform: 'scaleX(1)' },
+          },
         },
       },
     },
