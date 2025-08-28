@@ -1099,7 +1099,7 @@ export default function ContactPage() {
   // ============================================================================
 
   return (
-    <div className="min-h-screen flex flex-col bg-black">
+    <div className="min-h-screen flex flex-col bg-black mt-10">
       {/* Form container */}
       <div className="flex-1 flex flex-col items-center justify-center">
         <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-6xl px-4 py-10">
