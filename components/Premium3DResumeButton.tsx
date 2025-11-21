@@ -1,12 +1,10 @@
 'use client'
 
-import { motion, Transition as FMTransition } from 'framer-motion'; // Import specific types if needed for clarity
-import React from 'react'; // Import React for CSSProperties
+import { motion, Transition as FMTransition } from 'framer-motion';
+import React from 'react';
 
-// Define a more specific type for style objects if complex, though React.CSSProperties usually suffices
 interface ExtendedCSSProperties extends React.CSSProperties {
-  WebkitBackgroundClip?: string; // Ensure non-standard props are known
-  // Add other non-standard properties if necessary
+  WebkitBackgroundClip?: string;
 }
 
 interface Premium3DResumeButtonProps {
@@ -14,17 +12,12 @@ interface Premium3DResumeButtonProps {
 }
 
 const Premium3DResumeButton = ({ onClick }: Premium3DResumeButtonProps) => {
-  // Color variables for easy customization
-  const primaryRgb: string = "0, 0, 0"; // Base for black/dark backgrounds
-  
-
-  const accentGreenRgb: string = "184, 230, 45"; // The prominent green color (original green)
+  // Color variables
+  const primaryRgb: string = "0, 0, 0"; 
+  const accentGreenRgb: string = "184, 230, 45"; 
   const accentGreenHex: string = "#B8E62D";
-  
-  const whiteRgb: string = "255, 255, 255"; // For highlights, light borders, etc.
-  // const whiteHex: string = "#FFFFFF"; // Not used, can be removed if not needed elsewhere
+  const whiteRgb: string = "255, 255, 255"; 
 
-  // Style objects using React.CSSProperties or our extended version for clarity
   const rootDivStyle: React.CSSProperties = {
     perspective: "1200px",
     transformStyle: "preserve-3d"
@@ -34,7 +27,7 @@ const Premium3DResumeButton = ({ onClick }: Premium3DResumeButtonProps) => {
     transformStyle: "preserve-3d"
   };
   
-  // Framer Motion transition objects
+  // Framer Motion transitions
   const rootTransition: FMTransition = { 
     duration: 1.8, 
     delay: 1.4,
@@ -54,9 +47,24 @@ const Premium3DResumeButton = ({ onClick }: Premium3DResumeButtonProps) => {
   const boxShadowTransition: FMTransition = { duration: 3, repeat: Infinity, ease: "easeInOut" };
   const animatedGradientOverlayTransition: FMTransition = { duration: 2.5, repeat: Infinity, repeatDelay: 1, ease: "easeInOut" };
   const morphingBackgroundShapesTransition: FMTransition = { duration: 4, repeat: Infinity, ease: "easeInOut" };
-  const iconContainerTransition: FMTransition = { duration: 3, repeat: Infinity, ease: "easeInOut" };
+  
+  // UPDATED: Made the container float + scale slightly to look like a "pulse"
+  const iconContainerTransition: FMTransition = { 
+    duration: 4, 
+    repeat: Infinity, 
+    ease: "easeInOut" 
+  };
+  
   const iconGlowTransition: FMTransition = { duration: 2, repeat: Infinity, ease: "easeInOut" };
-  const iconPathTransition: FMTransition = { duration: 2, repeat: Infinity, repeatType: "reverse", ease: "easeInOut"};
+  
+  // UPDATED: Slower drawing speed for the complex star shape
+  const iconPathTransition: FMTransition = { 
+    duration: 3, 
+    repeat: Infinity, 
+    repeatType: "reverse", 
+    ease: "easeInOut"
+  };
+  
   const textShadowTransition: FMTransition = { duration: 2, repeat: Infinity, ease: "easeInOut" };
   const textReflectionOpacityTransition: FMTransition = { duration: 2, repeat: Infinity, ease: "easeInOut" };
   const runningBorderTransition: FMTransition = { duration: 3, repeat: Infinity, ease: "linear" };
@@ -64,7 +72,7 @@ const Premium3DResumeButton = ({ onClick }: Premium3DResumeButtonProps) => {
 
   return (
     <motion.div
-      className="relative group cursor-pointer md:w-[60%] mx-auto " // User's class
+      className="relative group cursor-pointer md:w-[60%] mx-auto "
       initial={{ opacity: 0, y: 90, rotateX: -25, scale: 0.8 }}
       animate={{ opacity: 1, y: 0, rotateX: 0, scale: 1 }}
       transition={rootTransition}
@@ -88,15 +96,11 @@ const Premium3DResumeButton = ({ onClick }: Premium3DResumeButtonProps) => {
       onClick={onClick}
       style={rootDivStyle}
     >
-      {/* Floating geometric shapes around button (user commented out) */}
-      {/* {[...Array(8)].map((_, i: number) => ( ... ))} */}
-
-      {/* Main button with glass morphism and advanced 3D */}
       <motion.div
         className="relative"
         style={mainButtonContainerStyle}
       >
-        {/* Multiple depth layers for extreme 3D effect */}
+        {/* Multiple depth layers */}
         {[...Array(6)].map((_, i: number) => {
           const depthLayerStyle: React.CSSProperties = {
             transform: `translateZ(-${(i + 1) * 6}px)`,
@@ -119,7 +123,7 @@ const Premium3DResumeButton = ({ onClick }: Premium3DResumeButtonProps) => {
         {/* Glass morphism main surface */}
         <motion.div
           className="relative px-5 py-5 rounded-3xl overflow-hidden"
-          style={{ // This style object is dynamic due to color variables
+          style={{
             background: `
               linear-gradient(135deg, 
                 rgba(${primaryRgb}, 0.85) 0%, 
@@ -144,7 +148,7 @@ const Premium3DResumeButton = ({ onClick }: Premium3DResumeButtonProps) => {
             `,
             transformStyle: "preserve-3d"
           }}
-          animate={{ // TargetAndTransition type is inferred by Framer Motion
+          animate={{ 
             boxShadow: [
               `0 8px 15px rgba(${accentGreenRgb}, 0.15), 0 5px 10px rgba(${primaryRgb},0.25), inset 0 1px 0 rgba(${whiteRgb}, 0.1), inset 0 -1px 0 rgba(${primaryRgb},0.15), 0 0 10px rgba(${accentGreenRgb}, 0.1)`,
               `0 10px 20px rgba(${accentGreenRgb}, 0.2), 0 7px 14px rgba(${primaryRgb},0.3), inset 0 1px 0 rgba(${whiteRgb}, 0.15), inset 0 -1px 0 rgba(${primaryRgb},0.2), 0 0 15px rgba(${accentGreenRgb}, 0.15)`,
@@ -153,7 +157,7 @@ const Premium3DResumeButton = ({ onClick }: Premium3DResumeButtonProps) => {
           }}
           transition={boxShadowTransition}
         >
-          {/* Animated gradient overlay (kept subtle) */}
+          {/* Animated gradient overlay */}
           <motion.div
             className="absolute inset-0 opacity-20"
             style={{ background: `linear-gradient(45deg, transparent, rgba(${whiteRgb},0.15), transparent)`}}
@@ -161,7 +165,7 @@ const Premium3DResumeButton = ({ onClick }: Premium3DResumeButtonProps) => {
             transition={animatedGradientOverlayTransition}
           />
 
-          {/* Morphing background shapes (kept subtle) */}
+          {/* Morphing background shapes */}
           <motion.div
             className="absolute inset-0 opacity-10"
             animate={{
@@ -175,11 +179,16 @@ const Premium3DResumeButton = ({ onClick }: Premium3DResumeButtonProps) => {
             transition={morphingBackgroundShapesTransition}
           />
 
-          {/* Button content with enhanced styling */}
-          <div className="relative z-20 flex items-center justify-center space-x-3">
+          {/* Button content */}
+            <div className="relative z-20 flex items-center justify-center space-x-3">
+            {/* 
+               --- ICON SECTION STARTS HERE --- 
+               Replaced Arrow with a "Magical Sparkle/Star"
+            */}
             <motion.div
               className="relative"
-              animate={{ y: [0, -3, 0], rotateZ: [0, 5, -5, 0] }}
+              // Updated animation to have a "twinkle" rotation and scale
+              animate={{ y: [0, -4, 0], rotate: [0, 15, -15, 0], scale: [1, 1.1, 1] }}
               transition={iconContainerTransition}
             >
               <motion.div
@@ -196,10 +205,11 @@ const Premium3DResumeButton = ({ onClick }: Premium3DResumeButtonProps) => {
                 className="relative z-10"
                 style={{ color: accentGreenHex, filter: `drop-shadow(0 1px 2px rgba(${primaryRgb},0.4))` }}
               >
+                {/* New Star/Sparkle Path */}
                 <motion.path 
-                  d="M12 2V16M12 16L8 12M12 16L16 12M3 20H21" 
+                  d="M12 2L14.8 9.2L22 12L14.8 14.8L12 22L9.2 14.8L2 12L9.2 9.2L12 2Z" 
                   stroke="currentColor"
-                  strokeWidth="2.5" 
+                  strokeWidth="2" 
                   strokeLinecap="round" 
                   strokeLinejoin="round"
                   initial={{ pathLength: 0 }}
@@ -208,48 +218,65 @@ const Premium3DResumeButton = ({ onClick }: Premium3DResumeButtonProps) => {
                 />
               </svg>
             </motion.div>
+             {/* --- ICON SECTION ENDS HERE --- */}
             
-            <div className="relative">
-              <motion.span 
-                className="font-bold text-xl tracking-wide relative z-10"
-                style={{ color: accentGreenHex, textShadow: `0 1px 2px rgba(${primaryRgb},0.6), 0 0px 1px rgba(${whiteRgb},0.1)`}}
-                animate={{
-                  textShadow: [
-                    `0 1px 2px rgba(${primaryRgb},0.6), 0 0px 1px rgba(${whiteRgb},0.1)`,
-                    `0 2px 3px rgba(${primaryRgb},0.7), 0 1px 1px rgba(${whiteRgb},0.15)`,
-                    `0 1px 2px rgba(${primaryRgb},0.6), 0 0px 1px rgba(${whiteRgb},0.1)`
-                  ]
-                }}
-                transition={textShadowTransition}
-              >
-                Download Resume
-              </motion.span>
+            <div className="relative text-center">
+              <div className="relative inline-block px-4 py-1">
+                <motion.span 
+                  className="relative z-20 font-semibold text-[1rem] sm:text-2xl tracking-[0.32em] uppercase text-transparent bg-clip-text bg-gradient-to-r from-[#F7FF8A] via-[#BFFE83] via-50% to-[#6FFFE3]"
+                  style={{ 
+                    letterSpacing: '0.32em',
+                    textShadow: `0 1px 5px rgba(${primaryRgb},0.15)`
+                  }}
+                  animate={{
+                    opacity: [0.85, 1, 0.85]
+                  }}
+                  transition={textShadowTransition}
+                >
+                  Let's Do It Nizar's Way
+                </motion.span>
+                <motion.span
+                  aria-hidden="true"
+                  className="absolute inset-0 font-semibold text-[1rem] sm:text-2xl tracking-[0.32em] uppercase text-transparent bg-clip-text blur-[2px]"
+                  style={{
+                    letterSpacing: '0.32em',
+                    backgroundImage: 'linear-gradient(100deg, rgba(111,255,227,0.55), rgba(247,255,138,0.4))'
+                  }}
+                  animate={{
+                    opacity: [0.25, 0.5, 0.25],
+                    translateY: [0, -2, 0]
+                  }}
+                  transition={textShadowTransition}
+                >
+                  Let's Do It Nizar's Way
+                </motion.span>
+              </div>
               <motion.span
-                className="absolute top-full left-0 font-bold text-xl tracking-wide"
-                style={{ // ExtendedCSSProperties ensures WebkitBackgroundClip is recognized if not in standard React.CSSProperties
-                  color: `rgba(${accentGreenRgb}, 0.15)`, 
+                className="absolute top-full left-1/2 -translate-x-1/2 font-semibold text-[0.95rem] sm:text-[1.8rem] tracking-[0.32em] uppercase"
+                style={{ 
+                  color: `rgba(${whiteRgb}, 0.08)`, 
                   transform: "scaleY(-1)",
-                  backgroundImage: `linear-gradient(to bottom, rgba(${primaryRgb},0.05), transparent)`, 
-                  WebkitBackgroundClip: "text", // Explicitly typed via ExtendedCSSProperties or rely on csstype
+                  backgroundImage: `linear-gradient(to bottom, rgba(255,255,255,0.08), rgba(${accentGreenRgb},0.3), transparent)`, 
+                  WebkitBackgroundClip: "text", 
                   backgroundClip: "text",
-                  opacity: 0.4 
-                } as ExtendedCSSProperties} // Cast if needed, though often inferred well
-                animate={{ opacity: [0.2, 0.5, 0.2] }}
+                  opacity: 0.2 
+                } as ExtendedCSSProperties}
+                animate={{ opacity: [0.12, 0.34, 0.12], translateY: [0, 3, 0] }}
                 transition={textReflectionOpacityTransition}
               >
-                Download Resume
+                Let's Do It Nizar's Way
               </motion.span>
             </div>
           </div>
 
-          {/* Advanced particle system (kept subtle) */}
+          {/* Particle system */}
           {[...Array(10)].map((_, i: number) => {
-            const particlePositions = [ // This array structure is inferred correctly
+            const particlePositions = [
               { top: '20%', left: '15%' }, { top: '80%', left: '85%' },
               { top: '60%', left: '25%' }, { top: '30%', left: '75%' },
               { top: '45%', left: '10%' }, { top: '70%', left: '90%' },
               { top: '15%', left: '60%' }, { top: '85%', left: '40%' },
-              { top: '35%', left: '50%' }, { top: '65%', left: '20%' } // Ensure enough for 10 particles
+              { top: '35%', left: '50%' }, { top: '65%', left: '20%' }
             ];
             const particleStyle: React.CSSProperties = {
               background: i % 2 === 0 ? `rgba(${whiteRgb}, 0.6)` : accentGreenHex,
@@ -272,7 +299,7 @@ const Premium3DResumeButton = ({ onClick }: Premium3DResumeButtonProps) => {
             );
           })}
 
-          {/* Energy pulse rings (kept very subtle) */}
+          {/* Energy pulse rings */}
           {[...Array(2)].map((_, i: number) => {
              const pulseRingTransition: FMTransition = { duration: 2.5, repeat: Infinity, delay: i * 0.8, ease: "easeOut" };
             return(
@@ -298,9 +325,6 @@ const Premium3DResumeButton = ({ onClick }: Premium3DResumeButtonProps) => {
           transition={runningBorderTransition}
         />
       </motion.div>
-
-      {/* Floating holographic elements (user commented out) */}
-      {/* {[...Array(4)].map((_, i: number) => ( ... ))} */}
     </motion.div>
   );
 };
