@@ -1,5 +1,6 @@
 // app/projects/page.tsx
 import { Metadata } from 'next'
+import { getSortedProjectsData } from '../../lib/projects'
 import ProjectsClient from './ProjectsClient'
 
 export const metadata: Metadata = {
@@ -19,6 +20,8 @@ export const metadata: Metadata = {
   },
 }
 
-export default function ProjectsPage() {
-  return <ProjectsClient />
+export default async function ProjectsPage() {
+  const projects = await getSortedProjectsData()
+
+  return <ProjectsClient projects={projects} />
 }

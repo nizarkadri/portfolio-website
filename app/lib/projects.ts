@@ -2,85 +2,153 @@
 
 import fs from 'fs';
 import path from 'path';
+import { cache } from 'react';
 import matter from 'gray-matter';
 import { remark } from 'remark';
 import html from 'remark-html';
-
-export interface Project {
-  slug: string;
-  title: string;
-  description: string;
-  imageUrl: string;
-  technologies: string[];
-  contentHtml?: string;
-}
+import {
+  PROJECT_PLACEHOLDER_IMAGE,
+  Project,
+  ProjectFrontmatter,
+  ProjectSummary,
+} from './project-shared';
 
 const projectsDirectory = path.join(process.cwd(), 'data/projects');
+const allowedProjectImageExtensions = new Set(['.svg', '.png', '.jpg', '.jpeg', '.webp', '.avif']);
 
-export async function getSortedProjectsData(): Promise<Project[]> {
-  // Get file names under /projects
-  const fileNames = fs.readdirSync(projectsDirectory);
-  const allProjectsData = fileNames.map((fileName) => {
-    // Remove ".md" from file name to get id
-    const slug = fileName.replace(/\.md$/, '');
-
-    // Read markdown file as string
-    const fullPath = path.join(projectsDirectory, fileName);
-    const fileContents = fs.readFileSync(fullPath, 'utf8');
-
-    // Use gray-matter to parse the post metadata section
-    const matterResult = matter(fileContents);
-
-    // Combine the data with the id
-    return {
-      slug,
-      ...(matterResult.data as {
-        title: string;
-        description: string;
-        imageUrl: string;
-        technologies: string[];
-      }),
-    };
-  });
-  
-  // Sort projects by date (if you add a date field)
-  return allProjectsData;
+function getProjectFileNames() {
+  return fs.readdirSync(projectsDirectory).filter((fileName) => fileName.endsWith('.md'));
 }
 
-export async function getProjectData(slug: string): Promise<Project> {
-  const fullPath = path.join(projectsDirectory, `${slug}.md`);
-  const fileContents = fs.readFileSync(fullPath, 'utf8');
+function slugToTitle(slug: string) {
+  return slug
+    .split('-')
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(' ');
+}
 
-  // Use gray-matter to parse the post metadata section
-  const matterResult = matter(fileContents);
+function normalizeProjectImagePath(imageUrl?: string) {
+  if (!imageUrl) {
+    return null;
+  }
 
-  // Use remark to convert markdown into HTML string
-  const processedContent = await remark()
-    .use(html)
-    .process(matterResult.content);
-  const contentHtml = processedContent.toString();
+  const normalizedPath = imageUrl.trim().replace(/\\/g, '/');
 
-  // Combine the data with the id and contentHtml
+  if (!normalizedPath.startsWith('/images/Projects/')) {
+    return null;
+  }
+
+  const extension = path.extname(normalizedPath).toLowerCase();
+
+  if (!allowedProjectImageExtensions.has(extension)) {
+    return null;
+  }
+
+  return normalizedPath;
+}
+
+function projectImageExists(imageUrl: string) {
+  const relativePath = imageUrl.replace(/^\/+/, '').split('/');
+  return fs.existsSync(path.join(process.cwd(), 'public', ...relativePath));
+}
+
+function resolveProjectImage(slug: string, imageUrl?: string) {
+  const preferredImage = normalizeProjectImagePath(imageUrl);
+  const candidates = [
+    preferredImage,
+    ...Array.from(allowedProjectImageExtensions).map((extension) => `/images/Projects/${slug}${extension}`),
+    PROJECT_PLACEHOLDER_IMAGE,
+  ].filter((candidate, index, list): candidate is string => Boolean(candidate) && list.indexOf(candidate) === index);
+
+  const resolvedImage = candidates.find(projectImageExists);
+
+  return resolvedImage || PROJECT_PLACEHOLDER_IMAGE;
+}
+
+function normalizeProject(slug: string, data: ProjectFrontmatter): ProjectSummary {
+  const technologies = Array.isArray(data.technologies) ? data.technologies : [];
+  const highlights = Array.isArray(data.highlights) ? data.highlights.slice(0, 3) : [];
+
   return {
     slug,
-    contentHtml,
-    ...(matterResult.data as {
-      title: string;
-      description: string;
-      imageUrl: string;
-      technologies: string[];
-    }),
+    title: data.title?.trim() || slugToTitle(slug),
+    description: data.description?.trim() || '',
+    summary: data.summary?.trim() || data.description?.trim() || '',
+    imageUrl: resolveProjectImage(slug, data.imageUrl),
+    technologies,
+    featured: Boolean(data.featured),
+    order: typeof data.order === 'number' ? data.order : Number.MAX_SAFE_INTEGER,
+    repoUrl: data.repoUrl?.trim() || undefined,
+    liveUrl: data.liveUrl?.trim() || undefined,
+    year: data.year?.trim() || undefined,
+    status: data.status?.trim() || undefined,
+    impact: data.impact?.trim() || undefined,
+    highlights,
   };
 }
 
-export async function getAllProjectSlugs() {
-  const fileNames = fs.readdirSync(projectsDirectory);
+function compareProjects(a: ProjectSummary, b: ProjectSummary) {
+  if (a.featured !== b.featured) {
+    return a.featured ? -1 : 1;
+  }
 
-  return fileNames.map((fileName) => {
-    return {
-      params: {
-        slug: fileName.replace(/\.md$/, ''),
-      },
-    };
-  });
-} 
+  if (a.order !== b.order) {
+    return a.order - b.order;
+  }
+
+  const aYear = Number.parseInt(a.year || '', 10) || 0;
+  const bYear = Number.parseInt(b.year || '', 10) || 0;
+
+  if (aYear !== bYear) {
+    return bYear - aYear;
+  }
+
+  return a.title.localeCompare(b.title);
+}
+
+function readProjectSummary(fileName: string): ProjectSummary {
+  const slug = fileName.replace(/\.md$/, '');
+  const fullPath = path.join(projectsDirectory, fileName);
+  const fileContents = fs.readFileSync(fullPath, 'utf8');
+  const matterResult = matter(fileContents);
+
+  return normalizeProject(slug, matterResult.data as ProjectFrontmatter);
+}
+
+const getSortedProjectsDataCached = cache(async (): Promise<ProjectSummary[]> => {
+  return getProjectFileNames().map(readProjectSummary).sort(compareProjects);
+});
+
+export async function getSortedProjectsData(): Promise<ProjectSummary[]> {
+  return getSortedProjectsDataCached();
+}
+
+export async function getFeaturedProjectsData(limit = 3): Promise<ProjectSummary[]> {
+  const projects = await getSortedProjectsData();
+  const featuredProjects = projects.filter((project) => project.featured);
+
+  return (featuredProjects.length > 0 ? featuredProjects : projects).slice(0, limit);
+}
+
+const getProjectDataCached = cache(async (slug: string): Promise<Project> => {
+  const fullPath = path.join(projectsDirectory, `${slug}.md`);
+  const fileContents = fs.readFileSync(fullPath, 'utf8');
+  const matterResult = matter(fileContents);
+
+  const processedContent = await remark().use(html).process(matterResult.content);
+
+  return {
+    ...normalizeProject(slug, matterResult.data as ProjectFrontmatter),
+    contentHtml: processedContent.toString(),
+  };
+});
+
+export async function getProjectData(slug: string): Promise<Project> {
+  return getProjectDataCached(slug);
+}
+
+export async function getAllProjectSlugs() {
+  return getProjectFileNames().map((fileName) => ({
+    slug: fileName.replace(/\.md$/, ''),
+  }));
+}

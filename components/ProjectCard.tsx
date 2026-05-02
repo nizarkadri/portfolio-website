@@ -1,88 +1,146 @@
-import Image from "next/image";
-import Link from "next/link";
+import Link from 'next/link';
+import clsx from 'clsx';
+import type { ProjectSummary } from '../app/lib/project-shared';
+import { ProjectMetaBadges, ProjectTechnologyBadges } from './projects/ProjectBadges';
+import { ProjectImage } from './projects/ProjectImage';
+import { ProjectLinks } from './projects/ProjectLinks';
 
-interface ProjectCardProps {
-    title: string;
-    description: string;
-    imageUrl: string;
-    slug: string;
-    technologies: string[];
-}
+type ProjectCardProps = Pick<
+  ProjectSummary,
+  | 'title'
+  | 'description'
+  | 'summary'
+  | 'imageUrl'
+  | 'slug'
+  | 'technologies'
+  | 'repoUrl'
+  | 'liveUrl'
+  | 'year'
+  | 'status'
+  | 'impact'
+  | 'highlights'
+> & {
+  index?: number;
+  className?: string;
+  priority?: boolean;
+};
 
-const ProjectCard: React.FC<ProjectCardProps> = ({title, description, imageUrl, slug, technologies}) => {
-    return (
-        <div className="group h-full flex flex-col transition-all duration-500 bg-soft-black/40 hover:bg-soft-black/60 rounded-lg overflow-hidden backdrop-blur-sm border border-white/5 hover:border-white/20 hover:shadow-lg hover:shadow-blue-500/10">
-            <div className="relative overflow-hidden aspect-video">
-                <Link href={`/projects/${slug}`}>
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10 flex items-center justify-center">
-                        <div className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 icon-3d">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                            </svg>
-                        </div>
-                    </div>
-                    <Image 
-                        src={imageUrl} 
-                        alt={title} 
-                        width={500} 
-                        height={300} 
-                        className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105" 
-                        placeholder="blur" 
-                        blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+ip1sAAAAASUVORK5CYII="
-                    />
-                </Link>
+const accentStyles = [
+  {
+    glow: 'from-[#B8E62D]/22 via-[#60A5FA]/12 to-transparent',
+    line: 'from-[#B8E62D]/0 via-[#B8E62D]/80 to-[#60A5FA]/0',
+    badge: 'border-[#B8E62D]/30 bg-[#B8E62D]/12 text-[#D9FF4B]',
+  },
+  {
+    glow: 'from-[#22D3EE]/24 via-[#2563EB]/14 to-transparent',
+    line: 'from-[#22D3EE]/0 via-[#22D3EE]/80 to-[#2563EB]/0',
+    badge: 'border-[#22D3EE]/30 bg-[#22D3EE]/10 text-[#67E8F9]',
+  },
+  {
+    glow: 'from-[#FB7185]/22 via-[#F59E0B]/12 to-transparent',
+    line: 'from-[#FB7185]/0 via-[#FB7185]/80 to-[#F59E0B]/0',
+    badge: 'border-[#FB7185]/30 bg-[#FB7185]/10 text-[#FDB4C0]',
+  },
+];
+
+const ProjectCard: React.FC<ProjectCardProps> = ({
+  title,
+  description,
+  summary,
+  imageUrl,
+  slug,
+  technologies,
+  repoUrl,
+  liveUrl,
+  year,
+  status,
+  impact,
+  highlights,
+  index = 0,
+  className = '',
+  priority = false,
+}) => {
+  const accent = accentStyles[index % accentStyles.length];
+  const isReversed = index % 2 === 1;
+  const bodyCopy = summary || description;
+
+  return (
+    <article
+      className={clsx(
+        'group relative overflow-hidden rounded-[32px] border border-white/10 bg-[linear-gradient(180deg,rgba(10,10,14,0.96),rgba(7,7,10,0.98))] shadow-[0_28px_80px_rgba(0,0,0,0.38)] transition-all duration-500 hover:-translate-y-1 hover:border-white/15',
+        className
+      )}
+    >
+      <div className={clsx('pointer-events-none absolute inset-0 bg-gradient-to-br opacity-90', accent.glow)} />
+      <div className={clsx('pointer-events-none absolute inset-x-16 top-0 h-px bg-gradient-to-r', accent.line)} />
+
+      <div className="relative grid gap-0 lg:grid-cols-[minmax(0,1.05fr)_minmax(360px,0.95fr)]">
+        <Link
+          href={`/projects/${slug}`}
+          className={clsx(
+            'relative min-h-[300px] overflow-hidden border-b border-white/10 bg-[#050816] lg:min-h-[420px] lg:border-b-0',
+            isReversed && 'lg:order-2 lg:border-b-0 lg:border-l'
+          )}
+        >
+          <div className="absolute inset-0 z-10 bg-gradient-to-t from-black/55 via-black/10 to-transparent opacity-55 transition-opacity duration-500 group-hover:opacity-65" />
+          <div className="pointer-events-none absolute left-6 right-6 top-6 z-20 flex items-center justify-between">
+            {status ? (
+              <span className="rounded-full border border-white/10 bg-black/35 px-3 py-1 text-[11px] uppercase tracking-[0.22em] text-soft-white/80 backdrop-blur-sm">
+                {status}
+              </span>
+            ) : <span />}
+            <span className={clsx('rounded-full px-3 py-1 text-[11px] uppercase tracking-[0.22em] backdrop-blur-sm', accent.badge)}>
+              View project
+            </span>
+          </div>
+          <div className="absolute inset-5 z-10 rounded-[28px] border border-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]" />
+          <ProjectImage
+            src={imageUrl}
+            alt={title}
+            fill
+            priority={priority}
+            sizes="(max-width: 1024px) 100vw, 52vw"
+            className="object-cover object-center transition-transform duration-700 group-hover:scale-[1.03]"
+          />
+        </Link>
+
+        <div className={clsx('relative flex flex-col justify-between p-7 md:p-8 lg:p-10', isReversed && 'lg:order-1')}>
+          <div className="space-y-6">
+            <div className="space-y-4">
+              <ProjectMetaBadges year={year} status={status} impact={impact} />
+              <div>
+                <p className="mb-3 text-xs uppercase tracking-[0.3em] text-[#D9FF4B]">Selected project</p>
+                <h3 className="max-w-xl text-3xl font-semibold leading-tight text-white md:text-4xl">
+                  <Link href={`/projects/${slug}`} className="transition-colors hover:text-[#D9FF4B]">
+                    {title}
+                  </Link>
+                </h3>
+                <p className="mt-4 max-w-xl text-base leading-8 text-soft-white/74 md:text-lg">
+                  {bodyCopy}
+                </p>
+              </div>
             </div>
-            <div className="p-6 flex flex-col flex-grow relative">
-                {/* Subtle glow effect */}
-                <div className="absolute -inset-1 rounded-lg bg-gradient-to-r from-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 blur-xl transition-opacity duration-700"></div>
-                
-                <div className="relative">
-                    <div className="flex justify-between items-start mb-4">
-                        <h3 className="text-xl font-bold text-white group-hover:text-blue-300 transition-colors duration-300">
-                            <Link href={`/projects/${slug}`} className="hover:text-blue-400 transition-colors">
-                                {title}
-                            </Link>
-                        </h3>
-                        <div className="icon-3d p-1">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="#3b82f6">
-                                <path fillRule="evenodd" d="M12.316 3.051a1 1 0 01.633 1.265l-4 12a1 1 0 11-1.898-.632l4-12a1 1 0 011.265-.633zM5.707 6.293a1 1 0 010 1.414L3.414 10l2.293 2.293a1 1 0 11-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0zm8.586 0a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 11-1.414-1.414L16.586 10l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
-                            </svg>
-                        </div>
-                    </div>
-                    
-                    <p className="text-soft-gray mb-6 line-clamp-3">{description}</p>
-                    
-                    <div className="flex flex-wrap mt-auto">
-                        {technologies.map((tech) => {
-                            // Get a unique color for each technology
-                            const colors = [
-                                "#4f46e5", // Indigo
-                                "#10b981", // Emerald
-                                "#f59e0b", // Amber
-                                "#ec4899", // Pink
-                                "#3b82f6", // Blue
-                                "#ef4444", // Red
-                                "#8b5cf6", // Violet
-                            ];
-                            
-                            const colorIndex = technologies.indexOf(tech) % colors.length;
-                            
-                            return (
-                                <span
-                                    key={tech}
-                                    className="inline-flex items-center m-1 px-3 py-1 text-xs font-medium rounded-full bg-black/30 backdrop-blur-sm border border-white/5 hover:border-white/20 transition-all duration-300"
-                                    style={{ color: colors[colorIndex] }}
-                                >
-                                    {tech}
-                                </span>
-                            );
-                        })}
-                    </div>
-                </div>
-            </div>
+
+            {highlights.length > 0 ? (
+              <ul className="grid gap-3 text-sm leading-7 text-soft-white/78">
+                {highlights.slice(0, 3).map((highlight) => (
+                  <li key={highlight} className="flex items-start gap-3">
+                    <span className="mt-2 h-2.5 w-2.5 rounded-full bg-[#D9FF4B] shadow-[0_0_18px_rgba(184,230,45,0.8)]" />
+                    <span>{highlight}</span>
+                  </li>
+                ))}
+              </ul>
+            ) : null}
+          </div>
+
+          <div className="mt-8 space-y-5">
+            <ProjectTechnologyBadges technologies={technologies.slice(0, 6)} />
+            <ProjectLinks liveUrl={liveUrl} repoUrl={repoUrl} className="pt-1" />
+          </div>
         </div>
-    );
+      </div>
+    </article>
+  );
 };
 
 export default ProjectCard;

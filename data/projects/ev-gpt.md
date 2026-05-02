@@ -1,9 +1,21 @@
 ---
 title: EV-GPT - AI-Powered Electric Vehicle Expert
 description: An intelligent web application that provides AI-powered insights about electric vehicles using Google's Gemini 1.5 Flash model and advanced document retrieval capabilities.
+summary: A retrieval-augmented EV assistant that turns dense documentation into fast, context-aware answers.
 imageUrl: /images/Projects/ev-gpt.jpg
 slug: ev-gpt
 technologies: ['Python', 'Streamlit', 'Google Gemini', 'LangChain', 'ChromaDB', 'AWS', 'Docker', 'Git']
+featured: true
+order: 2
+repoUrl: https://github.com/nizarkadri/EV-GPT
+liveUrl: http://18.117.102.197:8501/
+year: '2025'
+status: Live Demo
+impact: Faster expert answers from complex EV documentation
+highlights:
+  - RAG pipeline with semantic retrieval over uploaded EV documents
+  - Gemini-powered responses with source-aware context handling
+  - AWS and Docker deployment for a production-style demo
 ---
 
 ## 🔬 Project Overview

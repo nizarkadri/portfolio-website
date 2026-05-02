@@ -1,9 +1,20 @@
 ---
 title: Portfolio Website
-description: A personal portfolio website showcasing my skills and projects.
+description: A personal portfolio website showcasing my skills, selected projects, and professional experience.
+summary: A cinematic developer portfolio focused on storytelling, motion, and fast project discovery.
 imageUrl: /images/Projects/portfolio-website.png
 slug: portfolio-website
 technologies: ['Next.js', 'TypeScript', 'Tailwind CSS']
+featured: true
+order: 1
+repoUrl: https://github.com/nizarkadri/portfolio-website
+year: '2026'
+status: Live
+impact: Stronger personal brand and faster project discovery
+highlights:
+  - Premium single-page storytelling with motion-led sections
+  - Markdown-powered project system with reusable UI primitives
+  - Responsive experience tuned for recruiters and clients
 ---
 
 ## About the Project

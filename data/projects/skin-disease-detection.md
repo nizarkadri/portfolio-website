@@ -1,9 +1,20 @@
 ---
 title: Skin Disease Detection System
 description: An intelligent web application that leverages AI to detect and classify 20+ skin diseases from uploaded images with 92% accuracy, providing instant medical insights.
+summary: A healthcare-focused AI app that delivers image-based skin condition screening with fast, accessible feedback.
 imageUrl: /images/Projects/skin-disease-detection.jpg
 slug: skin-disease-detection
 technologies: ['Node.js', 'Express.js', 'EJS', 'CSS3', 'JavaScript', 'Machine Learning', 'Computer Vision', 'Git']
+featured: true
+order: 3
+repoUrl: https://github.com/nizarkadri/SkinDiseaseDetection
+year: '2024'
+status: Case Study
+impact: 92% accuracy across 20+ skin conditions
+highlights:
+  - Image upload workflow with near-instant diagnostic feedback
+  - Machine-learning pipeline tailored for healthcare use cases
+  - Clear trust, privacy, and medical-disclaimer UX considerations
 ---
 
 ## 🔬 Project Overview
@@ -95,7 +106,7 @@ An AI-powered web application that democratizes dermatological diagnosis by prov
 ## 🔗 Project Links
 
 **📁 [GitHub Repository](https://github.com/nizarkadri/SkinDiseaseDetection)** - Complete source code and documentation  
-**🌐 [Live Demo](https://your-demo-link.com)** - Try the application yourself  
+**🌐 Live Demo** - Available on request while the hosted preview is offline  
 
 ---
 
