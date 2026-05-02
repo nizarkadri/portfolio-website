@@ -25,21 +25,25 @@ type ProjectCardProps = Pick<
   priority?: boolean;
 };
 
+const caseStudyCtaClasses =
+  'border-[#B8E62D]/40 bg-[#B8E62D]/12 text-[#D9FF4B] group-hover:border-[#B8E62D]/55 group-hover:bg-[#B8E62D]/18';
+
+/** EV-GPT card: black CTA pill */
+const caseStudyCtaEvClasses =
+  'border-white/20 bg-black/80 text-white group-hover:border-white/30 group-hover:bg-black group-hover:text-white';
+
 const accentStyles = [
   {
     glow: 'from-[#B8E62D]/22 via-[#60A5FA]/12 to-transparent',
     line: 'from-[#B8E62D]/0 via-[#B8E62D]/80 to-[#60A5FA]/0',
-    badge: 'border-[#B8E62D]/30 bg-[#B8E62D]/12 text-[#D9FF4B]',
   },
   {
     glow: 'from-[#22D3EE]/24 via-[#2563EB]/14 to-transparent',
     line: 'from-[#22D3EE]/0 via-[#22D3EE]/80 to-[#2563EB]/0',
-    badge: 'border-[#22D3EE]/30 bg-[#22D3EE]/10 text-[#67E8F9]',
   },
   {
     glow: 'from-[#FB7185]/22 via-[#F59E0B]/12 to-transparent',
     line: 'from-[#FB7185]/0 via-[#FB7185]/80 to-[#F59E0B]/0',
-    badge: 'border-[#FB7185]/30 bg-[#FB7185]/10 text-[#FDB4C0]',
   },
 ];
 
@@ -63,6 +67,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   const accent = accentStyles[index % accentStyles.length];
   const isReversed = index % 2 === 1;
   const bodyCopy = summary || description;
+  const isEvGpt = slug === 'ev-gpt';
 
   return (
     <article
@@ -89,8 +94,37 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                 {status}
               </span>
             ) : <span />}
-            <span className={clsx('rounded-full px-3 py-1 text-[11px] uppercase tracking-[0.22em] backdrop-blur-sm', accent.badge)}>
-              View project
+            <span
+              className={clsx(
+                'inline-flex items-center rounded-full border px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] backdrop-blur-sm transition-all duration-300',
+                'group-hover:px-4 group-hover:py-1.5',
+                isEvGpt
+                  ? clsx(
+                      caseStudyCtaEvClasses,
+                      'group-hover:shadow-[0_0_28px_rgba(0,0,0,0.55)] group-hover:ring-1 group-hover:ring-white/15'
+                    )
+                  : clsx(
+                      caseStudyCtaClasses,
+                      'group-hover:shadow-[0_0_28px_rgba(217,255,75,0.28)] group-hover:ring-1 group-hover:ring-[#D9FF4B]/35'
+                    )
+              )}
+            >
+              <span className="group-hover:hidden">View project</span>
+              <span className="hidden items-center gap-1.5 group-hover:inline-flex">
+                Open full case study
+                <svg
+                  className="h-3.5 w-3.5 shrink-0 transition-transform duration-300 group-hover:translate-x-0.5"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  aria-hidden
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </span>
             </span>
           </div>
           <div className="absolute inset-5 z-10 rounded-[28px] border border-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]" />
