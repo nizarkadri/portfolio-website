@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useForm, FieldErrors } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { contactSchema, recruiterSchema, clientSchema, type ContactFormData } from '../../../lib/schemas/contact';
 import { motion, AnimatePresence } from 'framer-motion';
 import FormFieldError from '../../../components/FormFieldError';
 
@@ -14,48 +15,9 @@ import FormFieldError from '../../../components/FormFieldError';
 /** Available user types for the contact form */
 type UserType = 'recruiter' | 'client' | 'resume_request' | null;
 
-/** Zod schema for recruiter form data */
-const recruiterSchema = z.object({
-  userType: z.literal('recruiter'),
-  email: z.string().email('Invalid email address'),
-  company: z.string().min(2, 'Company name must be at least 2 characters'),
-  position: z.string().min(2, 'Position must be at least 2 characters'),
-  jobDescription: z.string().min(10, 'Job description must be at least 10 characters'),
-  employmentType: z.string().min(2, 'Please specify the employment type'),
-  interview: z.string().min(2, 'Please provide interview availability'),
-  workLocation: z.string().min(2, 'Please specify the work location'),
-  locationDetails: z.string().optional(),
-  message: z.string().optional(),
-});
-
-/** Zod schema for client form data */
-const clientSchema = z.object({
-  userType: z.literal('client'),
-  email: z.string().email('Invalid email address'),
-  name: z.string().min(2, 'Name must be at least 2 characters'),
-  message: z.string().min(10, 'Message must be at least 10 characters'),
-  projectType: z.string().min(2, 'Project type must be at least 2 characters'),
-  budget: z.string().optional(),
-  timeline: z.string().optional(),
-});
-
-/** Zod schema for resume request form data (currently unused but kept for future use) */
-const resumeSchema = z.object({
-  userType: z.literal('resume_request'),
-  email: z.string().email(),
-  jobDescription: z.string().min(10, 'Job description must be at least 10 characters'),
-  message: z.string(),
-});
-
 /** Type-safe error types for form validation */
 type RecruiterErrors = FieldErrors<z.infer<typeof recruiterSchema>>;
 type ClientErrors = FieldErrors<z.infer<typeof clientSchema>>;
-
-/** Main contact form schema using discriminated union for type safety */
-const contactSchema = z.discriminatedUnion('userType', [recruiterSchema, clientSchema, resumeSchema]);
-
-/** Inferred type from the contact schema */
-type ContactFormData = z.infer<typeof contactSchema>;
 
 /** Submit status type for form submission feedback */
 type SubmitStatus = {
