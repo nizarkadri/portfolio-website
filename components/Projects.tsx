@@ -9,50 +9,23 @@ interface ProjectsProps {
   projects: ProjectSummary[];
 }
 
-function SectionHeader() {
-  return (
-    <div className="mb-12 flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
-      <div className="max-w-3xl">
-        <motion.span
-          className="mb-4 inline-flex rounded-full border border-[#B8E62D]/20 bg-[#B8E62D]/10 px-4 py-2 text-xs uppercase tracking-[0.28em] text-[#D9FF4B]"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-80px' }}
-          transition={{ duration: 0.5 }}
-        >
-          Selected Work
-        </motion.span>
-      </div>
+const MAX_HOMEPAGE_PROJECTS = 6;
 
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: '-80px' }}
-        transition={{ duration: 0.5, delay: 0.15 }}
-      >
-        <Link
-          href="/projects"
-          className="inline-flex items-center rounded-full border border-[#B8E62D]/40 bg-[#B8E62D]/10 px-6 py-3 text-sm font-medium text-[#D9FF4B] transition-all duration-300 hover:border-[#B8E62D] hover:bg-[#B8E62D]/15"
-        >
-          View all projects
-          <svg xmlns="http://www.w3.org/2000/svg" className="ml-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-          </svg>
-        </Link>
-      </motion.div>
-    </div>
-  );
-}
-
+/**
+ * Homepage section: first item = showcase (split), rest = 2-col grid.
+ * Caps at 6 so new projects (agent3) never break layout; full archive lives at /projects.
+ */
 function Projects({ projects }: ProjectsProps) {
-  if (projects.length === 0) {
-    return null;
-  }
+  if (projects.length === 0) return null;
+
+  const shown = projects.slice(0, MAX_HOMEPAGE_PROJECTS);
+  const [first, ...rest] = shown;
 
   return (
-    <section className="relative overflow-hidden px-4 pb-20 pt-24 md:px-8 md:pt-28">
+    <section aria-labelledby="projects-heading" className="relative overflow-hidden px-4 pb-20 pt-24 md:px-8 md:pt-28">
       <div className="relative mx-auto max-w-7xl">
         <motion.h2
+          id="projects-heading"
           className="huge-text mb-6 select-none font-bold text-[#B8E62D]/80 opacity-80 md:mb-8"
           initial={{ opacity: 0, x: -40 }}
           whileInView={{ opacity: 0.8, x: 0 }}
@@ -62,43 +35,94 @@ function Projects({ projects }: ProjectsProps) {
           PROJECTS
         </motion.h2>
 
-        <motion.div
-          className="mb-12 h-px w-full bg-gradient-to-r from-[#B8E62D]/45 via-[#B8E62D]/15 to-transparent"
-          initial={{ opacity: 0, scaleX: 0.4 }}
-          whileInView={{ opacity: 1, scaleX: 1 }}
-          viewport={{ once: true, margin: '-120px' }}
-          transition={{ duration: 0.8 }}
-        />
+        <div className="mb-12 h-px w-full bg-gradient-to-r from-[#B8E62D]/45 via-[#B8E62D]/15 to-transparent" />
 
-        <SectionHeader />
+        <div className="mb-12 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+          <div className="max-w-2xl">
+            <p className="inline-flex rounded-full border border-[#B8E62D]/20 bg-[#B8E62D]/10 px-4 py-2 text-xs uppercase tracking-[0.28em] text-[#D9FF4B]">
+              Selected work
+            </p>
+            <p className="mt-4 text-lg leading-8 text-soft-white/70">
+              A focused set of shipped projects. Browse the full archive for filters, search, and case studies.
+            </p>
+          </div>
+          <Link
+            href="/projects"
+            className="inline-flex shrink-0 items-center rounded-full border border-[#B8E62D]/40 bg-[#B8E62D]/10 px-6 py-3 text-sm font-medium text-[#D9FF4B] transition-colors hover:bg-[#B8E62D]/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B8E62D]"
+          >
+            View all projects
+            <svg xmlns="http://www.w3.org/2000/svg" className="ml-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+            </svg>
+          </Link>
+        </div>
 
-        <div className="space-y-10">
-          {projects.map((project, index) => (
-            <motion.div
-              key={project.slug}
-              initial={{ opacity: 0, y: 28 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-80px' }}
-              transition={{ duration: 0.6, delay: 0.15 + index * 0.08 }}
-            >
-              <ProjectCard
-                title={project.title}
-                description={project.description}
-                summary={project.summary}
-                imageUrl={project.imageUrl}
-                slug={project.slug}
-                technologies={project.technologies}
-                repoUrl={project.repoUrl}
-                liveUrl={project.liveUrl}
-                year={project.year}
-                status={project.status}
-                impact={project.impact}
-                highlights={project.highlights}
-                index={index}
-                priority={index === 0}
-              />
-            </motion.div>
-          ))}
+        <div className="space-y-8">
+          <motion.div
+            initial={{ opacity: 0, y: 28 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-80px' }}
+            transition={{ duration: 0.6 }}
+          >
+            <ProjectCard
+              title={first.title}
+              description={first.description}
+              summary={first.summary}
+              imageUrl={first.imageUrl}
+              slug={first.slug}
+              technologies={first.technologies}
+              repoUrl={first.repoUrl}
+              liveUrl={first.liveUrl}
+              year={first.year}
+              status={first.status}
+              impact={first.impact}
+              highlights={first.highlights}
+              featured={first.featured}
+              variant="showcase"
+              priority
+            />
+          </motion.div>
+
+          {rest.length > 0 ? (
+            <div className="grid gap-6 md:grid-cols-2">
+              {rest.map((project, i) => (
+                <motion.div
+                  key={project.slug}
+                  initial={{ opacity: 0, y: 28 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: '-60px' }}
+                  transition={{ duration: 0.5, delay: i * 0.06 }}
+                >
+                  <ProjectCard
+                    title={project.title}
+                    description={project.description}
+                    summary={project.summary}
+                    imageUrl={project.imageUrl}
+                    slug={project.slug}
+                    technologies={project.technologies}
+                    repoUrl={project.repoUrl}
+                    liveUrl={project.liveUrl}
+                    year={project.year}
+                    status={project.status}
+                    impact={project.impact}
+                    highlights={project.highlights}
+                    featured={project.featured}
+                    variant="grid"
+                  />
+                </motion.div>
+              ))}
+            </div>
+          ) : null}
+        </div>
+
+        <div className="mt-12 text-center">
+          <Link
+            href="/projects"
+            className="inline-flex items-center gap-2 text-sm font-medium text-[#D9FF4B] underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B8E62D] rounded"
+          >
+            Explore all {projects.length} projects
+            <span aria-hidden>→</span>
+          </Link>
         </div>
       </div>
     </section>

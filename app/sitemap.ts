@@ -1,5 +1,6 @@
 import { MetadataRoute } from 'next'
 import { getSortedProjectsData } from './lib/projects'
+import { getAllPosts } from './lib/blog'
 
 function getBaseUrl() {
   // Primary: Use environment variable (set in CI/CD)
@@ -26,6 +27,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   
   // Get all projects for dynamic sitemap generation
   const projects = await getSortedProjectsData()
+  const posts = await getAllPosts()
   
   // Static pages
   const staticPages = [
@@ -46,6 +48,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: new Date(),
       changeFrequency: 'weekly' as const,
       priority: 0.9,
+    },
+    {
+      url: `${baseUrl}/blog`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly' as const,
+      priority: 0.85,
     },
     {
       url: `${baseUrl}/experience`,
@@ -69,5 +77,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.8,
   }))
   
-  return [...staticPages, ...projectPages]
+  // Dynamic blog pages
+  const blogPages = posts.map((post) => ({
+    url: `${baseUrl}/blog/${post.slug}`,
+    lastModified: new Date(post.date),
+    changeFrequency: 'monthly' as const,
+    priority: 0.7,
+  }))
+
+  return [...staticPages, ...projectPages, ...blogPages]
 } 

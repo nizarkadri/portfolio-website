@@ -75,6 +75,7 @@ const Navbar: React.FC = () => {
             <NavLink href="/" isActive={pathname === '/'} label="Home" />
             <NavLink href="/about" isActive={pathname === '/about'} label="About" />
             <NavLink href="/projects" isActive={pathname === '/projects'} label="Projects" />
+            <NavLink href="/blog" isActive={pathname.startsWith('/blog')} label="Blog" />
             <NavLink href="/experience" isActive={pathname === '/experience'} label="Experience" />
             <NavLink href="/contact" isActive={pathname === '/contact'} label="Contact" />
           </div>
@@ -146,6 +147,7 @@ const Navbar: React.FC = () => {
                 <MobileNavLink href="/" isActive={pathname === '/'} label="HOME" />
                 <MobileNavLink href="/about" isActive={pathname === '/about'} label="ABOUT" />
                 <MobileNavLink href="/projects" isActive={pathname === '/projects'} label="PROJECTS" />
+                <MobileNavLink href="/blog" isActive={pathname.startsWith('/blog')} label="BLOG" />
                 <MobileNavLink href="/experience" isActive={pathname === '/experience'} label="EXPERIENCE" />
                 <MobileNavLink href="/contact" isActive={pathname === '/contact'} label="CONTACT" />
               </div>
