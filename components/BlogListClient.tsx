@@ -1,30 +1,62 @@
 "use client";
 import { useMemo, useState } from 'react';
 import type { BlogPostSummary } from '../app/lib/blog-shared';
-import { BlogCard } from './BlogCard';
+import { BlogHero, BlogRow } from './BlogCard';
 
-export default function BlogListClient({ posts, tags }: { posts: BlogPostSummary[]; tags: string[] }) {
+/**
+ * The index. With no search and no topic chosen, the featured post leads and the
+ * rest follow as a ledger. As soon as the visitor filters, every post (the
+ * featured one included) is searched and shown as plain rows.
+ */
+export default function BlogListClient({ posts, tags, featured = null }: { posts: BlogPostSummary[]; tags: string[]; featured?: BlogPostSummary | null }) {
   const [active, setActive] = useState<string | null>(null);
   const [query, setQuery] = useState('');
-  const filtered = useMemo(() => posts.filter((p) =>
-    (!active || p.tags.includes(active)) &&
-    (!query || `${p.title} ${p.excerpt} ${p.tags.join(' ')}`.toLowerCase().includes(query.toLowerCase()))), [posts, active, query]);
-  const pill = (t: string | null, label: string) => (
-    <button key={label} onClick={() => setActive(t)} aria-pressed={active === t}
-      className={`rounded-full border px-4 py-2 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B8E62D] ${active === t ? 'border-[#B8E62D] bg-[#B8E62D] font-semibold text-black' : 'border-white/15 text-white/70 hover:border-[#B8E62D]/50'}`}>{label}</button>
+  const q = query.trim().toLowerCase();
+  const filtering = Boolean(active || q);
+
+  const rows = useMemo(() => {
+    if (!filtering) return featured ? posts.filter((p) => p.slug !== featured.slug) : posts;
+    return posts.filter((p) =>
+      (!active || p.tags.includes(active)) &&
+      (!q || `${p.title} ${p.excerpt} ${p.tags.join(' ')}`.toLowerCase().includes(q)));
+  }, [posts, featured, active, q, filtering]);
+
+  const shown = rows.length + (!filtering && featured ? 1 : 0);
+  const topic = (t: string | null, label: string) => (
+    <button key={label} type="button" className="bc-pill" onClick={() => setActive(t)} aria-pressed={active === t}>{label}</button>
   );
+  const clear = () => { setActive(null); setQuery(''); };
+
   return (
-    <div>
-      <div className="mb-8 flex flex-col gap-4">
-        <label className="sr-only" htmlFor="blog-search">Search posts</label>
-        <input id="blog-search" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search posts…"
-          className="w-full max-w-md rounded-full border border-white/15 bg-[#0B0B0F] px-5 py-3 text-white placeholder:text-white/40 focus:border-[#B8E62D] focus:outline-none focus:ring-2 focus:ring-[#B8E62D]/40" />
-        <div className="flex flex-wrap gap-2">{pill(null, 'All')}{tags.map((t) => pill(t, t))}</div>
+    <div className="bl-list">
+      <div className="bl-tools">
+        <div className="fx-field">
+          <label className="fx-label" htmlFor="blog-search">Search the notes</label>
+          <input id="blog-search" type="search" className="fx-input" value={query} onChange={(e) => setQuery(e.target.value)}
+            placeholder="RAG, Flutter, microservices" autoComplete="off" />
+        </div>
+        <div className="bl-pills" role="group" aria-label="Filter by topic">
+          {topic(null, 'All')}{tags.map((t) => topic(t, t))}
+        </div>
       </div>
-      {filtered.length === 0 ? (
-        <p className="py-16 text-center text-soft-white/60">No posts match. Try a different search or tag.</p>
-      ) : (
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">{filtered.map((p) => <BlogCard key={p.slug} post={p} />)}</div>
+
+      <p className="bl-count lg-note" role="status">
+        {shown} of {posts.length} {posts.length === 1 ? 'note' : 'notes'}{active ? <> · <b>{active}</b></> : null}
+      </p>
+
+      {!filtering && featured && <BlogHero post={featured} />}
+
+      {rows.length > 0 && (
+        <ol className="bl-ledger">
+          {rows.map((p, i) => <BlogRow key={p.slug} post={p} index={i} />)}
+        </ol>
+      )}
+
+      {filtering && rows.length === 0 && (
+        <div className="bl-empty">
+          <p className="lg-body">Nothing matches that search. Try another word or topic.</p>
+          <button type="button" className="bc-btn" onClick={clear}>Show every note</button>
+        </div>
       )}
     </div>
   );

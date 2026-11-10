@@ -2,7 +2,7 @@
 title: AI-Assisted Dev Workflow & MCP Tooling
 description: Agent-assisted engineering workflow with Pi Owl MCP agent, a custom Flutter MCP server, and an upstream Pi grapheme-width fix.
 summary: OpenRouter-routed coding-agent workflows with task queuing, context guard, and open-source terminal-rendering contributions.
-imageUrl: /images/Projects/ai-assisted-dev-workflow.jpg
+imageUrl: /images/Projects/ai-assisted-dev-workflow.webp
 slug: ai-assisted-dev-workflow
 technologies: ['Pi', 'OpenRouter', 'MCP', 'Flutter', 'TypeScript']
 featured: false

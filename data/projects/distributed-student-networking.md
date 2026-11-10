@@ -2,7 +2,7 @@
 title: Distributed Student Networking App
 description: A virtual community platform where students create/join interest-based groups with video conferencing, real-time chat, and shared event calendars.
 summary: Student community platform with interest groups, video conferencing, real-time chat, and events.
-imageUrl: /images/Projects/distributed-student-networking.jpg
+imageUrl: /images/Projects/distributed-student-networking.webp
 slug: distributed-student-networking
 technologies: ['Node.js', 'Express.js', 'IBM Db2', 'GraphQL', 'REST API']
 featured: false

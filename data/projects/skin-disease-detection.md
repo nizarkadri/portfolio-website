@@ -2,7 +2,7 @@
 title: Skin Disease Detection System
 description: An intelligent web application that leverages AI to detect and classify 20+ skin diseases from uploaded images with 92% accuracy, providing instant medical insights.
 summary: A healthcare-focused AI app that delivers image-based skin condition screening with fast, accessible feedback.
-imageUrl: /images/Projects/skin-disease-detection.jpg
+imageUrl: /images/Projects/skin-disease-detection.webp
 slug: skin-disease-detection
 technologies: ['Node.js', 'Express.js', 'EJS', 'CSS3', 'JavaScript', 'Machine Learning', 'Computer Vision', 'Git']
 featured: true

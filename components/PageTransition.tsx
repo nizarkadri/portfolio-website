@@ -23,12 +23,12 @@ const PageTransition: React.FC<PageTransitionProps> = ({ children }) => {
 
   // Get color for each route
   // const getRouteColor = (path: string) => {
-  //   if (path === '/') return '#B8E62D'; // Lime green for home
+  //   if (path === '/') return '#FF8A4C'; // Lime green for home
   //   if (path.includes('/projects')) return '#8fba1f'; // Darker lime for projects
   //   if (path.includes('/experience')) return '#a3cc29'; // Medium lime for experience
   //   if (path.includes('/about')) return '#9dd127'; // Bright lime for about
   //   if (path.includes('/contact')) return '#7aa61c'; // Deep lime for contact
-  //   return '#B8E62D'; // Default lime
+  //   return '#FF8A4C'; // Default lime
   // };
 
   const transitionVariants = {

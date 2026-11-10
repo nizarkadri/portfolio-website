@@ -91,7 +91,7 @@ const Hero = () => {
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
             <h1
               className="text-[clamp(30vw,20vw,20vw)] sm:text-[25vw] font-black text-transparent select-none tracking-tighter"
-              style={{ WebkitTextStroke: '3px rgba(184, 230, 45, 0.39)' }}
+              style={{ WebkitTextStroke: '3px rgba(255, 138, 76, 0.39)' }}
             >
               NIZAR
             </h1>
@@ -102,7 +102,7 @@ const Hero = () => {
               <span className="text-white bg-clip-text bg-gradient-to-r from-white via-white/90 to-white/80">
                 Turning Ideas into
               </span>
-              <span className="block text-[#B8E62D] bg-clip-text text-transparent bg-gradient-to-r from-[#B8E62D] to-[#8fba1f] md:mt-4">
+              <span className="block text-[#FF8A4C] bg-clip-text text-transparent bg-gradient-to-r from-[#FF8A4C] to-[#8fba1f] md:mt-4">
                 Technical Reality
               </span>
             </h1>
@@ -129,7 +129,7 @@ const Hero = () => {
         >
           <motion.h1
             className="text-[clamp(30vw,20vw,20vw)] sm:text-[25vw] font-black text-transparent select-none tracking-tighter"
-            style={{ WebkitTextStroke: '3px rgba(184, 230, 45, 0.39)' }}
+            style={{ WebkitTextStroke: '3px rgba(255, 138, 76, 0.39)' }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 1.5, delay: 0.5 }}
@@ -156,7 +156,7 @@ const Hero = () => {
                 Turning Ideas into
               </motion.span>
               <motion.span
-                className="block text-[#B8E62D] bg-clip-text text-transparent bg-gradient-to-r from-[#B8E62D] to-[#8fba1f] md:mt-4"
+                className="block text-[#FF8A4C] bg-clip-text text-transparent bg-gradient-to-r from-[#FF8A4C] to-[#8fba1f] md:mt-4"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.4 }}

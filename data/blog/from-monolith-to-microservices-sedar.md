@@ -2,7 +2,7 @@
 title: "From Monolith to Microservices at SEDAR: 70% Faster, 40% Safer Deploys"
 date: 2025-08-14
 slug: from-monolith-to-microservices-sedar
-excerpt: "Breaking a Java monolith into independently deployable services cut response times by 70% and deploy times by 40% — without the distributed-systems horror stories. Here's the playbook."
+excerpt: "Breaking a Java monolith into independently deployable services cut response times by 70% and deploy times by 40%, without the distributed-systems horror stories. Here's the playbook."
 tags: ['Microservices', 'Java', 'Performance', 'Architecture']
 author: Nizar Kadri
 readingTime: 9

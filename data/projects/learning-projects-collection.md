@@ -2,7 +2,7 @@
 title: Learning Projects Collection
 description: 'A collection of learning builds: MatchCards memory game, react-job-api job board, and a Gemini form auto-filler Chrome extension.'
 summary: MatchCards (Jest/Testing Library), react-job-api (Express + Vite/Tailwind), and gemini-form-auto-filler (Chrome extension + Google GenAI).
-imageUrl: /images/Projects/learning-projects-collection.jpg
+imageUrl: /images/Projects/learning-projects-collection.webp
 slug: learning-projects-collection
 technologies: ['React', 'Vite', 'Tailwind CSS', 'Express', 'Chrome Extension', 'Google GenAI', 'Jest']
 featured: false

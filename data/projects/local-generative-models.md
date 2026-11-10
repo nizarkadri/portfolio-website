@@ -2,7 +2,7 @@
 title: Local Generative Model Deployment & Fine-Tuning
 description: Local GPU deployment and fine-tuning of open-source generative models with ComfyUI, Stable Diffusion, and StyleGAN3.
 summary: Hands-on local inference and fine-tuning workflow with CUDA/xFormers troubleshooting for Hugging Face and CivitAI models.
-imageUrl: /images/Projects/local-generative-models.jpg
+imageUrl: /images/Projects/local-generative-models.webp
 slug: local-generative-models
 technologies: ['Hugging Face', 'ComfyUI', 'Stable Diffusion', 'StyleGAN3', 'CUDA', 'xFormers']
 featured: false

@@ -2,7 +2,7 @@
 title: Portfolio Website
 description: A personal portfolio website showcasing my skills, selected projects, and professional experience.
 summary: A cinematic developer portfolio focused on storytelling, motion, and fast project discovery.
-imageUrl: /images/Projects/portfolio-website.png
+imageUrl: /images/Projects/portfolio-website.webp
 slug: portfolio-website
 technologies: ['Next.js', 'TypeScript', 'Tailwind CSS']
 featured: true

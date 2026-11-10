@@ -11,8 +11,10 @@ module.exports = {
     theme: {
       extend: {
         fontFamily: {
-          sans: ['var(--font-inter)'], // Use the CSS variable
-          montserrat: ['var(--font-montserrat)', 'sans-serif'],
+          sans: ['var(--font-geist)', 'system-ui', 'sans-serif'], // Use the CSS variable
+          montserrat: ['var(--font-archivo)', 'sans-serif'],
+          display: ['var(--font-archivo)', 'sans-serif'],
+          mono: ['var(--font-geist-mono)', 'ui-monospace', 'monospace'],
         },
         colors: {
           transparent: 'transparent',

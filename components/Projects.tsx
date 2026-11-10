@@ -26,7 +26,7 @@ function Projects({ projects }: ProjectsProps) {
       <div className="relative mx-auto max-w-7xl">
         <motion.h2
           id="projects-heading"
-          className="huge-text mb-6 select-none font-bold text-[#B8E62D]/80 opacity-80 md:mb-8"
+          className="huge-text mb-6 select-none font-bold text-[#FF8A4C]/80 opacity-80 md:mb-8"
           initial={{ opacity: 0, x: -40 }}
           whileInView={{ opacity: 0.8, x: 0 }}
           viewport={{ once: true, margin: '-120px' }}
@@ -35,11 +35,11 @@ function Projects({ projects }: ProjectsProps) {
           PROJECTS
         </motion.h2>
 
-        <div className="mb-12 h-px w-full bg-gradient-to-r from-[#B8E62D]/45 via-[#B8E62D]/15 to-transparent" />
+        <div className="mb-12 h-px w-full bg-gradient-to-r from-[#FF8A4C]/45 via-[#FF8A4C]/15 to-transparent" />
 
         <div className="mb-12 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <div className="max-w-2xl">
-            <p className="inline-flex rounded-full border border-[#B8E62D]/20 bg-[#B8E62D]/10 px-4 py-2 text-xs uppercase tracking-[0.28em] text-[#D9FF4B]">
+            <p className="inline-flex rounded-full border border-[#FF8A4C]/20 bg-[#FF8A4C]/10 px-4 py-2 text-xs uppercase tracking-[0.28em] text-[#FFB083]">
               Selected work
             </p>
             <p className="mt-4 text-lg leading-8 text-soft-white/70">
@@ -48,7 +48,7 @@ function Projects({ projects }: ProjectsProps) {
           </div>
           <Link
             href="/projects"
-            className="inline-flex shrink-0 items-center rounded-full border border-[#B8E62D]/40 bg-[#B8E62D]/10 px-6 py-3 text-sm font-medium text-[#D9FF4B] transition-colors hover:bg-[#B8E62D]/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B8E62D]"
+            className="inline-flex shrink-0 items-center rounded-full border border-[#FF8A4C]/40 bg-[#FF8A4C]/10 px-6 py-3 text-sm font-medium text-[#FFB083] transition-colors hover:bg-[#FF8A4C]/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF8A4C]"
           >
             View all projects
             <svg xmlns="http://www.w3.org/2000/svg" className="ml-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
@@ -118,7 +118,7 @@ function Projects({ projects }: ProjectsProps) {
         <div className="mt-12 text-center">
           <Link
             href="/projects"
-            className="inline-flex items-center gap-2 text-sm font-medium text-[#D9FF4B] underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B8E62D] rounded"
+            className="inline-flex items-center gap-2 text-sm font-medium text-[#FFB083] underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF8A4C] rounded"
           >
             Explore all {projects.length} projects
             <span aria-hidden>→</span>

@@ -2,7 +2,7 @@
 title: "Flutter, MCP, and Maestro: Mobile Testing That Actually Catches Regressions"
 date: 2025-03-18
 slug: flutter-mcp-maestro-testing
-excerpt: "How I use MCP tooling and Maestro flows to test Flutter apps end-to-end — deterministic waits, honest assertions, and CI that fails on real bugs instead of flakes."
+excerpt: "How I use MCP tooling and Maestro flows to test Flutter apps end-to-end, deterministic waits, honest assertions, and CI that fails on real bugs instead of flakes."
 tags: ['Flutter', 'Maestro', 'MCP', 'Mobile', 'Testing']
 author: Nizar Kadri
 readingTime: 7

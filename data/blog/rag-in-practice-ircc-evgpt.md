@@ -2,7 +2,7 @@
 title: "RAG in Practice: IRCC Genie, EV-GPT, and the Retrieval Details That Matter"
 date: 2025-06-02
 slug: rag-in-practice-ircc-evgpt
-excerpt: "Citation grounding, chunking strategy, and evaluation loops — what actually separates a useful RAG assistant from a confident hallucinator, from two production builds."
+excerpt: "Citation grounding, chunking strategy, and evaluation loops, what actually separates a useful RAG assistant from a confident hallucinator, from two production builds."
 tags: ['RAG', 'LLM', 'Python', 'IRCC', 'EV-GPT']
 author: Nizar Kadri
 readingTime: 10

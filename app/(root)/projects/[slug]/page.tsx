@@ -15,7 +15,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   try {
     const p = await getProjectData(slug);
-    const title = `${p.title} — Project Case Study`;
+    const title = `${p.title}: Project Case Study`;
     const description = p.description || p.summary;
     return {
       title,
@@ -52,25 +52,25 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
   ].filter(Boolean) as { label: string; value: string }[];
 
   return (
-    <div className="min-h-screen py-20">
+    <div className="lg-page min-h-screen pb-20">
       <div className="container mx-auto max-w-6xl px-4">
         <nav aria-label="Breadcrumb" className="mb-8 flex flex-wrap items-center gap-2 text-sm text-soft-white/50">
-          <Link href="/" className="hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B8E62D] rounded">Home</Link>
+          <Link href="/" className="hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF8A4C] rounded">Home</Link>
           <span aria-hidden>/</span>
-          <Link href="/projects" className="hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B8E62D] rounded">Projects</Link>
+          <Link href="/projects" className="hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF8A4C] rounded">Projects</Link>
           <span aria-hidden>/</span>
           <span aria-current="page" className="text-white">{project.title}</span>
         </nav>
 
         {/* Hero */}
-        <header className="relative overflow-hidden rounded-3xl border border-white/10 bg-[#0B0B0F]">
-          <div className="relative aspect-[16/8] min-h-[280px] overflow-hidden bg-[#050816]">
+        <header className="relative overflow-hidden rounded-xl border border-white/10 bg-[#0F1319]">
+          <div className="relative aspect-[16/8] min-h-[280px] overflow-hidden bg-[#0B0F15]">
             <ProjectImage src={project.imageUrl} alt={project.title} fill priority sizes="(max-width:768px) 100vw, 1100px" />
-            <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-[#0B0B0F] via-black/40 to-transparent" />
+            <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-[#0F1319] via-[#0F1319]/30 to-transparent" />
           </div>
           <div className="p-7 md:p-10">
             <ProjectMetaBadges year={project.year} status={project.status} showFeatured featured={project.featured} className="mb-4" />
-            <h1 className="max-w-3xl text-4xl font-bold leading-tight text-white md:text-5xl">{project.title}</h1>
+            <h1 className="lg-display lg-display--lg max-w-3xl">{project.title}</h1>
             <p className="mt-4 max-w-2xl text-lg leading-8 text-soft-white/70">{project.description}</p>
             <div className="mt-6 flex flex-wrap items-center gap-4">
               <ProjectLinks liveUrl={project.liveUrl} repoUrl={project.repoUrl} />
@@ -83,8 +83,8 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
         {metrics.length > 0 ? (
           <dl className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {metrics.map((m) => (
-              <div key={m.label} className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
-                <dt className="text-xs font-semibold uppercase tracking-[0.22em] text-[#D9FF4B]">{m.label}</dt>
+              <div key={m.label} className="rounded-lg border border-white/10 bg-white/[0.03] p-5">
+                <dt className="text-xs font-semibold uppercase tracking-[0.22em] text-[#FFB083]">{m.label}</dt>
                 <dd className="mt-2 text-sm leading-6 text-soft-white/75">{m.value}</dd>
               </div>
             ))}
@@ -94,16 +94,16 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
         {/* Body + highlights rail */}
         <div className="mt-10 grid gap-10 lg:grid-cols-[minmax(0,1fr)_300px]">
           <article
-            className="prose prose-invert prose-lg max-w-none prose-p:text-soft-white/80 prose-headings:text-white prose-li:text-soft-white/70 prose-a:text-[#D9FF4B] prose-strong:text-white prose-pre:border prose-pre:border-white/10 prose-pre:bg-black/50 prose-code:text-[#D9FF4B]"
+            className="prose prose-invert prose-lg max-w-none prose-p:text-soft-white/80 prose-headings:text-white prose-li:text-soft-white/70 prose-a:text-[#FFB083] prose-strong:text-white prose-pre:border prose-pre:border-white/10 prose-pre:bg-black/50 prose-code:text-[#FFB083]"
             dangerouslySetInnerHTML={{ __html: project.contentHtml }}
           />
           {project.highlights.length > 0 ? (
-            <aside aria-label="Highlights" className="h-fit rounded-2xl border border-white/10 bg-white/[0.03] p-6 lg:sticky lg:top-24">
-              <h2 className="text-sm font-semibold uppercase tracking-[0.22em] text-[#D9FF4B]">Highlights</h2>
+            <aside aria-label="Highlights" className="h-fit rounded-lg border border-white/10 bg-white/[0.03] p-6 lg:sticky lg:top-24">
+              <h2 className="text-sm font-semibold uppercase tracking-[0.22em] text-[#FFB083]">Highlights</h2>
               <ul className="mt-4 grid gap-3 text-sm leading-6 text-soft-white/75">
                 {project.highlights.map((h) => (
                   <li key={h} className="flex items-start gap-2.5">
-                    <span aria-hidden className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-[#B8E62D]" />
+                    <span aria-hidden className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-[#FF8A4C]" />
                     <span>{h}</span>
                   </li>
                 ))}
@@ -119,15 +119,15 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
         {all.length > 1 ? (
           <nav aria-label="More projects" className="mt-14 grid gap-4 sm:grid-cols-2">
             {prev && prev.slug !== slug ? (
-              <Link href={`/projects/${prev.slug}`} className="group rounded-2xl border border-white/10 bg-white/[0.03] p-5 transition-colors hover:border-[#B8E62D]/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B8E62D]">
-                <span className="text-xs uppercase tracking-[0.22em] text-soft-white/50">← Previous</span>
-                <span className="mt-1 block font-medium text-white group-hover:text-[#D9FF4B]">{prev.title}</span>
+              <Link href={`/projects/${prev.slug}`} className="group rounded-lg border border-white/10 bg-white/[0.03] p-5 transition-colors hover:border-[#FF8A4C]/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF8A4C]">
+                <span className="text-xs uppercase tracking-[0.22em] text-soft-white/50">Previous</span>
+                <span className="mt-1 block font-medium text-white group-hover:text-[#FFB083]">{prev.title}</span>
               </Link>
             ) : <span />}
             {next && next.slug !== slug ? (
-              <Link href={`/projects/${next.slug}`} className="group rounded-2xl border border-white/10 bg-white/[0.03] p-5 text-right transition-colors hover:border-[#B8E62D]/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B8E62D]">
-                <span className="text-xs uppercase tracking-[0.22em] text-soft-white/50">Next →</span>
-                <span className="mt-1 block font-medium text-white group-hover:text-[#D9FF4B]">{next.title}</span>
+              <Link href={`/projects/${next.slug}`} className="group rounded-lg border border-white/10 bg-white/[0.03] p-5 text-right transition-colors hover:border-[#FF8A4C]/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF8A4C]">
+                <span className="text-xs uppercase tracking-[0.22em] text-soft-white/50">Next</span>
+                <span className="mt-1 block font-medium text-white group-hover:text-[#FFB083]">{next.title}</span>
               </Link>
             ) : null}
           </nav>

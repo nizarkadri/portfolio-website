@@ -1,0 +1,90 @@
+/* ==========================================================================
+   /projects: a hall of doors you walk by scrolling, then the index.
+   ========================================================================== */
+.pj-hall__stage { position: sticky; top: 0; height: 100svh; overflow: hidden; isolation: isolate;
+  background: radial-gradient(120% 70% at 50% 108%, #131a24 0%, var(--sc-canvas) 62%); }
+.pj-hall__scene { position: absolute; inset: 0; perspective: 1150px; perspective-origin: 50% 44%; }
+.pj-hall__track { position: absolute; left: 50%; top: 50%; width: 0; height: 0; transform-style: preserve-3d; will-change: transform; }
+
+/* the board runs the length of the hall */
+.pj-hall__floor { position: absolute; left: -2600px; top: 0; width: 5200px; height: calc(var(--n) * var(--gap) + 4200px);
+  transform-origin: 50% 0; transform: translate3d(0, min(36vh, 22rem), 1600px) rotateX(90deg) translateY(-100%);
+  background:
+    conic-gradient(from 90deg, #0b0f15 25%, #1c2531 0 50%, #0b0f15 0 75%, #1c2531 0) 0 0 / 520px 520px;
+  box-shadow: inset 0 0 0 2px rgba(255, 138, 76, 0.05); backface-visibility: hidden; }
+
+.pj-door { --off: clamp(11rem, 19vw, 21rem); position: absolute; left: 0; top: 0; width: min(31rem, 40vw);
+  transform: translate3d(calc(-50% + var(--side) * var(--off)), -50%, calc(var(--i) * var(--gap) * -1)) rotateY(calc(var(--side) * -15deg));
+  transform-style: preserve-3d; display: grid; gap: 1.1rem; opacity: 0; }
+.pj-door:first-of-type { opacity: 1; }
+.pj-door__frame { position: relative; padding: 0.55rem; background: linear-gradient(180deg, #1a212b, #0c1016); border: 1px solid var(--sc-hairline-strong);
+  border-radius: 6px; box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.6), 0 40px 80px -30px rgba(0, 0, 0, 0.9), 0 0 90px -20px color-mix(in oklab, var(--sc-accent) 38%, transparent); }
+.pj-door__frame::after { content: ""; position: absolute; left: 6%; right: 6%; bottom: -2.4rem; height: 2.4rem; pointer-events: none;
+  background: radial-gradient(60% 100% at 50% 0, color-mix(in oklab, var(--sc-accent) 30%, transparent), transparent 75%); filter: blur(6px); }
+.pj-cover { position: relative; aspect-ratio: 4 / 3; overflow: hidden; border-radius: 3px; background: #0b0f15; }
+.pj-cover__img { object-fit: cover; }
+.pj-cover__blank { position: absolute; inset: 0; display: grid; place-items: center; align-content: center; gap: 0.6rem; color: color-mix(in oklab, var(--sc-accent) 80%, transparent);
+  background: radial-gradient(80% 70% at 50% 100%, color-mix(in oklab, var(--sc-accent) 26%, transparent), transparent 70%), linear-gradient(180deg, #121821, #090c11); }
+.pj-cover__blank svg { width: 22%; height: auto; }
+.pj-cover__blank span { font-family: var(--sc-font-mono); letter-spacing: 0.3em; font-size: 0.8rem; color: var(--sc-ink-soft); }
+.pj-door__plate { display: grid; gap: 0.6rem; justify-items: start; padding-inline: 0.2rem; }
+.pj-door__plate > * { margin: 0; }
+.pj-door__sum { color: var(--sc-ink-soft); font-size: 0.98rem; line-height: 1.5; max-width: 44ch; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.pj-stack { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.35rem; }
+.pj-links { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem 1.25rem; margin-top: 0.35rem; }
+.pj-door:not(.is-active) .pj-links, .pj-door:not(.is-active) .pj-stack, .pj-door:not(.is-active) .pj-door__sum { opacity: 0.35; transition: opacity 240ms var(--sc-ease-out); }
+.pj-door.is-active .pj-links, .pj-door.is-active .pj-stack, .pj-door.is-active .pj-door__sum { transition: opacity 240ms var(--sc-ease-out); }
+
+.pj-hall__fog { position: absolute; inset: 0; pointer-events: none; z-index: 2;
+  background: linear-gradient(180deg, var(--sc-canvas) 0%, transparent 20%, transparent 80%, color-mix(in oklab, var(--sc-canvas) 80%, transparent) 100%); }
+.pj-hall__head { position: absolute; z-index: 3; left: var(--sc-gutter); top: calc(var(--lg-bar-h) + 1.1rem); display: flex; align-items: baseline; gap: 1.4rem; }
+.pj-hall__head > * { margin: 0; }
+.pj-hall__rail { position: absolute; z-index: 3; left: 50%; bottom: 1.4rem; transform: translateX(-50%); display: flex; gap: 0.15rem; list-style: none; margin: 0; padding: 0; }
+.pj-hall__rail button { width: 1.6rem; height: 2.4rem; background: transparent; border: 0; cursor: pointer; position: relative; }
+.pj-hall__rail button::after { content: ""; position: absolute; left: 0.2rem; right: 0.2rem; top: 50%; height: 2px; background: var(--sc-hairline-strong); transition: background-color 200ms var(--sc-ease-out), transform 200ms var(--sc-ease-out); }
+.pj-hall__rail button[aria-current="true"]::after { background: var(--sc-accent); transform: scaleY(2); }
+@media (hover: hover) and (pointer: fine) { .pj-hall__rail button:hover::after { background: var(--sc-ink); } }
+
+@media (max-width: 860px) {
+  .pj-hall__scene { perspective: 900px; perspective-origin: 50% 40%; }
+  .pj-door { --off: 0rem; width: min(22rem, 82vw); transform: translate3d(-50%, -50%, calc(var(--i) * var(--gap) * -1)) rotateY(calc(var(--side) * -5deg)); gap: 0.8rem; }
+  .pj-door__sum { font-size: 0.92rem; }
+  .pj-hall__rail { gap: 0; }
+  .pj-hall__rail button { width: 1.25rem; }
+  .pj-hall__head { gap: 0.9rem; flex-wrap: wrap; }
+}
+
+/* no pinned hall without motion: the index below carries every project */
+@media (prefers-reduced-motion: reduce) { .pj-hall { display: none; } .pj-index { padding-top: calc(var(--lg-bar-h) + 3rem); } }
+
+/* ------------------------------------------------------------- the index */
+.pj-index { background: var(--sc-canvas); position: relative; z-index: 4; }
+.pj-index__head { display: grid; gap: 0.9rem; margin-bottom: clamp(2rem, 4vw, 3.5rem); }
+.pj-index__head > * { margin: 0; }
+.pj-tools { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 0.6fr); gap: 1rem 1.25rem; align-items: end; }
+.pj-search, .pj-sort { display: grid; gap: 0.45rem; }
+.pj-search input, .pj-sort select { width: 100%; height: 3rem; padding: 0 0.95rem; background: var(--sc-surface); color: var(--sc-ink); border: 1px solid var(--sc-hairline-strong); border-radius: var(--sc-r-sm); font-size: 1rem; }
+.pj-search input::placeholder { color: color-mix(in oklab, var(--sc-ink-soft) 70%, transparent); }
+.pj-filter { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.pj-filter button { cursor: pointer; background: transparent; min-height: 2.25rem; gap: 0.45rem; transition: border-color 160ms var(--sc-ease-out), color 160ms var(--sc-ease-out), background-color 160ms var(--sc-ease-out); }
+.pj-filter button span { opacity: 0.55; }
+.pj-filter button[aria-pressed="true"] { background: var(--sc-accent); color: var(--sc-accent-ink); border-color: var(--sc-accent); }
+@media (hover: hover) and (pointer: fine) { .pj-filter button:not([aria-pressed="true"]):hover { color: var(--sc-ink); border-color: var(--sc-hairline-strong); } }
+.pj-count { margin: 1.5rem 0 0.25rem; }
+.pj-rows { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--sc-hairline-strong); }
+.pj-row { position: relative; display: grid; grid-template-columns: 11rem minmax(0, 1fr) auto; gap: 1.25rem 2rem; align-items: start; padding: 1.5rem 0; border-bottom: 1px solid var(--sc-hairline); }
+.pj-row__main { display: grid; gap: 0.6rem; }
+.pj-row__main > *, .pj-row__meta > * { margin: 0; }
+.pj-row__main p { color: var(--sc-ink-soft); max-width: 60ch; line-height: 1.55; }
+.pj-row__main h3 a { color: var(--sc-ink); text-decoration: none; }
+@media (hover: hover) and (pointer: fine) { .pj-row__main h3 a:hover { color: var(--sc-accent); } }
+.pj-row__meta { display: grid; gap: 0.8rem; justify-items: end; text-align: right; }
+.pj-row__meta .pj-links { justify-content: flex-end; margin: 0; }
+.pj-empty { padding: 3rem 0; display: grid; gap: 0.75rem; justify-items: start; border-top: 1px solid var(--sc-hairline-strong); }
+.pj-empty button { background: none; border: 0; cursor: pointer; padding: 0; }
+@media (max-width: 860px) {
+  .pj-tools { grid-template-columns: 1fr; }
+  .pj-row { grid-template-columns: 5.5rem minmax(0, 1fr); gap: 0.9rem 1rem; }
+  .pj-row__meta { grid-column: 1 / -1; justify-items: start; text-align: left; }
+  .pj-row__meta .pj-links { justify-content: flex-start; }
+}

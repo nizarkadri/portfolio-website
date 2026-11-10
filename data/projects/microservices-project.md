@@ -1,8 +1,8 @@
 ---
-title: Microservices Project — Order / Payment / User Services
+title: "Microservices Project: Order / Payment / User Services"
 description: A three-service microservices demo (order, payment, user) deployed with Docker Compose and Nginx.
 summary: Dockerized microservices architecture with Nginx routing and AppDynamics machine-agent instrumentation.
-imageUrl: /images/Projects/microservices-project.jpg
+imageUrl: /images/Projects/microservices-project.webp
 slug: microservices-project
 technologies: ['Docker Compose', 'Nginx', 'Microservices', 'AppDynamics']
 featured: false

@@ -1,8 +1,8 @@
 ---
-title: CondoConnect — Flutter Condo Community App
+title: "CondoConnect: Flutter Condo Community App"
 description: A cross-platform Flutter app for condo residents with community feed, marketplace, direct messages, issue reporting, and polls.
 summary: Residents-only condo community platform with Material 3 theming, Sentry crash reporting, and Supabase RLS.
-imageUrl: /images/Projects/condoconnect.jpg
+imageUrl: /images/Projects/condoconnect.webp
 slug: condoconnect
 technologies: ['Flutter', 'Dart', 'Supabase', 'Sentry', 'Material 3', 'Maestro']
 featured: true

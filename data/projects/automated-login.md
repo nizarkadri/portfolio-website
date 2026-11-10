@@ -2,7 +2,7 @@
 title: Automated Login & Password Reset
 description: Python web-scraping utility that automates logins, solves CAPTCHA with IBM Watson Assistant, and fetches OTPs via the Gmail API.
 summary: Automated login and password-reset automation with Python scraping, Watson CAPTCHA solving, and Gmail OTP fetch.
-imageUrl: /images/Projects/automated-login.jpg
+imageUrl: /images/Projects/automated-login.webp
 slug: automated-login
 technologies: ['Python', 'IBM Watson', 'Gmail API', 'Web Scraping']
 featured: false

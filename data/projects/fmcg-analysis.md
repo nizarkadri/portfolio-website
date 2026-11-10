@@ -2,7 +2,7 @@
 title: FMCG Analysis Application
 description: Business-insights visualizations with IBM Cognos dashboards plus an Android point-of-sale simulation app.
 summary: FMCG analysis with IBM Cognos dashboards and a Python/IBM Db2-backed Android POS app from Ganpat University.
-imageUrl: /images/Projects/fmcg-analysis.jpg
+imageUrl: /images/Projects/fmcg-analysis.webp
 slug: fmcg-analysis
 technologies: ['IBM Cognos', 'Android Studio', 'Python', 'IBM Db2']
 featured: false

@@ -1,19 +1,15 @@
 import Link from 'next/link';
 import type { BlogPostSummary } from '../app/lib/blog-shared';
-import { BlogCard } from './BlogCard';
+import { BlogRow } from './BlogCard';
+import '../app/blog-contact.css';
 
 export default function BlogPreview({ posts }: { posts: BlogPostSummary[] }) {
   if (!posts.length) return null;
   return (
-    <section aria-label="Latest blog posts" className="container mx-auto max-w-6xl px-4 py-20">
-      <div className="mb-10 flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <p className="text-xs uppercase tracking-[0.3em] text-[#D9FF4B]">Blog</p>
-          <h2 className="mt-2 text-4xl font-bold text-white md:text-5xl">Latest writing</h2>
-        </div>
-        <Link href="/blog" className="rounded-full border border-[#B8E62D]/40 px-5 py-2.5 text-sm font-semibold text-[#D9FF4B] transition-colors hover:bg-[#B8E62D]/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B8E62D]">All posts →</Link>
-      </div>
-      <div className="grid gap-6 md:grid-cols-3">{posts.map((p) => <BlogCard key={p.slug} post={p} />)}</div>
+    <section aria-labelledby="latest-writing" className="lg-wrap lg-section bl-related">
+      <h2 id="latest-writing" className="lg-display lg-display--md">Latest writing</h2>
+      <ol className="bl-ledger">{posts.map((p, i) => <BlogRow key={p.slug} post={p} heading="h3" index={i} />)}</ol>
+      <p style={{ margin: '1.5rem 0 0' }}><Link href="/blog" className="lg-link">All notes</Link></p>
     </section>
   );
 }

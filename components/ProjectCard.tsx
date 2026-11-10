@@ -30,7 +30,7 @@ type ProjectCardProps = Pick<
 };
 
 const cardBase =
-  'group relative flex h-full flex-col overflow-hidden rounded-3xl border border-white/10 bg-[#0B0B0F]/95 shadow-[0_16px_50px_rgba(0,0,0,0.35)] transition-colors duration-300 hover:border-[#B8E62D]/35 hover:bg-[#0D0D12]';
+  'group relative flex h-full flex-col overflow-hidden rounded-3xl border border-white/10 bg-[#0B0B0F]/95 shadow-[0_16px_50px_rgba(0,0,0,0.35)] transition-colors duration-300 hover:border-[#FF8A4C]/35 hover:bg-[#0D0D12]';
 
 /**
  * Unified card. Variants:
@@ -66,7 +66,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
       <article className={clsx(cardBase, 'lg:grid lg:grid-cols-2', className)}>
         <Link
           href={`/projects/${slug}`}
-          className="relative block min-h-[280px] overflow-hidden bg-[#050816] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#B8E62D]"
+          className="relative block min-h-[280px] overflow-hidden bg-[#050816] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#FF8A4C]"
           aria-label={`View case study: ${title}`}
         >
           <ProjectImage
@@ -85,27 +85,27 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
 
         <div className={clsx('flex flex-col justify-between p-7 md:p-9', isReversed && 'lg:order-first')}>
           <div>
-            <p className="mb-2 text-xs uppercase tracking-[0.28em] text-[#D9FF4B]">
+            <p className="mb-2 text-xs uppercase tracking-[0.28em] text-[#FFB083]">
               {featured ? 'Featured project' : 'Selected project'}
               {year ? ` · ${year}` : ''}
             </p>
             <h3 className="text-2xl font-semibold leading-tight text-white md:text-[2rem]">
               <Link
                 href={`/projects/${slug}`}
-                className="after:absolute after:inset-0 after:rounded-3xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B8E62D] transition-colors hover:text-[#D9FF4B]"
+                className="after:absolute after:inset-0 after:rounded-3xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF8A4C] transition-colors hover:text-[#FFB083]"
               >
                 {title}
               </Link>
             </h3>
             <p className="mt-4 leading-7 text-soft-white/70">{bodyCopy}</p>
             {impact ? (
-              <p className="mt-4 border-l-2 border-[#B8E62D]/60 pl-3 text-sm leading-6 text-soft-white/60">{impact}</p>
+              <p className="mt-4 border-l-2 border-[#FF8A4C]/60 pl-3 text-sm leading-6 text-soft-white/60">{impact}</p>
             ) : null}
             {highlights.length > 0 ? (
               <ul className="mt-5 grid gap-2 text-sm leading-6 text-soft-white/70">
                 {highlights.slice(0, 3).map((h) => (
                   <li key={h} className="flex items-start gap-2.5">
-                    <span aria-hidden className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-[#B8E62D]" />
+                    <span aria-hidden className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-[#FF8A4C]" />
                     <span>{h}</span>
                   </li>
                 ))}
@@ -142,7 +142,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
         </div>
         <div className="flex flex-1 flex-col p-5">
           <h3 className="text-lg font-semibold leading-snug text-white">
-            <Link href={`/projects/${slug}`} className="after:absolute after:inset-0 after:rounded-3xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B8E62D] transition-colors hover:text-[#D9FF4B]">
+            <Link href={`/projects/${slug}`} className="after:absolute after:inset-0 after:rounded-3xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF8A4C] transition-colors hover:text-[#FFB083]">
               {title}
             </Link>
           </h3>
@@ -175,7 +175,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
 
       <div className="flex flex-1 flex-col p-6">
         <h3 className="text-xl font-semibold leading-tight text-white">
-          <Link href={`/projects/${slug}`} className="after:absolute after:inset-0 after:rounded-3xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B8E62D] transition-colors hover:text-[#D9FF4B]">
+          <Link href={`/projects/${slug}`} className="after:absolute after:inset-0 after:rounded-3xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF8A4C] transition-colors hover:text-[#FFB083]">
             {title}
           </Link>
         </h3>

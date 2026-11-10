@@ -2,7 +2,7 @@
 title: EV-GPT - AI-Powered Electric Vehicle Expert
 description: An intelligent web application that provides AI-powered insights about electric vehicles using Google's Gemini 1.5 Flash model and advanced document retrieval capabilities.
 summary: A retrieval-augmented EV assistant that turns dense documentation into fast, context-aware answers.
-imageUrl: /images/Projects/ev-gpt.jpg
+imageUrl: /images/Projects/ev-gpt.webp
 slug: ev-gpt
 technologies: ['Python', 'Streamlit', 'Google Gemini', 'LangChain', 'ChromaDB', 'AWS', 'Docker', 'Git']
 featured: true

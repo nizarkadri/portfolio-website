@@ -33,12 +33,12 @@ const TransitionOverlay: React.FC = () => {
 
   // Get color and name for each route
   const getRouteInfo = (path: string) => {
-    if (path === '/') return { color: '#B8E62D', name: 'HOME' };
+    if (path === '/') return { color: '#FF8A4C', name: 'HOME' };
     if (path.includes('/projects')) return { color: '#8fba1f', name: 'PROJECTS' };
     if (path.includes('/experience')) return { color: '#a3cc29', name: 'EXPERIENCE' };
     if (path.includes('/about')) return { color: '#9dd127', name: 'ABOUT' };
     if (path.includes('/contact')) return { color: '#7aa61c', name: 'CONTACT' };
-    return { color: '#B8E62D', name: 'LOADING' };
+    return { color: '#FF8A4C', name: 'LOADING' };
   };
 
   // Fixed particle positions to avoid hydration mismatch

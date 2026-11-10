@@ -1,8 +1,8 @@
 ---
-title: Insta-Feed — Multimedia Social Feed
+title: "Insta-Feed: Multimedia Social Feed"
 description: An Instagram-style multimedia social feed with MongoDB, GridFS media storage, and a client/server split.
 summary: Social feed app with image/video upload, Express + Mongoose backend, and GridFS storage.
-imageUrl: /images/Projects/insta-feed.jpg
+imageUrl: /images/Projects/insta-feed.webp
 slug: insta-feed
 technologies: ['React', 'Express', 'MongoDB', 'Mongoose', 'Multer', 'GridFS']
 featured: false

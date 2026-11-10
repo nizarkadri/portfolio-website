@@ -32,10 +32,10 @@ function LinkButton({ href, label, primary = false, compact = false, icon }: { h
       rel="noreferrer noopener"
       aria-label={`${label} (opens in new tab)`}
       className={clsx(
-        'inline-flex items-center justify-center rounded-full border font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B8E62D] focus-visible:ring-offset-2 focus-visible:ring-offset-black',
+        'inline-flex items-center justify-center rounded-full border font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF8A4C] focus-visible:ring-offset-2 focus-visible:ring-offset-black',
         compact ? 'px-3 py-1.5 text-xs' : 'px-4 py-2 text-sm',
         primary
-          ? 'border-[#B8E62D]/50 bg-[#B8E62D]/10 text-[#D9FF4B] hover:bg-[#B8E62D]/20'
+          ? 'border-[#FF8A4C]/50 bg-[#FF8A4C]/10 text-[#FFB083] hover:bg-[#FF8A4C]/20'
           : 'border-white/15 bg-white/5 text-soft-white/80 hover:border-white/30 hover:bg-white/10 hover:text-white',
       )}
     >

@@ -1,0 +1,86 @@
+{
+  "01-ibm-project-completion": {
+    "title": "Project Completion: FMCG Operational Insights",
+    "issuer": "IBM Career Education Program",
+    "date": "Apr 2020"
+  },
+  "02-establishing-ai-guardrails-and-governance": {
+    "title": "Establishing AI Guardrails and Governance",
+    "issuer": "Skillsoft"
+  },
+  "03-docker-essential-training": {
+    "title": "Docker Essential Training",
+    "issuer": "LinkedIn Learning",
+    "date": "Feb 2025"
+  },
+  "04-site-reliability-engineering-slas-and-slos": {
+    "title": "Site Reliability Engineering: Service-Level Agreements and Objectives",
+    "issuer": "LinkedIn Learning",
+    "date": "Feb 2025"
+  },
+  "05-learning-splunk": {
+    "title": "Learning Splunk",
+    "issuer": "LinkedIn Learning",
+    "date": "Feb 2025"
+  },
+  "06-splunk-for-security-analytics-and-monitoring": {
+    "title": "Splunk for Security Analytics and Monitoring",
+    "issuer": "LinkedIn Learning",
+    "date": "Mar 2025"
+  },
+  "07-cgi-canada-consultants-journey": {
+    "title": "CGI Canada: Consultants Journey",
+    "issuer": "CGI Academia",
+    "date": "Dec 2022"
+  },
+  "08-cgi-canada-onboarding-journey": {
+    "title": "CGI Canada: Onboarding Journey for New Members",
+    "issuer": "CGI Academia",
+    "date": "Jul 2022"
+  },
+  "09-cpmf-overview-m1": {
+    "title": "CPMF Overview: M1",
+    "issuer": "CGI Academia",
+    "date": "Jul 2022"
+  },
+  "10-member-partnership-management-framework": {
+    "title": "The Member Partnership Management Framework (MPMF)",
+    "issuer": "CGI Academia",
+    "date": "Jul 2022"
+  },
+  "11-ensure-quality-cgi-management-foundation": {
+    "title": "Ensure Quality through the CGI Management Foundation",
+    "issuer": "CGI Academia",
+    "date": "Jul 2022"
+  },
+  "12-aoda-accessibility-for-ontarians": {
+    "title": "AODA: Accessibility for Ontarians with Disabilities Act",
+    "issuer": "CGI Academia",
+    "date": "Jul 2022"
+  },
+  "13-records-management": {
+    "title": "Records Management",
+    "issuer": "CGI Academia",
+    "date": "Jul 2022"
+  },
+  "14-global-anti-corruption": {
+    "title": "CGI Global Anti-Corruption",
+    "issuer": "Percipio",
+    "date": "Jul 2022"
+  },
+  "15-diversity-and-employment-equity": {
+    "title": "Understanding Diversity and Employment Equity in Canada",
+    "issuer": "CGI Academia",
+    "date": "Jul 2022"
+  },
+  "16-occupational-health-and-safety-awareness": {
+    "title": "Occupational Health and Safety Awareness: Ontario Reg. 297/13",
+    "issuer": "CGI Academia",
+    "date": "Jul 2022"
+  },
+  "17-respectful-workplace": {
+    "title": "Respectful Workplace: Preventing Discrimination, Harassment and Violence",
+    "issuer": "CGI Academia",
+    "date": "Jul 2022"
+  }
+}

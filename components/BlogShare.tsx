@@ -1,15 +1,41 @@
 "use client";
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+
+type Note = { kind: 'ok' | 'error'; text: string } | null;
+
 export default function BlogShare({ title, url }: { title: string; url: string }) {
-  const [copied, setCopied] = useState(false);
-  const mark = () => { setCopied(true); setTimeout(() => setCopied(false), 2000); };
-  const copy = async () => { try { await navigator.clipboard.writeText(url); mark(); } catch { mark(); } };
-  const share = async () => { try { await navigator.clipboard.writeText(`${title} — ${url}`); mark(); } catch { mark(); } };
+  const [note, setNote] = useState<Note>(null);
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => () => { if (timer.current) clearTimeout(timer.current); }, []);
+
+  const say = (n: Note) => {
+    setNote(n);
+    if (timer.current) clearTimeout(timer.current);
+    timer.current = setTimeout(() => setNote(null), 2400);
+  };
+  const write = async (text: string, done: string) => {
+    try { await navigator.clipboard.writeText(text); say({ kind: 'ok', text: done }); }
+    catch { say({ kind: 'error', text: 'Could not copy. Copy the address from the bar instead.' }); }
+  };
+  const copy = () => write(url, 'Link copied.');
+  const share = async () => {
+    if (typeof navigator.share === 'function') {
+      try { await navigator.share({ title, url }); return; }
+      catch (e) { if (e instanceof DOMException && e.name === 'AbortError') return; }
+    }
+    await write(`${title}: ${url}`, 'Title and link copied.');
+  };
+
   return (
-    <div className="flex flex-wrap items-center gap-3">
-      <button onClick={copy} className="rounded-full border border-white/15 px-4 py-2 text-sm text-white/80 transition-colors hover:border-[#B8E62D]/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B8E62D]">{copied ? 'Copied ✓' : 'Copy link'}</button>
-      <button onClick={share} className="rounded-full border border-white/15 px-4 py-2 text-sm text-white/80 transition-colors hover:border-[#B8E62D]/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B8E62D]">Share</button>
-      <a href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(url)}`} target="_blank" rel="noopener noreferrer" className="rounded-full border border-white/15 px-4 py-2 text-sm text-white/80 transition-colors hover:border-[#B8E62D]/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B8E62D]">Post to X</a>
+    <div className="bl-share">
+      <div className="bl-share__row">
+        <button type="button" className="bc-btn" onClick={copy}>Copy link</button>
+        <button type="button" className="bc-btn" onClick={share}>Share</button>
+        <a className="bc-btn" href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(url)}`} target="_blank" rel="noopener noreferrer">Post to X</a>
+      </div>
+      <p className="bl-share__status lg-note" role="status" data-kind={note?.kind}>
+        {note?.text ?? ''}
+      </p>
     </div>
   );
 }

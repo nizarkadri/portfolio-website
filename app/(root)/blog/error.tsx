@@ -1,10 +1,14 @@
 "use client";
+import '../../blog-contact.css';
+
 export default function Error({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
   return (
-    <div className="container mx-auto max-w-2xl px-4 py-28 text-center">
-      <h1 className="text-4xl font-bold text-white">Something went wrong</h1>
-      <p className="mt-3 text-soft-white/65">{error.message || 'Could not load blog posts.'}</p>
-      <button onClick={reset} className="mt-8 rounded-full bg-[#B8E62D] px-6 py-3 font-semibold text-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white">Try again</button>
+    <div className="lg-page bl">
+      <div className="lg-wrap bl-head" role="alert">
+        <h1 className="lg-display lg-display--lg">The notes did not load.</h1>
+        <p className="lg-body lg-body--lg">{error.message || 'Could not load blog posts.'}</p>
+        <button type="button" onClick={reset} className="lg-cta">Try again</button>
+      </div>
     </div>
   );
 }

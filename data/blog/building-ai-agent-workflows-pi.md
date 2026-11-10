@@ -2,7 +2,7 @@
 title: "Building AI Agent Workflows with Pi: Small Models, Sharp Tools"
 date: 2025-10-26
 slug: building-ai-agent-workflows-pi
-excerpt: "How I design agent workflows that stay cheap and reliable — deterministic tools, tiny models for routing, and human checkpoints before anything ships."
+excerpt: "How I design agent workflows that stay cheap and reliable, deterministic tools, tiny models for routing, and human checkpoints before anything ships."
 tags: ['AI Agents', 'Pi', 'LLM', 'Engineering']
 author: Nizar Kadri
 readingTime: 8

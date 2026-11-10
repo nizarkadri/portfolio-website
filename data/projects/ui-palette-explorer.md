@@ -2,7 +2,7 @@
 title: UI Palette Explorer (colorBrain)
 description: A full-stack web app that turns UI screenshots into hundreds of live-previewable color palettes with AI-generated recreations rendered in sandboxed Chromium.
 summary: Screenshot-to-color-palette tool with Kanban role correction, Space-cycle exploration, and CSS variables / JSON export.
-imageUrl: /images/Projects/ui-palette-explorer.jpg
+imageUrl: /images/Projects/ui-palette-explorer.webp
 slug: ui-palette-explorer
 technologies: ['Google Cloud Run', 'Cloud Tasks', 'Firestore', 'Chromium', 'TypeScript', 'AI']
 featured: true

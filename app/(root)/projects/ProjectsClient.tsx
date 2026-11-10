@@ -1,207 +1,229 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
-import type { ProjectSummary } from '../../lib/project-shared';
-import ProjectCard from '../../../components/ProjectCard';
+import Image from 'next/image';
+import { PROJECT_PLACEHOLDER_IMAGE, ProjectSummary } from '../../lib/project-shared';
+import { Arrow, KingMark } from '../../../components/Navbar';
+import '../../projects.css';
 
-interface ProjectsClientProps {
-  projects: ProjectSummary[];
+const GAP = 880;          // px between doors along the hall
+const FOCUS = 40;         // px ahead of the camera where a door is "reached"
+
+const shortTitle = (t: string) => t.split(/\s+[-—]\s+|:\s+/)[0];
+const hasCover = (p: ProjectSummary) => p.imageUrl !== PROJECT_PLACEHOLDER_IMAGE;
+
+function Cover({ project, sizes, priority = false }: { project: ProjectSummary; sizes: string; priority?: boolean }) {
+  if (hasCover(project)) {
+    return <Image src={project.imageUrl} alt="" fill sizes={sizes} priority={priority} className="pj-cover__img" />;
+  }
+  return (
+    <div className="pj-cover__blank" aria-hidden="true">
+      <KingMark />
+      <span>{shortTitle(project.title).slice(0, 2).toUpperCase()}</span>
+    </div>
+  );
 }
 
-type SortKey = 'featured' | 'year-desc' | 'year-asc' | 'title';
-type ViewKey = 'grid' | 'bento';
+function Links({ project, compact = false }: { project: ProjectSummary; compact?: boolean }) {
+  return (
+    <div className="pj-links">
+      <Link href={`/projects/${project.slug}`} className={compact ? 'lg-link' : 'lg-cta lg-cta--sm'}>
+        Case study {!compact && <Arrow />}
+      </Link>
+      {project.liveUrl && (
+        <a href={project.liveUrl} target="_blank" rel="noreferrer noopener" className="lg-link" aria-label={`Live preview of ${shortTitle(project.title)} (opens in a new tab)`}>
+          Live preview
+        </a>
+      )}
+      {project.repoUrl && (
+        <a href={project.repoUrl} target="_blank" rel="noreferrer noopener" className="lg-link" aria-label={`Source code of ${shortTitle(project.title)} (opens in a new tab)`}>
+          Code
+        </a>
+      )}
+    </div>
+  );
+}
 
-const SORT_OPTIONS: { value: SortKey; label: string }[] = [
-  { value: 'featured', label: 'Featured first' },
-  { value: 'year-desc', label: 'Newest year' },
-  { value: 'year-asc', label: 'Oldest year' },
-  { value: 'title', label: 'Title A–Z' },
-];
-
-const yearOf = (p: ProjectSummary) => parseInt(p.year || '', 10) || 0;
-
-export default function ProjectsClient({ projects }: ProjectsClientProps) {
+export default function ProjectsClient({ projects }: { projects: ProjectSummary[] }) {
+  const act = useRef<HTMLElement>(null);
+  const track = useRef<HTMLDivElement>(null);
+  const items = useRef<Array<HTMLElement | null>>([]);
+  const [active, setActive] = useState(0);
   const [query, setQuery] = useState('');
   const [tech, setTech] = useState<string | null>(null);
-  const [sort, setSort] = useState<SortKey>('featured');
-  const [view, setView] = useState<ViewKey>('grid');
+  const [sort, setSort] = useState<'featured' | 'year' | 'title'>('featured');
 
-  const allTechs = useMemo(() => {
-    const counts = new Map<string, number>();
-    projects.forEach((p) => p.technologies.forEach((t) => counts.set(t, (counts.get(t) || 0) + 1)));
-    return [...counts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+  // The hall: scroll walks the camera down a row of doors.
+  useEffect(() => {
+    const el = act.current, tr = track.current;
+    if (!el || !tr) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    let raf = 0, last = -1, z = 0, sway = 0, swayTarget = 0;
+    const depth = (projects.length - 1) * GAP;
+
+    const frame = () => {
+      raf = requestAnimationFrame(frame);
+      const r = el.getBoundingClientRect();
+      if (r.bottom < -200 || r.top > window.innerHeight + 200) return;
+      const p = Math.min(1, Math.max(0, -r.top / Math.max(1, r.height - window.innerHeight)));
+      const target = p * depth;
+      z += (target - z) * 0.14;
+      sway += (swayTarget - sway) * 0.06;
+      tr.style.transform = `translate3d(0,0,${(z - FOCUS).toFixed(1)}px) rotateY(${sway.toFixed(3)}deg)`;
+      let best = 0, bestD = Infinity;
+      items.current.forEach((node, i) => {
+        if (!node) return;
+        const d = i * GAP - z;                       // distance still to walk
+        const far = 1 - Math.min(1, Math.max(0, (d - 500) / 1700));
+        const near = Math.min(1, Math.max(0, (d + 400) / 300));
+        node.style.opacity = (far * near).toFixed(3);
+        node.style.visibility = far * near < 0.01 ? 'hidden' : 'visible';
+        if (Math.abs(d) < bestD) { bestD = Math.abs(d); best = i; }
+      });
+      if (best !== last) { last = best; setActive(best); }
+    };
+    raf = requestAnimationFrame(frame);
+    const onPointer = (e: PointerEvent) => {
+      if (e.pointerType === 'mouse') swayTarget = ((e.clientX / window.innerWidth) * 2 - 1) * -2.2;
+    };
+    window.addEventListener('pointermove', onPointer, { passive: true });
+    return () => { cancelAnimationFrame(raf); window.removeEventListener('pointermove', onPointer); };
+  }, [projects.length]);
+
+  const walkTo = (i: number) => {
+    const el = act.current;
+    if (!el) return;
+    const top = el.getBoundingClientRect().top + window.scrollY;
+    const y = top + (el.offsetHeight - window.innerHeight) * (i / Math.max(1, projects.length - 1));
+    const lenis = (window as unknown as { lenis?: { scrollTo: (y: number, o?: object) => void } }).lenis;
+    if (lenis) lenis.scrollTo(y, { duration: 1.2 }); else window.scrollTo({ top: y, behavior: 'smooth' });
+  };
+
+  const techs = useMemo(() => {
+    const count = new Map<string, number>();
+    projects.forEach((p) => p.technologies.forEach((t) => count.set(t, (count.get(t) || 0) + 1)));
+    return [...count.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])).slice(0, 10);
   }, [projects]);
 
   const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
+    const words = query.toLowerCase().split(/\s+/).filter(Boolean);
     const list = projects.filter((p) => {
       if (tech && !p.technologies.includes(tech)) return false;
-      if (!q) return true;
-      const haystack = [p.title, p.description, p.summary, ...p.technologies, p.status || '', p.impact || ''].join(' ').toLowerCase();
-      return q.split(/\s+/).every((w) => haystack.includes(w));
+      const hay = [p.title, p.description, p.summary, p.status, p.impact, p.year, ...p.technologies].join(' ').toLowerCase();
+      return words.every((w) => hay.includes(w));
     });
-    const sorted = [...list];
-    switch (sort) {
-      case 'year-desc':
-        sorted.sort((a, b) => yearOf(b) - yearOf(a) || a.title.localeCompare(b.title));
-        break;
-      case 'year-asc':
-        sorted.sort((a, b) => yearOf(a) - yearOf(b) || a.title.localeCompare(b.title));
-        break;
-      case 'title':
-        sorted.sort((a, b) => a.title.localeCompare(b.title));
-        break;
-      default:
-        sorted.sort(
-          (a, b) =>
-            Number(b.featured) - Number(a.featured) ||
-            a.order - b.order ||
-            yearOf(b) - yearOf(a) ||
-            a.title.localeCompare(b.title),
-        );
-    }
-    return sorted;
+    if (sort === 'year') return [...list].sort((a, b) => (parseInt(b.year || '0', 10) || 0) - (parseInt(a.year || '0', 10) || 0));
+    if (sort === 'title') return [...list].sort((a, b) => a.title.localeCompare(b.title));
+    return list;
   }, [projects, query, tech, sort]);
 
-  const featured = filtered.filter((p) => p.featured);
-  const rest = filtered.filter((p) => !p.featured);
-  const hasFilters = Boolean(query.trim() || tech);
-  const clearFilters = () => { setQuery(''); setTech(null); };
+  const span = (projects.length * 0.62 + 1.2).toFixed(2);
 
   return (
-    <div className="min-h-screen py-20 md:py-24">
-      <div className="mx-auto max-w-7xl px-4 md:px-8">
-        <div className="mb-10 max-w-3xl">
-          <p className="mb-4 inline-flex rounded-full border border-[#B8E62D]/20 bg-[#B8E62D]/10 px-4 py-2 text-xs uppercase tracking-[0.28em] text-[#D9FF4B]">
-            Project archive
-          </p>
-          <h1 className="huge-text font-bold leading-none text-[#B8E62D]/80 opacity-90">PROJECTS</h1>
-          <p className="mt-4 max-w-2xl leading-7 text-soft-white/70">
-            Search and filter shipped work. Featured projects are highlighted first; open any card for the full case study.
-          </p>
-        </div>
-
-        {/* Toolbar */}
-        <form
-          role="search"
-          onSubmit={(e) => e.preventDefault()}
-          className="mb-6 flex flex-col gap-4 rounded-2xl border border-white/10 bg-white/[0.03] p-4 md:flex-row md:flex-wrap md:items-center"
-        >
-          <label className="flex min-w-0 flex-1 items-center gap-3 rounded-xl border border-white/10 bg-black/30 px-4 py-2.5 focus-within:border-[#B8E62D]/50">
-            <span className="sr-only">Search projects by title, description, or technology</span>
-            <svg className="h-4 w-4 shrink-0 text-soft-white/40" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" /></svg>
-            <input
-              type="search"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search title, tech, or keywords…"
-              className="w-full min-w-0 bg-transparent text-sm text-white placeholder:text-soft-white/40 focus:outline-none"
-            />
-            {query ? (
-              <button type="button" onClick={() => setQuery('')} className="shrink-0 rounded-full border border-white/10 px-2 py-0.5 text-xs text-soft-white/70 hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B8E62D]" aria-label="Clear search">
-                ✕
-              </button>
-            ) : null}
-          </label>
-
-          <label className="flex items-center gap-2 text-sm text-soft-white/70">
-            <span>Sort</span>
-            <select
-              value={sort}
-              onChange={(e) => setSort(e.target.value as SortKey)}
-              className="rounded-xl border border-white/10 bg-black/30 px-3 py-2.5 text-sm text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B8E62D]"
-            >
-              {SORT_OPTIONS.map((o) => <option key={o.value} value={o.value} className="bg-[#111]">{o.label}</option>)}
-            </select>
-          </label>
-
-          <div role="group" aria-label="Layout view" className="flex overflow-hidden rounded-xl border border-white/10">
-            {(['grid', 'bento'] as ViewKey[]).map((v) => (
-              <button
-                key={v}
-                type="button"
-                aria-pressed={view === v}
-                onClick={() => setView(v)}
-                className={`px-4 py-2.5 text-sm capitalize transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#B8E62D] ${view === v ? 'bg-[#B8E62D]/15 text-[#D9FF4B]' : 'bg-black/30 text-soft-white/60 hover:bg-white/5'}`}
-              >
-                {v}
-              </button>
+    <div className="pj">
+      {/* The hall. Object one is already in view: the collection starts at the top. */}
+      <section ref={act} className="pj-hall" data-sc-act="pin" data-sc-span={span} data-sc-drift="#07090c" aria-label="Project hall">
+        <div data-sc-stage className="pj-hall__stage">
+          <div className="pj-hall__scene">
+            <div ref={track} className="pj-hall__track" style={{ ['--gap' as string]: `${GAP}px`, ['--n' as string]: projects.length }}>
+              <div className="pj-hall__floor" aria-hidden="true" />
+              {projects.map((p, i) => (
+                <article
+                  key={p.slug}
+                  ref={(n) => { items.current[i] = n; }}
+                  className={`pj-door${i === active ? ' is-active' : ''}`}
+                  style={{ ['--i' as string]: i, ['--side' as string]: i % 2 === 0 ? -1 : 1 }}
+                  onFocus={() => { if (i !== active) walkTo(i); }}
+                >
+                  <div className="pj-door__frame">
+                    <div className="pj-cover"><Cover project={p} sizes="(max-width: 860px) 80vw, 34rem" priority={i < 2} /></div>
+                  </div>
+                  <div className="pj-door__plate">
+                    <p className="lg-note">{[p.year, p.status].filter(Boolean).join(' · ')}</p>
+                    <h2 className="lg-display lg-display--md">{shortTitle(p.title)}</h2>
+                    <p className="pj-door__sum">{p.summary}</p>
+                    <ul className="pj-stack" aria-label="Stack">
+                      {p.technologies.slice(0, 5).map((t) => <li key={t} className="lg-chip">{t}</li>)}
+                    </ul>
+                    <Links project={p} />
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+          <div className="pj-hall__fog" aria-hidden="true" />
+          <header className="pj-hall__head">
+            <h1 className="lg-display lg-display--sm">The work</h1>
+            <p className="lg-note">{projects.length} projects</p>
+            <a href="#index" className="lg-link">Index</a>
+          </header>
+          <ol className="pj-hall__rail" aria-label="Jump to a project">
+            {projects.map((p, i) => (
+              <li key={p.slug}>
+                <button type="button" aria-label={shortTitle(p.title)} aria-current={i === active ? 'true' : undefined} onClick={() => walkTo(i)} />
+              </li>
             ))}
-          </div>
-        </form>
-
-        {/* Tech filters */}
-        <div className="mb-4 flex flex-wrap items-center gap-2" role="group" aria-label="Filter by technology">
-          <button
-            type="button"
-            aria-pressed={!tech}
-            onClick={() => setTech(null)}
-            className={`rounded-full border px-3.5 py-1.5 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B8E62D] ${!tech ? 'border-[#B8E62D]/60 bg-[#B8E62D]/15 text-[#D9FF4B]' : 'border-white/10 text-soft-white/65 hover:border-white/25'}`}
-          >
-            All ({projects.length})
-          </button>
-          {allTechs.map(([t, n]) => (
-            <button
-              key={t}
-              type="button"
-              aria-pressed={tech === t}
-              onClick={() => setTech(tech === t ? null : t)}
-              className={`rounded-full border px-3.5 py-1.5 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B8E62D] ${tech === t ? 'border-[#B8E62D]/60 bg-[#B8E62D]/15 text-[#D9FF4B]' : 'border-white/10 text-soft-white/65 hover:border-white/25'}`}
-            >
-              {t} ({n})
-            </button>
-          ))}
+          </ol>
         </div>
+      </section>
 
-        <p className="mb-8 text-sm text-soft-white/50" role="status" aria-live="polite">
-          {filtered.length} of {projects.length} projects
-          {hasFilters ? (
-            <>
-              {' '}· <button type="button" onClick={clearFilters} className="text-[#D9FF4B] underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B8E62D] rounded">Clear filters</button>
-            </>
-          ) : null}
-        </p>
-
-        {filtered.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-white/15 px-6 py-16 text-center">
-            <p className="text-lg font-medium text-white">No projects match your filters</p>
-            <p className="mt-2 text-sm text-soft-white/60">Try a different search term or clear the technology filter.</p>
-            <button type="button" onClick={clearFilters} className="mt-6 rounded-full border border-[#B8E62D]/50 bg-[#B8E62D]/10 px-5 py-2.5 text-sm font-medium text-[#D9FF4B] hover:bg-[#B8E62D]/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B8E62D]">
-              Clear all filters
-            </button>
+      {/* The index: every door, as a ledger you can search. */}
+      <section id="index" className="pj-index lg-section">
+        <div className="lg-wrap">
+          <div className="pj-index__head">
+            <h2 className="lg-display lg-display--lg">Index</h2>
+            <p className="lg-body">Every project, with the same label on each: what it is, when, what it runs on.</p>
           </div>
-        ) : (
-          <>
-            {/* Featured highlight */}
-            {featured.length > 0 ? (
-              <section aria-label="Featured projects" className="mb-10">
-                <h2 className="mb-5 flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.28em] text-[#D9FF4B]">
-                  Featured
-                  <span aria-hidden className="h-px flex-1 bg-gradient-to-r from-[#B8E62D]/40 to-transparent" />
-                </h2>
-                <div className={view === 'bento' ? 'grid gap-6 md:grid-cols-2' : 'space-y-6'}>
-                  {featured.map((p, i) => (
-                    <ProjectCard key={p.slug} {...p} index={i} priority={i === 0} variant={view === 'bento' ? 'grid' : 'showcase'} featured />
-                  ))}
-                </div>
-              </section>
-            ) : null}
-
-            {rest.length > 0 ? (
-              <section aria-label="All projects" className={view === 'bento' ? 'grid gap-6 sm:grid-cols-2 lg:grid-cols-3' : 'grid gap-6 md:grid-cols-2'}>
-                {rest.map((p, i) => (
-                  <ProjectCard key={p.slug} {...p} index={i} variant={view === 'bento' ? 'compact' : 'grid'} />
-                ))}
-              </section>
-            ) : null}
-          </>
-        )}
-
-        <p className="mt-12 text-center text-sm text-soft-white/40">
-          Back to <Link href="/" className="text-[#D9FF4B] underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B8E62D] rounded">home</Link>
-        </p>
-      </div>
+          <div className="pj-tools" role="search">
+            <label className="pj-search">
+              <span className="lg-note">Search</span>
+              <input type="search" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="RAG, Flutter, Azure" autoComplete="off" />
+            </label>
+            <label className="pj-sort">
+              <span className="lg-note">Order</span>
+              <select value={sort} onChange={(e) => setSort(e.target.value as typeof sort)}>
+                <option value="featured">Featured first</option>
+                <option value="year">Newest</option>
+                <option value="title">A to Z</option>
+              </select>
+            </label>
+            <div className="pj-filter" role="group" aria-label="Filter by technology">
+              {techs.map(([t, n]) => (
+                <button key={t} type="button" className="lg-chip" aria-pressed={tech === t} onClick={() => setTech(tech === t ? null : t)}>
+                  {t} <span>{n}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+          <p className="lg-note pj-count" aria-live="polite">{filtered.length} of {projects.length} shown</p>
+          {filtered.length === 0 ? (
+            <div className="pj-empty">
+              <p className="lg-body">Nothing matches that. </p>
+              <button type="button" className="lg-link" onClick={() => { setQuery(''); setTech(null); }}>Clear the filters</button>
+            </div>
+          ) : (
+            <ul className="pj-rows">
+              {filtered.map((p) => (
+                <li key={p.slug} className="pj-row">
+                  <div className="pj-row__cover pj-cover"><Cover project={p} sizes="12rem" /></div>
+                  <div className="pj-row__main">
+                    <h3 className="lg-display lg-display--sm"><Link href={`/projects/${p.slug}`}>{shortTitle(p.title)}</Link></h3>
+                    <p>{p.summary}</p>
+                    <ul className="pj-stack" aria-label="Stack">
+                      {p.technologies.slice(0, 6).map((t) => <li key={t} className="lg-chip">{t}</li>)}
+                    </ul>
+                  </div>
+                  <div className="pj-row__meta">
+                    <p className="lg-note">{[p.year, p.status].filter(Boolean).join(' · ')}</p>
+                    <Links project={p} compact />
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </section>
     </div>
   );
 }

@@ -1,152 +1,26 @@
-'use client';
+import React from 'react';
 
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { createFloatAnimation, createPulseAnimation } from '../utils/animations';
-import { 
-  // getSkillGlowColors, 
-  // needsBackground, 
-  isPngIcon, 
-  getSvgTileEffectStyles, 
-  getPngBackgroundStyles,
-  type PositionProps 
-} from '../utils/skill-utils';
-import Image from 'next/image';
+export type Piece = 'queen' | 'rook' | 'knight' | 'bishop' | 'pawn';
 
-interface SkillIconProps {
-  skill: string;
-  index: number;
-  skillId: string;
-  position: PositionProps;
-  isHighlighted: boolean;
-  prefersReducedMotion: boolean | null;
-  iconSize?: number;
-}
+const BASE = 'M6.2 20.1h11.6l.9 2.4H5.3l.9-2.4z';
 
-const SkillIcon: React.FC<SkillIconProps> = ({ 
-  skill, 
-  index, 
-  skillId, 
-  position, 
-  isHighlighted, 
-  prefersReducedMotion,
-  iconSize
-}) => {
-  const [isHovered, setIsHovered] = useState(false);
-  // const glowColors = getSkillGlowColors(skill);
-  // const requiresBackground = needsBackground(skill);
-  const isPng = isPngIcon(skill);
-  const isWordPress = skill === 'WordPress' || skill === 'Wordpress';
-  const isJsOrTs = skill === 'JavaScript' || skill === 'Typescript';
-
-  // If user prefers no motion, skip fancy animations
-  const floatVariants = prefersReducedMotion
-    ? { animate: { scale: 1 } }
-    : createFloatAnimation(position.duration, position.delay);
-
-  const pulseVariants = prefersReducedMotion
-    ? { animate: { opacity: 0.9 } }
-    : createPulseAnimation(position.duration);
-  
-  return (
-    <motion.div
-      key={skillId}
-      className="absolute flex flex-col items-center"
-      style={{
-        left: position.x,
-        top: position.y,
-        width: iconSize,
-        height: iconSize,
-        transform: `translateX(${position.translateX}px) translateY(${position.translateY}px)`
-      }}
-      initial={{ opacity: 0, y: 20 }}
-      animate={{
-        opacity: isHighlighted ? 1 : 0.95,
-        scale: isHighlighted ? 1.03 : 1,
-        y: 0,
-        zIndex: isHighlighted ? 50 : isWordPress ? 30 : 'auto',
-      }}
-      exit={{ opacity: 0, y: -10, transition: { duration: 0.4 } }}
-      transition={{
-        duration: 0.6,
-        delay: index * 0.05,
-        ease: [0.33, 1, 0.68, 1], // Mobbin-like easing
-      }}
-      onHoverStart={() => setIsHovered(true)}
-      onHoverEnd={() => setIsHovered(false)}
-      whileTap={{ scale: 0.98 }}
-    >
-      <motion.div
-        variants={floatVariants}
-        animate="animate"
-        className="relative flex items-center justify-center w-full h-full"
-      >
-        <motion.div
-          variants={pulseVariants}
-          animate="animate"
-          className="w-[90%] h-[90%] relative z-10 flex items-center justify-center rounded-2xl overflow-hidden"
-          style={{
-            boxShadow: '0 10px 30px rgba(0, 0, 0, 0.3)',
-            background: isJsOrTs ? 'transparent' : '#18181B',
-          }}
-        >
-          {/* Clean background for icons - Mobbin style */}
-          {!isJsOrTs && (
-            <div className="absolute inset-0 rounded-2xl shadow-lg bg-[#18181B] z-10" 
-                style={{
-                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.1)',
-                  transform: 'translateZ(-2px)',
-                  border: '1px solid rgba(255, 255, 255, 0.05)'
-                }}
-            />
-          )}
-
-          {/* Tile Effect - Different styling for PNG vs SVG */}
-          {!isJsOrTs && (
-            <div 
-              className={`absolute ${isPng ? 'inset-[8%]' : 'inset-[10%]'} z-15 rounded-xl`} 
-              style={isPng ? getPngBackgroundStyles(skill) : getSvgTileEffectStyles(skill)}
-            />
-          )}
-
-          <Image
-            src={`/images/NewIcons/${skill === 'C#' ? 'C%23' : skill}${isPng ? '.png' : '.svg'}`}
-            alt={skill === 'C#' ? 'C#' : skill.replace('_', ' ').replace('-', ' ')}
-            className={`
-              w-full h-full object-contain transition-all duration-300 relative z-20
-              ${isJsOrTs ? '' : 'p-2 rounded-2xl'}
-              ${isPng ? 'filter brightness-100 contrast-100' : 'filter brightness-100 contrast-100 saturate-100'}
-              scale-110
-            `}
-            style={{
-              imageRendering: 'crisp-edges',
-              mixBlendMode: 'normal'
-            }}
-            width={iconSize}
-            height={iconSize}
-          />
-        </motion.div>
-      </motion.div>
-
-      <div className="mt-2 absolute -bottom-6">
-        <motion.span
-          initial={{ opacity: 0, y: 5 }}
-          animate={{ 
-            opacity: isHovered ? 1 : 0,
-            y: isHovered ? 0 : 5,
-            scale: isHovered ? 1 : 0.95
-          }}
-          transition={{
-            duration: 0.2,
-            ease: [0.33, 1, 0.68, 1]
-          }}
-          className="text-xs font-medium bg-[#1F2937] px-3 py-1 rounded-full backdrop-blur-sm whitespace-nowrap block text-[#E5E7EB]"
-        >
-          {skill === 'C#' ? 'C#' : skill.replace('_', ' ').replace('-', ' ')}
-        </motion.span>
-      </div>
-    </motion.div>
-  );
+const BODY: Record<Piece, string> = {
+  queen:
+    'M4.6 6.4a1.4 1.4 0 1 1 2.2 1.1l2.1 4.6 2-6.2a1.5 1.5 0 1 1 2.2 0l2 6.2 2.1-4.6a1.4 1.4 0 1 1 1.3.4L16.9 18.6H7.1L5.5 7.9a1.4 1.4 0 0 1-.9-1.5z',
+  rook: 'M6.8 2.8h2.3v2h1.7v-2h2.4v2h1.7v-2h2.3v4.7l-1.7 1.6v6l1.8 3.5H6.7l1.8-3.5v-6L6.8 7.5V2.8z',
+  knight:
+    'M7.6 18.6c.1-3.2 2.1-4.9 3.4-7-1.2.6-2.3 1.4-3.5 1.7-.9.7-2 .5-2.5-.3-.4-.8-.1-1.7.6-2.3l3.4-4.1-.4-3.4 2.7 1.8c4.2.3 6.9 3.7 6.9 8.6v5H7.6z',
+  bishop:
+    'M12 1.6a1.5 1.5 0 0 1 1.1 2.5c2 1.5 3.2 3.6 3.2 5.7 0 1.6-.8 3-2 3.9l1.6 4.9H8.1l1.6-4.9c-1.2-.9-2-2.3-2-3.9 0-2.1 1.2-4.2 3.2-5.7A1.5 1.5 0 0 1 12 1.6z',
+  pawn: 'M12 3.4a3 3 0 0 1 1.9 5.3c1.4.9 2.3 2.4 2.3 4 0 1.2-.5 2.3-1.3 3.1l1.2 2.8H7.9l1.2-2.8a4.4 4.4 0 0 1-1.3-3.1c0-1.6.9-3.1 2.3-4A3 3 0 0 1 12 3.4z',
 };
 
-export default SkillIcon; 
+/** Chess pieces drawn to sit beside the king mark in the bar. Decorative. */
+const SkillIcon = ({ piece, className = '' }: { piece: Piece; className?: string }) => (
+  <svg viewBox="0 0 24 24" className={className} aria-hidden="true" fill="currentColor">
+    <path d={BODY[piece]} />
+    <path d={BASE} />
+  </svg>
+);
+
+export default SkillIcon;

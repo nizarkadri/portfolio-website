@@ -1,4 +1,4 @@
-// app/lib/blog-shared.ts — pure types + zod schema, safe for client+server.
+// app/lib/blog-shared.ts: pure types + zod schema, safe for client+server.
 import { z } from 'zod';
 
 export const blogFrontmatterSchema = z.object({
@@ -25,8 +25,12 @@ export function estimateReadingTime(content: string): number {
   const words = content.trim().split(/\s+/).filter(Boolean).length;
   return Math.max(1, Math.round(words / 200));
 }
+// timeZone is pinned so the server and the browser print the same day.
 export function formatBlogDate(iso: string): string {
-  return new Date(iso).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  return new Date(iso).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' });
+}
+export function formatBlogDateShort(iso: string): string {
+  return new Date(iso).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC' });
 }
 export const newPostSchema = blogFrontmatterSchema.extend({
   title: z.string().min(3).max(200),

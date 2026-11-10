@@ -1,28 +1,23 @@
 // app/layout.tsx
-
 import type { NextWebVitalsMetric } from 'next/app';
 import { Suspense } from 'react';
 import type { Metadata } from 'next';
+import { Archivo, Geist, Geist_Mono } from 'next/font/google';
 import Navbar from '../components/Navbar';
 import NewFooter from '../components/NewFooter';
-import GlobalResumeButton from '../components/GlobalResumeButton';
 import GoogleAnalytics from '../components/GoogleAnalytics';
+import SmoothScroll from '../components/SmoothScroll';
+import ScrollCraftMount from '../components/ScrollCraftMount';
 import { GA_TRACKING_ID } from './lib/gtag';
 import { siteMetadata } from './lib/metadata';
 import './globals.css';
-import { Inter } from 'next/font/google';
-import { Montserrat } from 'next/font/google';
-import SmoothScroll from '../components/SmoothScroll';
+import './chrome.css';
+import './world.css';
 
-const inter = Inter({
-  subsets: ['latin'],
-  variable: '--font-inter',
-});
-const montserrat = Montserrat({
-  subsets: ['latin'],
-  variable: '--font-montserrat',
-  weight: '900', // This is the 'Black' weight
-});
+const archivo = Archivo({ subsets: ['latin'], variable: '--font-archivo', axes: ['wdth'], display: 'swap' });
+const geist = Geist({ subsets: ['latin'], variable: '--font-geist', display: 'swap' });
+const geistMono = Geist_Mono({ subsets: ['latin'], variable: '--font-geist-mono', display: 'swap' });
+
 export function reportWebVitals(metric: NextWebVitalsMetric) {
   if (!GA_TRACKING_ID || typeof window.gtag !== 'function') {
     return;
@@ -36,31 +31,23 @@ export function reportWebVitals(metric: NextWebVitalsMetric) {
   });
 }
 
-// Import metadata from separate configuration file
 export const metadata: Metadata = siteMetadata;
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${inter.variable} ${montserrat.variable}`}>
-      <head>
-        {/* All your head tags are correct and should remain */}
-        {/* ... */}
-      </head>
-      <body className="bg-black text-white overflow-x-hidden">
+    <html lang="en" className={`${archivo.variable} ${geist.variable} ${geistMono.variable}`}>
+      <body>
         <Suspense fallback={null}>
           <GoogleAnalytics />
         </Suspense>
-
+        <a href="#main" className="lg-skip">Skip to content</a>
+        <div className="sc-grain" aria-hidden="true" />
         <SmoothScroll>
           <Navbar />
-          <main>{children}</main>
+          <main id="main">{children}</main>
           <NewFooter />
         </SmoothScroll>
-        <GlobalResumeButton />
+        <ScrollCraftMount />
       </body>
     </html>
   );

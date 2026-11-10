@@ -1,8 +1,8 @@
 ---
-title: IRCC Genie — Canadian Immigration RAG Assistant
+title: "IRCC Genie: Canadian Immigration RAG Assistant"
 description: A RAG MVP answering questions about Canada's Federal Skilled Worker six selection factors, grounded in official IRCC documentation.
 summary: Python RAG pipeline with Scrapy scraping, ChromaDB retrieval, and Gemini answers for immigration policy questions.
-imageUrl: /images/Projects/ircc-genie.jpg
+imageUrl: /images/Projects/ircc-genie.webp
 slug: ircc-genie
 technologies: ['Python', 'Scrapy', 'ChromaDB', 'HuggingFace', 'Gemini', 'pytest']
 featured: false

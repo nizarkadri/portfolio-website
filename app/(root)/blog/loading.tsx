@@ -1,11 +1,14 @@
+import '../../blog-contact.css';
+
 export default function Loading() {
   return (
-    <div className="min-h-screen py-24" aria-busy="true">
-      <div className="container mx-auto max-w-6xl px-4">
-        <div className="h-16 w-64 animate-pulse rounded-2xl bg-white/5" />
-        <div className="mt-8 grid gap-6 md:grid-cols-3">
-          {Array.from({ length: 3 }).map((_, i) => <div key={i} className="h-64 animate-pulse rounded-3xl bg-white/5" />)}
-        </div>
+    <div className="lg-page bl" aria-busy="true">
+      <div className="lg-wrap bl-skel">
+        <span className="bc-sr" role="status">Loading the notes</span>
+        <i style={{ height: '3.5rem', width: 'min(100%, 28rem)' }} />
+        <i style={{ width: 'min(100%, 34rem)' }} />
+        <i style={{ height: '1px', marginTop: '3rem' }} />
+        {[0, 1, 2].map((n) => <i key={n} style={{ height: '5.5rem' }} />)}
       </div>
     </div>
   );

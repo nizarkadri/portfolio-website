@@ -1,40 +1,32 @@
-import { getFeaturedProjectsData } from '../lib/projects';
-
-import Skills from '../../components/Skills';
-import Hero from '../../components/Hero';
-import Projects from '../../components/Projects';
-// import Experience from '../../components/Experience';
-import CompanyMarquee from '../../components/CompanyMarquee';
-import BlogPreview from '../../components/BlogPreview';
-import { getAllPosts } from '../lib/blog';
+import fs from 'fs';
+import path from 'path';
+import { getSortedProjectsData } from '../lib/projects';
+import { PROJECT_PLACEHOLDER_IMAGE } from '../lib/project-shared';
+import Landing, { LandingDoor } from '../../components/world/Landing';
+import { CERTIFICATE_SLOTS, getCertificates } from '../../components/about/certificates';
 
 const Home = async () => {
-  const featuredProjects = await getFeaturedProjectsData(3);
-  const latestPosts = (await getAllPosts()).slice(0, 3);
+  const projects = await getSortedProjectsData();
+  // The landing page shows three doors; this site itself is not one of them.
+  const featured = projects.filter((p) => p.featured && p.slug !== 'portfolio-website').slice(0, 3);
+  const cover = (url: string) => (url === PROJECT_PLACEHOLDER_IMAGE ? '' : url);
+  // A portrait image made for the doorway, when one exists; otherwise the regular cover.
+  const doorCover = (slug: string, url: string) =>
+    fs.existsSync(path.join(process.cwd(), 'public/images/Projects/doors', `${slug}.webp`)) ? `/images/Projects/doors/${slug}.webp` : cover(url);
 
-  return (
-    <div className="page-transition">
-      
-        {/* Hero Section */}
-        <Hero />
+  const doors: LandingDoor[] = featured.map((p) => ({
+    slug: p.slug,
+    title: p.title.split(/\s+[-—]\s+|:\s+/)[0],
+    summary: p.summary,
+    technologies: p.technologies,
+    cover: doorCover(p.slug, p.imageUrl),
+    liveUrl: p.liveUrl,
+  }));
 
-        {/* Skills Section */}
-        <Skills />
+  const certificates = getCertificates();
+  const tower = [...certificates.map((c) => c.src), ...projects.map((p) => cover(p.imageUrl)).filter(Boolean)];
 
-        {/* Company Marquee Section */}
-        <CompanyMarquee />
-
-        {/* Experience Preview Section */}
-        {/* <Experience /> */}
-        
-        {/* Projects Preview Section */}
-        <Projects projects={featuredProjects} />
-
-        {/* Blog Preview Section */}
-        <BlogPreview posts={latestPosts} />
-      
-    </div>
-  );
+  return <Landing doors={doors} tower={tower} projectCount={projects.length} certificateCount={Math.max(CERTIFICATE_SLOTS, certificates.length)} />;
 };
 
 export default Home;

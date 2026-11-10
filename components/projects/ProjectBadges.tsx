@@ -54,8 +54,8 @@ export function ProjectTechnologyBadges({
 
 export function ProjectFeaturedBadge() {
   return (
-    <span className="inline-flex items-center gap-1.5 rounded-full border border-[#B8E62D]/40 bg-[#B8E62D]/15 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#D9FF4B] backdrop-blur-sm">
-      <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-[#B8E62D]" />
+    <span className="inline-flex items-center gap-1.5 rounded-full border border-[#FF8A4C]/40 bg-[#FF8A4C]/15 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#FFB083] backdrop-blur-sm">
+      <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-[#FF8A4C]" />
       Featured
     </span>
   );

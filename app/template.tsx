@@ -1,15 +1,5 @@
-'use client';
-
-import PageTransition from '../components/PageTransition';
-import TransitionOverlay from '../components/TransitionOverlay';
-
+// Route transition: opacity only. A transform on this wrapper would break
+// every sticky and fixed stage beneath it.
 export default function Template({ children }: { children: React.ReactNode }) {
-  return (
-    <>
-      <TransitionOverlay />
-      <PageTransition>
-        {children}
-      </PageTransition>
-    </>
-  );
-} 
+  return <div className="lg-fade">{children}</div>;
+}

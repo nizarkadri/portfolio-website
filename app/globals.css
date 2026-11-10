@@ -1,60 +1,102 @@
-/* styles/globals.css */
+@import "./scrollcraft.css";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* ==========================================================================
+   The Long Game: tokens. Six colours, three faces. Everything derives.
+   ========================================================================== */
 :root {
-  --white: #f8f8f8;
-  --off-white: #f0f0f0;
-  --light-gray: #e0e0e0;
-  --mid-gray: #a0a0a0;
-  --dark-gray: #333333;
-  --off-black: #1a1a1a;
-  --deep-black: #000000;
-  --transition-speed: 0.3s;
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+  --sc-canvas:     #07090c;
+  --sc-surface:    #0f1319;
+  --sc-ink:        #ece7df;
+  --sc-ink-soft:   #98a0ab;
+  --sc-accent:     #ff8a4c;
+  --sc-accent-ink: #140a04;
+  --sc-font-display: var(--font-archivo), "Archivo", system-ui, sans-serif;
+  --sc-font-text:    var(--font-geist), "Geist", system-ui, sans-serif;
+  --sc-font-mono:    var(--font-geist-mono), "Geist Mono", ui-monospace, monospace;
+  --sc-shadow-color: 216 45% 2%;
+  --lg-bar-h: 4.25rem;
+  --lg-surface-2: #151b23;
+  --lg-ember-soft: color-mix(in oklab, var(--sc-accent) 16%, transparent);
+  /* legacy variables some older components still read */
+  --white: #ece7df; --off-white: #dcd6cc; --light-gray: #c3c7cd; --mid-gray: #98a0ab;
+  --dark-gray: #2a313b; --off-black: #0f1319; --deep-black: #07090c;
+  --transition-speed: 0.24s;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
+html { scroll-behavior: auto; background: var(--sc-canvas); }
+html.lenis, html.lenis body { height: auto; }
+body { overflow-x: clip; font-feature-settings: "ss01", "cv11"; }
+main { min-height: 100svh; position: relative; }
+
+@layer base {
+  h1, h2, h3, h4 { font-family: var(--sc-font-display); letter-spacing: var(--sc-track-snug); text-wrap: balance; }
+  p { text-wrap: pretty; }
 }
 
-/* Smooth page transitions */
-html {
-  scroll-behavior: smooth;
+/* ------------------------------------------------------------ primitives */
+.lg-wrap { width: min(100% - 2 * var(--sc-gutter), var(--sc-maxw)); margin-inline: auto; }
+.lg-display {
+  font-family: var(--sc-font-display); font-weight: 800; font-stretch: 112%;
+  letter-spacing: -0.035em; line-height: 0.98; text-wrap: balance; color: var(--sc-ink);
 }
+.lg-display--xl { font-size: clamp(2.5rem, 1.2rem + 5.6vw, 6.25rem); }
+.lg-display--lg { font-size: clamp(2.1rem, 1.3rem + 3.6vw, 4.5rem); }
+.lg-display--md { font-size: clamp(1.7rem, 1.25rem + 1.9vw, 2.9rem); line-height: 1.04; }
+.lg-display--sm { font-size: clamp(1.25rem, 1.1rem + 0.7vw, 1.7rem); line-height: 1.12; letter-spacing: -0.02em; font-stretch: 105%; font-weight: 700; }
+.lg-body { color: var(--sc-ink-soft); font-size: var(--sc-t-base); line-height: 1.68; max-width: 58ch; letter-spacing: 0.002em; }
+.lg-body--lg { font-size: var(--sc-t-lg); line-height: 1.5; color: color-mix(in oklab, var(--sc-ink) 82%, var(--sc-canvas)); }
+/* notation: the mono face is reserved for chess notation and data */
+.lg-note {
+  font-family: var(--sc-font-mono); font-size: 0.78rem; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--sc-ink-soft); font-variant-numeric: tabular-nums;
+}
+.lg-note b, .lg-note strong { color: var(--sc-accent); font-weight: 500; }
+.lg-hair { border: 0; border-top: 1px solid var(--sc-hairline); margin: 0; }
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
-  @apply antialiased;
-  font-feature-settings: "ss01", "ss02", "cv01", "cv02";
-  overflow-x: hidden;
+.lg-cta {
+  display: inline-flex; align-items: center; gap: 0.7rem; white-space: nowrap;
+  padding: 0.85rem 1.35rem; border-radius: var(--sc-r-sm);
+  background: var(--sc-accent); color: var(--sc-accent-ink);
+  font-family: var(--sc-font-text); font-weight: 600; font-size: 0.95rem; letter-spacing: 0;
+  text-decoration: none; border: 0; cursor: pointer;
+  box-shadow: 0 1px 0 color-mix(in oklab, white 35%, transparent) inset, 0 10px 30px -12px color-mix(in oklab, var(--sc-accent) 70%, transparent);
+  transition: transform 140ms var(--sc-ease-out), background-color 140ms var(--sc-ease-out);
 }
+.lg-cta svg { width: 1rem; height: 1rem; flex: none; }
+.lg-cta:active { transform: translateY(1px) scale(0.985); }
+@media (hover: hover) and (pointer: fine) { .lg-cta:hover { background: #ffa06c; } }
+.lg-cta--sm { padding: 0.55rem 0.95rem; font-size: 0.875rem; }
+.lg-link {
+  display: inline-flex; align-items: center; gap: 0.5rem; color: var(--sc-ink);
+  font-weight: 500; font-size: 0.95rem; text-decoration: underline;
+  text-decoration-color: var(--sc-hairline-strong); text-underline-offset: 0.3em;
+  transition: text-decoration-color 160ms var(--sc-ease-out), color 160ms var(--sc-ease-out);
+}
+@media (hover: hover) and (pointer: fine) { .lg-link:hover { text-decoration-color: var(--sc-accent); color: #fff; } }
+.lg-chip {
+  display: inline-flex; align-items: center; padding: 0.22rem 0.55rem; border-radius: 4px;
+  border: 1px solid var(--sc-hairline); color: var(--sc-ink-soft);
+  font-family: var(--sc-font-mono); font-size: 0.72rem; letter-spacing: 0.02em; white-space: nowrap;
+}
+.lg-panel {
+  background: linear-gradient(180deg, var(--lg-surface-2), var(--sc-surface));
+  border: 1px solid var(--sc-hairline); border-radius: var(--sc-r-md);
+  box-shadow: var(--sc-edge), var(--sc-e2);
+}
+.lg-section { padding-block: var(--sc-section); position: relative; }
+.lg-page { padding-top: calc(var(--lg-bar-h) + clamp(2.5rem, 6vw, 6rem)); }
+.lg-fade { animation: lgFade 420ms var(--sc-ease-out) both; }
+@keyframes lgFade { from { opacity: 0; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .lg-fade { animation: none; } }
 
-/* Page transition optimizations */
-.page-transition {
-  will-change: transform, opacity, filter;
-  backface-visibility: hidden;
-  transform-style: preserve-3d;
-}
+/* ==========================================================================
+   Legacy component styles (kept so older widgets keep working)
+   ========================================================================== */
+.page-transition { backface-visibility: hidden; }
 
-/* Prevent layout shift during transitions */
-main {
-  min-height: 100vh;
-  position: relative;
-}
 
 @layer base {
   h1, h2, h3, h4, h5, h6 {
@@ -353,12 +395,12 @@ main {
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(184, 230, 45, 0.3);
+  background: rgba(255, 138, 76, 0.3);
   border-radius: 4px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(184, 230, 45, 0.5);
+  background: rgba(255, 138, 76, 0.5);
 }
 
 /* 3D Icon styling */
@@ -712,7 +754,7 @@ html.lenis, html.lenis body {
 
 /* Custom styles for webkit text stroke to fix Framer Motion compatibility */
 .hero-title-stroke {
-  -webkit-text-stroke: 2px rgba(184, 230, 45, 0.3);
+  -webkit-text-stroke: 2px rgba(255, 138, 76, 0.3);
 }
 
 /* Transform style preserve-3d for 3D animations */

@@ -1,42 +1,13 @@
-'use client';
+import React from 'react';
 
-import { motion } from 'framer-motion';
-import { titleVariants, highlightVariants} from '../utils/animations';
-import {useIsMobile} from '../app/hooks/useMobile';
+/** Heading for the skills section. */
+const SkillTitle = () => (
+  <header className="ae-head" data-sc-in>
+    <h2 className="lg-display lg-display--lg">The pieces I play with.</h2>
+    <p className="lg-body">
+      A stack is a set of pieces. Each one moves differently, and the skill is knowing which to bring out and when.
+    </p>
+  </header>
+);
 
-const SkillTitle = () => {
-  const isMobile = useIsMobile();
-  return (
-    <div className="flex flex-col items-center mb-16">
-      <motion.div
-        initial="initial"
-        whileInView="animate"
-        viewport={{ once: false, margin: "-100px" }}
-        className="relative"
-      >
-        <motion.h2 
-          className="huge-text font-bold text-[#B8E62D]/90 mb-2"
-          // huge-text absolute top-6 md:-top-16 left-[7%] md:left-0 md:translate-x-0 opacity-80 text-[#B8E62D]/90 font-bold select-none
-          variants={titleVariants}
-        >
-          {isMobile ? 'Skills' : 'Skills & Expertise'}
-        </motion.h2>
-        <motion.div 
-          className="absolute -bottom-2 left-0 h-0.5 bg-[#B8E62D]/10 rounded-full"
-          variants={highlightVariants}
-        />
-        {/* <motion.div 
-          className="absolute -right-8 -top-6 text-[#B8E62D] opacity-50"
-          variants={decorationVariants}
-        >
-          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M12 17L6.12 21.5L8 14.87L2 10.5L8.6 10.13L12 4L15.4 10.13L22 10.5L16 14.87L17.88 21.5L12 17Z" fill="currentColor"/>
-          </svg>
-        </motion.div> */}
-      </motion.div>
-      
-    </div>
-  );
-};
-
-export default SkillTitle; 
+export default SkillTitle;
