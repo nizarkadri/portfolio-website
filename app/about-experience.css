@@ -258,3 +258,59 @@ button.ae-frame:focus-visible .ae-frame__mat::after { opacity: 0; }
 .ae-roster a:active svg { transform: rotate(90deg) translateX(2px); }
 @media (hover: hover) and (pointer: fine) { .ae-roster a:hover svg { color: var(--sc-accent); transform: rotate(90deg) translateX(3px); } }
 @media (max-width: 520px) { .ae-roster a { grid-template-columns: minmax(0, 1fr) auto; } .ae-roster a .lg-note { grid-column: 1; grid-row: 2; } .ae-roster a svg { grid-column: 2; grid-row: 1 / span 2; } }
+
+/* ==========================================================================
+   Light version: bands, the day hero, the facts ledger, how I think
+   ========================================================================== */
+.ae-band { position: relative; }
+.ae-band--gap { margin-top: clamp(4rem, 8vw, 9rem); }
+.ae-band__end { height: clamp(4rem, 8vw, 9rem); }
+.ae-band.tone-day .ae-section:first-child { padding-top: clamp(4rem, 8vw, 8rem); }
+
+.tone-day .ae-hero__copy .lg-display { text-shadow: none; }
+.ae-hero__copy .lg-note { text-transform: none; letter-spacing: 0.02em; }
+.ae-hero__frame { aspect-ratio: 4 / 5; border-radius: 4px; box-shadow: var(--sc-e3); border: 0; outline: 1px solid var(--sc-hairline); outline-offset: 0.6rem; }
+.ae-hero__frame img { object-position: 50% 30%; }
+.ae-hero__frame::after { background: linear-gradient(0deg, color-mix(in oklab, var(--sc-canvas) 30%, transparent), transparent 22%); }
+.ae-hero__figure { max-width: 30rem; padding: 0.6rem; }
+.ae-hero { align-items: center; padding-bottom: clamp(2.5rem, 5vw, 5rem); }
+
+.ae-facts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; border-top: 1px solid var(--sc-hairline-strong); padding-bottom: clamp(3rem, 6vw, 6rem); }
+.ae-facts > div { display: grid; gap: 0.55rem; align-content: start; padding: 1.25rem 1.5rem 0 0; }
+.ae-facts > div + div { padding-left: 1.5rem; border-left: 1px solid var(--sc-hairline); }
+.ae-facts dd { font-family: var(--sc-font-display); font-weight: 700; font-stretch: 106%; letter-spacing: -0.015em; font-size: clamp(1.02rem, 0.95rem + 0.4vw, 1.3rem); line-height: 1.25; color: var(--sc-ink); text-wrap: balance; }
+@media (max-width: 860px) {
+  .ae-facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ae-facts > div { padding: 1rem 1rem 1rem 0; border-bottom: 1px solid var(--sc-hairline); }
+  .ae-facts > div + div { padding-left: 0; border-left: 0; }
+  .ae-facts > div:nth-child(even) { padding-left: 1rem; border-left: 1px solid var(--sc-hairline); }
+}
+
+/* how I think: the sculpture stands in the night hall */
+.ae-think { position: relative; padding-block: clamp(4.5rem, 9vw, 10rem); overflow: clip;
+  background: radial-gradient(90% 70% at 22% 40%, #132040 0%, transparent 62%), var(--sc-canvas); }
+.ae-think__grid { display: grid; grid-template-columns: minmax(0, 0.82fr) minmax(0, 1fr); gap: clamp(2rem, 5vw, 5.5rem); align-items: center; }
+.ae-think__art { position: relative; border-radius: 4px; overflow: hidden; box-shadow: 0 0 0 1px rgb(190 214 255 / 0.22), var(--sc-e3); }
+.ae-think__art img { display: block; width: 100%; height: auto; }
+.ae-think__art::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(0deg, rgb(7 11 20 / 0.5), transparent 30%); }
+.ae-think__copy .ae-head { margin-bottom: clamp(1.5rem, 3vw, 2.5rem); }
+.ae-think__copy .ae-head .lg-display { max-width: 16ch; }
+.ae-habits { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-top: 1px solid var(--sc-hairline-strong); }
+.ae-habits > li { display: grid; gap: 0.6rem; align-content: start; padding: 1.4rem 1.5rem 1.6rem 0; border-bottom: 1px solid var(--sc-hairline); }
+.ae-habits > li:nth-child(even) { padding-left: 1.5rem; border-left: 1px solid var(--sc-hairline); }
+.ae-habits p { color: var(--sc-ink-soft); line-height: 1.6; font-size: 0.98rem; }
+.ae-habits .lg-note { text-transform: none; }
+@media (max-width: 860px) {
+  .ae-think__grid { grid-template-columns: minmax(0, 1fr); }
+  .ae-habits { grid-template-columns: minmax(0, 1fr); }
+  .ae-habits > li, .ae-habits > li:nth-child(even) { padding: 1.2rem 0 1.3rem; border-left: 0; }
+}
+/* on marble the heading sits beside the portrait, not across it */
+.tone-day .ae-hero__copy .lg-display { margin-right: 0; white-space: normal; max-width: 11ch; }
+@media (min-width: 861px) { .tone-day .ae-hero__copy .lg-display { font-size: clamp(2.5rem, 0.6rem + 4.9vw, 5.4rem); } }
+@media (max-width: 860px) {
+  .tone-day .ae-hero__copy { margin-top: 1.25rem; }
+  .tone-day .ae-hero__copy .lg-display { max-width: 12ch; }
+  .ae-hero__figure { padding: 0.6rem 0.6rem 0; align-items: stretch; }
+  .ae-hero__frame { height: auto; width: min(100%, 22rem); margin-inline: auto; }
+}

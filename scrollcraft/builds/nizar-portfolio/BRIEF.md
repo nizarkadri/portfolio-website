@@ -135,3 +135,126 @@ reply.
 - Generated assets (Higgsfield, Nano Banana 2, owner's trial): 14 project covers
   at 4:3 and three portrait door images for the landing page, all from one
   style preamble. kie.ai was never called.
+
+---
+
+# Revision 2: the light version (branch `redesign/light-version`)
+
+Supersedes the world above for this branch. The dark build stays untouched on
+`redesign/scrollcraft-chess-world`. Concept, flow, copy and the scoresheet are
+kept; the world, the palette and the rendering are new.
+
+## The owner's verdict on revision 1 (verbatim)
+
+"I like the concept and the flow but everything is super finicky and doesnt look
+polished. The light effects are way too bright and scroll is inconsistently fast
+at wrong places! The entire concept of lake and toronto city looks really bad!
+The frames on door are glitching and low quality and the light shines way too
+bright. The tower looks really cool but moves very fast and glitches a lot! The
+work page concept is perfect! but implementation is very bad! the cards
+disappear before user can see or click. It glitches a lot too. The about page is
+way too simple and the portrait looks bad."
+
+## The owner's direction for revision 2 (verbatim)
+
+- "I dont wanna go strict light mode or dark mode. I wanna keep the best of both
+  worlds. A mix of glass, blue lights, marble, clouds, architecture and all
+  clean aesthetics with the scoll and 3d animations as before."
+- "My potraits i wanna be modified as not human but an artistic human with
+  sculpture or wires or other forms. In about section i would prefer a
+  professional version of my potraits."
+- "I think you can be really creative and come up with somehting extraordinary
+  with images numbered 1 to 8 in resources folder."
+- "control the lights better dont make it shine too much and keep the scene in
+  closed space but wider and longer field of view"
+- "needs more illuminating animated wavy lights i am just giving directions you
+  dont have to 100% follow them"
+- "just to confirm you are sticking with the world frame right? or the album?"
+  (Answered: the world. One continuous place.)
+
+References 1 to 8: a dark rock spire with platforms (1), white and gold columns
+in cloud (2), a glass wave in a vitrine (3), a marble statue dissolving into
+cubes (4), white marble chess pieces in the sky (5), a blue glass portal (6),
+fractal cloud from orbit (7), a glass figure dissolving into pixels (8).
+
+## The world: The Long Game, from daylight to blue hour (authored)
+
+One place: a marble-and-glass architecture standing in a sea of cloud. The game
+takes a day, so the light changes as the visitor scrolls. It opens on a marble
+board in the sky, passes a sculpture of the player dissolving into glass cubes,
+enters a dark enclosed hall with one blue portal, crosses a gallery of glass
+waves and flowing light, climbs a rock spire at blue hour, and ends above the
+cloud spiral at the edge of space with one square lit.
+
+Style preamble (verbatim on every generated asset):
+
+> Cinematic architectural photography, wide-angle lens, deep focus,
+> photographic realism. Clean minimal monumental architecture in polished
+> marble and clear glass. Light is soft and tightly controlled: no glare, no
+> lens flare, no bloom, no halos, no blown highlights, gentle contrast, long
+> soft falloff into shadow. Grade: deep blue-black shadows, cool slate grey,
+> marble white, one restrained electric cobalt blue accent. Fine film grain. No
+> text, no letters, no logos, no people, no watermark, no cartoon, no clay, no
+> plastic.
+
+Tokens, two tones on one system. Night: canvas `#070B14`, surface `#0E1524`,
+ink `#EEF2F7`, ink-soft `#9AA7B8`, accent `#7FB0FF`. Day (`.tone-day`): canvas
+`#F3F1EC`, surface `#FFFFFF`, ink `#10141B`, ink-soft `#566070`, accent
+`#1F4FD8`. One solid blue for buttons on either tone: `#2A62F0`. Gold `#B8935A`
+is reserved for hairlines. Faces unchanged: Archivo, Geist, Geist Mono.
+
+## Grammar
+
+**Continuous world, in its native form: worldflight.** One fixed stage, seven
+video legs scrubbed by scroll, copy in one fixed layer, nothing in document
+flow but the spacer. Revision 1 declared a deviation (a real-time WebGL stage);
+that deviation was the source of the popping, glare and uneven pace, and it is
+withdrawn. Doors, certificates, stack labels and the scoresheet are real DOM on
+top of the film, so they are sharp and clickable at any size.
+
+Pace: every 5 s leg owns 1.3 vh and the 10 s tower leg owns 2.6 vh, so the rate
+is one number for the whole flight (0.26 vh per second of film).
+
+## Journey and feeling curve (landing page)
+
+| Move | Scene | Feeling | What causes it |
+|---|---|---|---|
+| 1. e4 `open()` | Marble board in the sky | Curiosity | Daylight, giant pieces labelled with his stack, his name as the headline. |
+| 2. Nf3 `calculate()` | The sculpture | Intimacy | The camera comes to rest in front of a marble bust of him breaking into glass cubes joined by calculation lines. |
+| 3. Bc4 `ship(3)` | The dark hall | Appetite | Daylight falls away. Three lit doors stand in a vast enclosed hall with one blue portal at its end. |
+| 4. O-O `deploy("toronto")` | The glass gallery | Trust | Through the portal: quiet vitrines, ribbons of wave light, two roles stated plainly. |
+| (rest) | Cloud | Held breath | The gallery gives way to cloud at dusk. Authored silence, no copy. |
+| 5. d4 `prove()` | The spire | Awe | A dark rock spire rises out of the cloud; the camera cranes slowly up it while 17 real certificates pass as glass panes. |
+| 6. Re1 `await yourMove()` | The edge of space | Resolve | Above a cloud spiral, one marble board, one square lit. The visitor replies. |
+
+**Peak:** move 5, the largest span on the page (2.6 vh against 1.3). Said to a
+friend: "you fly out of a glass gallery into cloud and a black spire comes up
+out of it with his certificates passing you as you climb."
+
+**Tell-someone sentence:** it's the site where you fly through a marble chess
+world from daylight into night by scrolling, and the last move is yours.
+
+**Signature move:** unchanged, the scoresheet written as function calls. Black's
+column stays empty until the visitor plays the reply, and that move is carried
+to /contact.
+
+**Authored silence:** the cloud between the gallery and the spire (the second
+half of leg 4 and the first tenth of leg 5). Not dead scroll.
+
+## Other pages
+
+- /projects: the hall of doors, rebuilt. Only the door frames live in the 3D
+  scene. The walk happens in the middle 38% of each door's scroll, so each door
+  stands still for the rest; the label (title, year, stack, links) is flat,
+  fixed and always clickable. The index below it is on marble.
+- /about: marble hero with a professional portrait, a facts ledger, the
+  sculpture with four habits shared by the board and the codebase, the story,
+  live widgets, skills, studies and the certificate wall, alternating day and
+  night bands.
+- /experience and /blog: marble, for reading. /contact: night.
+
+## Portraits (two, as agreed)
+
+The artistic one is the sculpture (landing move 2, and the About habits
+section). The professional one is the About hero. Both generated from the two
+photos the owner supplied on 2026-11-10 with Higgsfield (Nano Banana 2).

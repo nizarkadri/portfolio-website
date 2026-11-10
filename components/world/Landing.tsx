@@ -2,10 +2,11 @@
 
 import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import type { World as WorldType } from './World';
 import { Arrow, CTA_LABEL } from '../Navbar';
 import { SOCIALS } from '../NewFooter';
+import { BEATS, LEGS, STILL_BEATS, TOTAL, beatOpacity, sceneAt, smooth, windowOf } from './flight';
 
 export interface LandingDoor {
   slug: string;
@@ -16,326 +17,328 @@ export interface LandingDoor {
   liveUrl?: string;
 }
 
+export interface LandingCertificate {
+  src: string;
+  title: string;
+}
+
 interface Props {
   doors: LandingDoor[];
-  tower: string[];
+  certificates: LandingCertificate[];
   projectCount: number;
   certificateCount: number;
 }
 
-/** The score of the game. `at` is where the camera rests; `from` is when the move is stamped. */
-const MOVES = [
-  { san: 'e4', label: 'Opening', fn: 'open()', from: 0, at: 0.04 },
-  { san: 'Nf3', label: 'Calculation', fn: 'calculate()', from: 0.19, at: 0.27 },
-  { san: 'Bc4', label: 'The work', fn: 'ship(3)', from: 0.37, at: 0.46 },
-  { san: 'O-O', label: 'The city', fn: 'deploy("toronto")', from: 0.57, at: 0.63 },
-  { san: 'd4', label: 'The tower', fn: 'prove()', from: 0.74, at: 0.84 },
-  { san: 'Re1', label: 'Your move', fn: 'await yourMove()', from: 0.95, at: 1 },
-];
-
-const WINDOWS: Array<[number, number]> = [[0, 0.13], [0.18, 0.34], [0.36, 0.54], [0.56, 0.68], [0.74, 0.925], [0.945, 1.01]];
-
-/** What each piece stands for. Order matches TAGGED in World.ts. */
+/** What each piece stands for, pinned to the piece in the opening frame.
+ *  x and y are fractions of that frame (the top of each piece). */
 const TAGS = [
-  { piece: 'king', value: 'Nizar' },
-  { piece: 'queen', value: 'React, TypeScript' },
-  { piece: 'rook', value: 'Java, Spring Boot' },
-  { piece: 'bishop', value: 'Python, LangChain' },
-  { piece: 'knight', value: 'AWS, Azure' },
-  { piece: 'pawn', value: 'Docker, CI/CD' },
+  { piece: 'king', value: 'Nizar', x: 0.689, y: 0.31 },
+  { piece: 'queen', value: 'React, TypeScript', x: 0.625, y: 0.395 },
+  { piece: 'rook', value: 'Java, Spring Boot', x: 0.563, y: 0.465 },
+  { piece: 'bishop', value: 'Python, LangChain', x: 0.786, y: 0.425 },
+  { piece: 'knight', value: 'AWS, Azure', x: 0.858, y: 0.44 },
+  { piece: 'pawn', value: 'Docker, CI/CD', x: 0.934, y: 0.485 },
 ];
+const FRAME = 16 / 9;
+const PHONE_FRAME = 9 / 16;
 
-function webglOk() {
-  try {
-    const c = document.createElement('canvas');
-    return !!(c.getContext('webgl2') || c.getContext('webgl'));
-  } catch {
-    return false;
-  }
-}
+const LANES = 2;
 
-export default function Landing({ doors, tower, projectCount, certificateCount }: Props) {
+export default function Landing({ doors, certificates, projectCount, certificateCount }: Props) {
   const router = useRouter();
-  const act = useRef<HTMLElement>(null);
-  const canvas = useRef<HTMLCanvasElement>(null);
-  const world = useRef<WorldType | null>(null);
-  const labels = useRef<Array<HTMLElement | null>>([]);
-  const points = useRef<Array<HTMLElement | null>>([]);
+  const root = useRef<HTMLDivElement>(null);
   const scrims = useRef<Array<HTMLElement | null>>([]);
   const tags = useRef<Array<HTMLElement | null>>([]);
+  const wall = useRef<HTMLDivElement>(null);
   const [move, setMove] = useState(0);
-  const [mode, setMode] = useState<'pending' | 'live' | 'static'>('pending');
+  const [still, setStill] = useState(false);
+  const [phone, setPhone] = useState(false);
   const [reply, setReply] = useState(false);
 
-  // Decide before the engine mounts whether this visitor gets the live world.
+  // Decide before the engine mounts which film this visitor gets.
   useLayoutEffect(() => {
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    setMode(reduce || !webglOk() ? 'static' : 'live');
+    setStill(window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+    const mq = window.matchMedia('(max-width: 860px)');
+    setPhone(mq.matches);
+    const on = () => setPhone(mq.matches);
+    mq.addEventListener('change', on);
+    return () => mq.removeEventListener('change', on);
   }, []);
 
+  const beats = still ? STILL_BEATS : BEATS;
+
   useEffect(() => {
-    if (mode !== 'live' || !canvas.current || !act.current) return;
-    let dead = false;
+    const el = root.current;
+    if (!el) return;
     let raf = 0;
-    let w: WorldType | null = null;
-    const mobile = window.matchMedia('(max-width: 860px)').matches;
-    const el = act.current;
     let last = -1;
+    let tone = '';
+    const doc = document.documentElement;
+    const blocks = Array.from(el.querySelectorAll<HTMLElement>('[data-beat]')).flatMap((node) => {
+      const beat = beats.find((b) => b.key === node.dataset.beat);
+      return beat ? [{ node, beat }] : [];
+    });
 
     const frame = () => {
       raf = requestAnimationFrame(frame);
-      const r = el.getBoundingClientRect();
-      const travel = Math.max(1, r.height - window.innerHeight);
-      const p = Math.min(1, Math.max(0, -r.top / travel));
-      w?.setProgress(p);
-      let m = 0;
-      for (let i = 0; i < MOVES.length; i++) if (p >= MOVES[i].from - 0.004) m = i;
-      if (m !== last) { last = m; setMove(m); }
-      WINDOWS.forEach(([a, b], i) => {
-        const node = points.current[i];
-        if (node) node.inert = !(p >= a - 0.01 && p <= b);
+      const vh = Math.max(1, window.innerHeight);
+      const vw = window.innerWidth;
+      const t = Math.min(TOTAL + 1, Math.max(0, -el.getBoundingClientRect().top / vh));
+
+      // scrims follow the copy they sit under
+      beats.forEach((b, i) => {
+        const node = scrims.current[i];
+        if (node) node.style.opacity = beatOpacity(b, t).toFixed(3);
       });
-      // scrims follow the same windows as the copy they sit under
-      for (const node of scrims.current) {
-        if (!node) continue;
-        const [a, b, greet, hold] = (node.dataset.win || '').split(' ').map(Number);
-        const w = b - a;
-        const ramp = Math.min(w * 0.3, 0.03);
-        const up = greet ? (p >= a ? 1 : 0) : Math.min(1, Math.max(0, (p - a) / ramp));
-        const down = hold ? 1 : Math.min(1, Math.max(0, (b - p) / ramp));
-        node.style.opacity = (up * down).toFixed(3);
-      }
-      // stack labels ride above their pieces while the game position is on the board
-      if (w) {
-        const show = p < 0.345;
-        tags.current.forEach((node, i) => {
-          if (!node) return;
-          const t = show ? w!.tag(i) : null;
-          // keep labels off the copy: the right-hand column on desktop, the lower half on phones
-          const clear = t && t.y > 118 && (mobile ? t.y < window.innerHeight * 0.5 : p < 0.15 || t.x < window.innerWidth * 0.55);
-          if (t && t.on && clear) {
-            node.style.transform = `translate3d(${t.x.toFixed(1)}px, ${t.y.toFixed(1)}px, 0)`;
-            node.style.opacity = '1';
-          } else node.style.opacity = '0';
-        });
-      }
-      if (w && !mobile && p > 0.33 && p < 0.58) {
-        labels.current.forEach((node, i) => {
-          const s = w!.project(i);
-          if (node && s) node.style.setProperty('--x', `${s.x.toFixed(1)}px`);
-        });
+
+      // only the scene on screen can take focus; the rest are out of the tab order
+      blocks.forEach(({ node, beat }) => {
+        const off = beatOpacity(beat, t) < 0.5;
+        if (node.inert !== off) node.inert = off;
+      });
+
+      // which move the score is on
+      let m = 0;
+      for (let i = 0; i < beats.length; i++) if (t >= beats[i].from - 0.02) m = i;
+      if (m !== last) { last = m; setMove(m); }
+
+      // the bar reads on marble while the film is in daylight
+      const nextTone = t < sceneAt(1) + (still ? LEGS[1].w : 0.62) ? 'day' : 'night';
+      if (nextTone !== tone) { tone = nextTone; doc.dataset.tone = tone; }
+
+      // stack labels sit on the pieces while the opening position is on screen
+      const show = 1 - smooth(t / 0.2);
+      const ar = vw < 861 ? PHONE_FRAME : FRAME;
+      const scale = Math.max(vw / ar, vh) ;
+      const iw = scale * ar, ih = scale;
+      const ox = (vw - iw) / 2, oy = (vh - ih) / 2;
+      tags.current.forEach((node, i) => {
+        if (!node) return;
+        const x = ox + TAGS[i].x * iw, y = oy + TAGS[i].y * ih;
+        const inside = x > 70 && x < vw - 70 && vw >= 861;
+        node.style.opacity = inside ? show.toFixed(3) : '0';
+        node.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0)`;
+      });
+
+      // the certificates pass as the camera climbs
+      if (wall.current) {
+        const a = sceneAt(4), z = sceneAt(5);
+        const u = still ? 0.5 : Math.min(1, Math.max(0, (t - a + 0.1) / (z - a + 0.2)));
+        wall.current.style.setProperty('--u', u.toFixed(4));
       }
     };
-
-    import('./World').then(({ World }) => {
-      if (dead || !canvas.current) return;
-      try {
-        w = new World(canvas.current, {
-          mobile,
-          covers: doors.map((d) => d.cover),
-          tower,
-          figure: '/images/portraits/figure.webp',
-        });
-      } catch {
-        setMode('static');
-        return;
-      }
-      world.current = w;
-      (window as unknown as { __world?: WorldType }).__world = w;
-      w.start();
-      el.classList.add('is-live');
-    });
     raf = requestAnimationFrame(frame);
 
-    const onResize = () => w?.resize();
-    const onPointer = (e: PointerEvent) => {
-      if (e.pointerType !== 'mouse') return;
-      w?.setPointer((e.clientX / window.innerWidth) * 2 - 1, -((e.clientY / window.innerHeight) * 2 - 1));
-    };
-    const onVis = () => (document.hidden ? w?.stop() : w?.start());
-    window.addEventListener('resize', onResize);
-    window.addEventListener('pointermove', onPointer, { passive: true });
-    document.addEventListener('visibilitychange', onVis);
+    // The engine sizes the scroll track once, at mount. Re-measure when the
+    // window and the fonts have settled.
+    const relayout = () => window.dispatchEvent(new Event('resize'));
+    window.addEventListener('load', relayout);
+    document.fonts?.ready.then(relayout).catch(() => undefined);
+    const settle = window.setTimeout(relayout, 600);
+
     return () => {
-      dead = true;
       cancelAnimationFrame(raf);
-      window.removeEventListener('resize', onResize);
-      window.removeEventListener('pointermove', onPointer);
-      document.removeEventListener('visibilitychange', onVis);
-      w?.dispose();
-      world.current = null;
+      window.removeEventListener('load', relayout);
+      window.clearTimeout(settle);
+      delete doc.dataset.tone;
     };
-  }, [mode, doors, tower]);
+  }, [beats, still]);
 
   const flyTo = useCallback((i: number) => {
-    const el = act.current;
+    const el = root.current;
     if (!el) return;
-    if (mode === 'static') {
-      points.current[i]?.scrollIntoView({ behavior: 'auto', block: 'start' });
-      return;
-    }
-    const top = el.getBoundingClientRect().top + window.scrollY;
-    const y = top + (el.offsetHeight - window.innerHeight) * MOVES[i].at;
+    const b = beats[i];
+    const rest = b.key === 'open' ? 0 : b.key === 'tower' ? b.from + 0.55 : b.key === 'close' ? TOTAL : still ? (b.from + b.to) / 2 : sceneAt(b.scene);
+    const y = el.getBoundingClientRect().top + window.scrollY + rest * window.innerHeight;
     const lenis = (window as unknown as { lenis?: { scrollTo: (y: number, o?: object) => void } }).lenis;
-    if (lenis) lenis.scrollTo(y, { duration: 1.6 });
-    else window.scrollTo({ top: y, behavior: 'smooth' });
-  }, [mode]);
+    if (lenis) lenis.scrollTo(y, still ? { immediate: true } : { duration: 1.8 });
+    else window.scrollTo({ top: y, behavior: still ? 'auto' : 'smooth' });
+  }, [beats, still]);
 
-  const play = useCallback(async (e: React.MouseEvent) => {
+  const play = useCallback((e: React.MouseEvent) => {
     if (e.metaKey || e.ctrlKey || e.shiftKey) return;
     e.preventDefault();
     if (reply) return;
     setReply(true);
     try { sessionStorage.setItem('lg-reply', 'e5'); } catch { /* private mode */ }
-    await Promise.race([world.current?.playReply() ?? Promise.resolve(), new Promise((r) => setTimeout(r, 1200))]);
-    router.push('/contact');
-  }, [reply, router]);
+    window.setTimeout(() => router.push('/contact'), still ? 0 : 900);
+  }, [reply, router, still]);
 
-  const setPoint = (i: number) => (node: HTMLElement | null) => { points.current[i] = node; };
   const setScrim = (i: number) => (node: HTMLElement | null) => { scrims.current[i] = node; };
+  const win = (key: string) => windowOf(beats.find((b) => b.key === key)!);
+  const poster = (n: number) => (phone ? `/world/k${n}-m.webp` : `/world/k${n}.webp`);
+  const lanes = phone ? 2 : LANES;
 
   return (
-    <div className="world" data-mode={mode}>
-      <section ref={act} className="world__act" data-sc-act="pin" data-sc-span="11" data-sc-drift="#07090c" aria-label="The long game">
-        <div data-sc-stage className="world__stage">
-          <canvas ref={canvas} className="world__canvas" aria-hidden="true" />
-          <div className="world__vignette" aria-hidden="true" />
-
-          {/* 1. e4: the opening */}
-          <div ref={setScrim(0)} className="scrim scrim--lead scrim--on" data-win="0.0 0.12 1 0" aria-hidden="true" />
-          <div ref={setPoint(0)} className="wp wp--open" data-wp="open">
-            <div className="wp__copy" data-sc-cue="0 0.12 0">
-              <p className="lg-note">Software engineer <b>/</b> Toronto</p>
-              <h1 className="lg-display hero__name">Nizar Kadri</h1>
-              <p className="lg-display lg-display--md hero__line">I think several moves ahead.</p>
-              <p className="lg-body lg-body--lg">
-                Chess player since childhood, engineer by trade, allergic to default settings. I read a system the way
-                I read a board: every piece, every line, then one committed move.
-              </p>
-              <div className="wp__actions">
-                <Link href="/contact" className="lg-cta">{CTA_LABEL} <Arrow /></Link>
-                <Link href="/projects" className="lg-link">See the work</Link>
-              </div>
-            </div>
+    <div ref={root} className={`flight${still ? ' is-still' : ''}`} data-sc-mode="worldflight" data-sc-seam="0.17" data-sc-lerp="0.18">
+      <div data-sc-world className="flight__world">
+        {LEGS.map((leg, i) => (
+          <div key={leg.id} data-sc-segment data-sc-w={leg.w} data-sc-waypoint={leg.label}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img className="sc-world__poster" src={poster(Math.min(i, 6))} alt="" decoding="async" fetchPriority={i === 0 ? 'high' : 'low'} />
+            <video data-sc-src={`/world/${leg.id}.mp4`} data-sc-src-mobile={`/world/${leg.id}-m.mp4`} muted playsInline preload="none" aria-hidden="true" tabIndex={-1} />
           </div>
+        ))}
+      </div>
 
-          {/* 2. Nf3: calculation */}
-          <div ref={setScrim(1)} className="scrim scrim--trail" data-win="0.19 0.33 0 0" aria-hidden="true" />
-          <div ref={setPoint(1)} className="wp wp--calc" data-wp="calc">
-            <div className="wp__copy" data-sc-cue="0.19 0.33">
-              <p className="lg-note">search(position, <b>depth</b>)</p>
-              <h2 className="lg-display lg-display--lg">Chess taught me to see the whole board.</h2>
-              <p className="lg-body lg-body--lg">
-                Every system is a position: pieces, pressure, and a few moves that actually matter. So I calculate the
-                lines first. Then I commit. My default setting is that there has to be a better way.
-              </p>
-            </div>
-          </div>
-
-          {/* 3. Bc4: the work */}
-          <div ref={setScrim(2)} className="scrim scrim--top" data-win="0.37 0.53 0 0" aria-hidden="true" />
-          <div ref={setPoint(2)} className="wp wp--work" data-wp="work">
-            <div className="wp__copy" data-sc-cue="0.37 0.53">
-              <h2 className="lg-display lg-display--lg">Three doors. Each one shipped.</h2>
-              <Link href="/projects" className="lg-link">All {projectCount} projects</Link>
-            </div>
-            <ol className="doors" data-sc-cue="0.37 0.53">
-              {doors.map((d, i) => (
-                <li key={d.slug} ref={(n) => { labels.current[i] = n; }} className="door">
-                  <h3 className="lg-display lg-display--sm">
-                    <Link href={`/projects/${d.slug}`}>{d.title}</Link>
-                  </h3>
-                  <p>{d.summary}</p>
-                  <p className="lg-note">{d.technologies.slice(0, 3).join(' · ')}</p>
-                </li>
-              ))}
-            </ol>
-          </div>
-
-          {/* 4. O-O: the city */}
-          <div ref={setScrim(3)} className="scrim scrim--lead" data-win="0.57 0.67 0 0" aria-hidden="true" />
-          <div ref={setPoint(3)} className="wp wp--city" data-wp="city">
-            <div className="wp__copy" data-sc-cue="0.57 0.67">
-              <h2 className="lg-display lg-display--lg">Toronto is the home board.</h2>
-              <dl className="ledger">
-                <div>
-                  <dt>CGI <span className="lg-note">Software Engineer</span></dt>
-                  <dd>Re-architected Ontario&rsquo;s SEDAR Plus portal: pages 70% faster, 98% WCAG 2.1 compliant.</dd>
-                </div>
-                <div>
-                  <dt>Fiera Capital <span className="lg-note">Cloud Administrator</span></dt>
-                  <dd>Moved more than 20 on-premise servers to Azure and cut operating cost by 30%.</dd>
-                </div>
-              </dl>
-              <Link href="/experience" className="lg-link">Full experience</Link>
-            </div>
-          </div>
-
-          {/* 5. d4: the tower. The fog before it is authored silence. */}
-          <div ref={setScrim(4)} className="scrim scrim--low" data-win="0.75 0.915 0 0" aria-hidden="true" />
-          <div ref={setPoint(4)} className="wp wp--tower" data-wp="tower">
-            <div className="wp__copy" data-sc-cue="0.75 0.915">
-              <h2 className="lg-display lg-display--lg">Everything I have built and earned.</h2>
-              <p className="lg-body lg-body--lg">
-                {projectCount} projects. {certificateCount} certifications. One long game.
-              </p>
-              <div className="wp__actions">
-                <Link href="/about#certificates" className="lg-link">The certificates</Link>
-                <Link href="/projects" className="lg-link">The projects</Link>
-              </div>
-            </div>
-          </div>
-
-          {/* 6. the last position: it is the visitor's move */}
-          <div ref={setScrim(5)} className="scrim scrim--close" data-win="0.945 1.3 0 1" aria-hidden="true" />
-          <div ref={setPoint(5)} className="wp wp--close" data-wp="close">
-            <div className="wp__copy" data-sc-cue="0.945 1.3 0.07 0">
-              <p className="lg-note">await <b>yourMove()</b></p>
-              <h2 className="lg-display lg-display--xl">Your move.</h2>
-              <p className="lg-body lg-body--lg">Six moves on the board and none answered yet. Tell me what you are building.</p>
-              <Link href="/contact" className="lg-cta" onClick={play} data-sc-magnet="0.22">
-                {reply ? 'e5. Good move.' : CTA_LABEL} <Arrow />
-              </Link>
-            </div>
-            <footer className="world__foot" data-sc-cue="0.945 1.3 0.07 0" data-sc-rise="0">
-              <span className="lg-note">Nizar Kadri · Toronto · {new Date().getFullYear()}</span>
-              <nav aria-label="Elsewhere">
-                <Link href="/about">About</Link>
-                <Link href="/blog">Blog</Link>
-                {SOCIALS.map((s) => (
-                  <a key={s.name} href={s.url} target="_blank" rel="noreferrer noopener">{s.name}</a>
-                ))}
-              </nav>
-            </footer>
-          </div>
-
-          {/* What the pieces stand for: his stack, labelled on the board itself. */}
-          <ul className="tags" aria-label="The pieces I play with">
-            {TAGS.map((t, i) => (
-              <li key={t.piece} ref={(n) => { tags.current[i] = n; }} className="tag">
-                <span><i>{t.piece}</i> = <b>{t.value}</b></span>
+      <div data-sc-world-copy className="flight__copy">
+        {/* The scoresheet: written by scrolling, and the map of the page. It comes first
+            in the layer so the keyboard reaches the map before any scene. */}
+        <nav className="score" aria-label="The game so far">
+          <p className="score__head lg-note"><span>{'// nizar'}</span><span>{'// you'}</span></p>
+          <ol>
+            {beats.map((b, i) => (
+              <li key={b.san} className={i <= move ? 'is-played' : ''} aria-current={i === move ? 'step' : undefined}>
+                <button type="button" onClick={() => flyTo(i)} aria-label={`${i + 1}. ${b.san}, ${b.label}`}>
+                  <span className="score__n">{i + 1}.</span>
+                  <span className="score__san">{b.san}</span>
+                  <span className="score__label" title={b.label}>{b.fn}</span>
+                  <span className={`score__black${i === beats.length - 1 && reply ? ' is-reply' : ''}`}>{i === beats.length - 1 && reply ? 'e5' : '…'}</span>
+                </button>
               </li>
             ))}
-          </ul>
+          </ol>
+        </nav>
+        {/* scrims: only where the type sits, and driven here so the harness measures the real page */}
+        {beats.map((b, i) => (
+          <div key={b.key} ref={setScrim(i)} className={`veil veil--${b.key} veil--${b.tone}`} aria-hidden="true" />
+        ))}
 
-          {/* The scoresheet: written by scrolling, and the map of the page. */}
-          <nav className="score" aria-label="The game so far">
-            <p className="score__head lg-note"><span>{'// nizar'}</span><span>{'// you'}</span></p>
-            <ol>
-              {MOVES.map((m, i) => (
-                <li key={m.san} className={i <= move ? 'is-played' : ''} aria-current={i === move ? 'step' : undefined}>
-                  <button type="button" onClick={() => flyTo(i)} aria-label={`${i + 1}. ${m.san}, ${m.label}`}>
-                    <span className="score__n">{i + 1}.</span>
-                    <span className="score__san">{m.san}</span>
-                    <span className="score__label" title={m.label}>{m.fn}</span>
-                    <span className="score__black">{i === MOVES.length - 1 && reply ? 'e5' : '…'}</span>
-                  </button>
-                </li>
-              ))}
-            </ol>
-          </nav>
+        {/* 1. e4: the opening */}
+        <div className="slot slot--open">
+        <section className="beat beat--open tone-day" data-sc-copy data-beat="open" data-sc-window={win('open')}>
+          <p className="lg-note">Software engineer <b>/</b> Toronto</p>
+          <h1 className="lg-display hero__name">Nizar Kadri</h1>
+          <p className="lg-display lg-display--md hero__line">I think several moves ahead.</p>
+          <p className="lg-body lg-body--lg">
+            Chess player since childhood, engineer by trade, allergic to default settings. I read a system the way I
+            read a board: every piece, every line, then one committed move.
+          </p>
+          <div className="beat__actions">
+            <Link href="/contact" className="lg-cta">{CTA_LABEL} <Arrow /></Link>
+            <Link href="/projects" className="lg-link">See the work</Link>
+          </div>
+          <ul className="legend" aria-label="The pieces I play with">
+            {TAGS.slice(1).map((t) => (
+              <li key={t.piece}><i>{t.piece}</i> {t.value}</li>
+            ))}
+          </ul>
+        </section>
         </div>
-      </section>
+
+        {/* 2. Nf3: calculation */}
+        <div className="slot slot--calc">
+        <section className="beat beat--calc tone-day" data-sc-copy data-beat="calc" data-sc-window={win('calc')}>
+          <p className="lg-note">search(position, <b>depth</b>)</p>
+          <h2 className="lg-display lg-display--lg">Chess taught me to see the whole board.</h2>
+          <p className="lg-body lg-body--lg">
+            Every system is a position: pieces, pressure, and a few moves that actually matter. So I calculate the
+            lines first. Then I commit. My default setting is that there has to be a better way.
+          </p>
+        </section>
+        </div>
+
+        {/* 3. Bc4: the work */}
+        <section className="slot slot--work" aria-label="Featured work">
+          <header className="beat beat__head" data-sc-copy data-beat="work" data-sc-window={win('work')}>
+            <h2 className="lg-display lg-display--lg">Three doors. Each one shipped.</h2>
+            <Link href="/projects" className="lg-link">All {projectCount} projects</Link>
+          </header>
+          <ol className="gates" data-sc-copy data-beat="work" data-sc-window={win('work')}>
+            {doors.map((d, i) => (
+              <li key={d.slug} className="gate">
+                <Link href={`/projects/${d.slug}`} className="gate__door" aria-label={`${d.title}, case study`}>
+                  {d.cover && <Image src={d.cover} alt="" fill sizes="(max-width: 860px) 30vw, 22rem" priority={i === 0} />}
+                </Link>
+                <div className="gate__plate">
+                  <h3 className="lg-display lg-display--sm"><Link href={`/projects/${d.slug}`}>{d.title}</Link></h3>
+                  <p className="gate__sum">{d.summary}</p>
+                  <p className="lg-note">{d.technologies.slice(0, 3).join(' · ')}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </section>
+
+        {/* 4. O-O: where it was proven */}
+        <div className="slot slot--city">
+        <section className="beat beat--city" data-sc-copy data-beat="city" data-sc-window={win('city')}>
+          <h2 className="lg-display lg-display--lg">Toronto is the home board.</h2>
+          <dl className="ledger">
+            <div>
+              <dt>CGI <span className="lg-note">Software Engineer</span></dt>
+              <dd>Re-architected Ontario&rsquo;s SEDAR Plus portal: pages 70% faster, 98% WCAG 2.1 compliant.</dd>
+            </div>
+            <div>
+              <dt>Fiera Capital <span className="lg-note">Cloud Administrator</span></dt>
+              <dd>Moved more than 20 on-premise servers to Azure and cut operating cost by 30%.</dd>
+            </div>
+          </dl>
+          <Link href="/experience" className="lg-link">Full experience</Link>
+        </section>
+        </div>
+
+        {/* 5. d4: the tower. The cloud before it is authored silence. */}
+        <section className="slot slot--tower" aria-label="Certificates and work">
+          <div className="beat beat--tower" data-sc-copy data-beat="tower" data-sc-window={win('tower')}>
+            <h2 className="lg-display lg-display--lg">Everything I have built and earned.</h2>
+            <p className="lg-body lg-body--lg">
+              {projectCount} projects. {certificateCount} certifications. One long game.
+            </p>
+            <div className="beat__actions">
+              <Link href="/about#certificates" className="lg-link">The certificates</Link>
+              <Link href="/projects" className="lg-link">The projects</Link>
+            </div>
+          </div>
+          <div ref={wall} className="wall" data-sc-copy data-beat="tower" data-sc-window={win('tower')} style={{ ['--lanes' as string]: lanes }}>
+            {Array.from({ length: lanes }, (_, lane) => (
+              <ul key={lane} className="wall__lane">
+                {certificates.filter((_, i) => i % lanes === lane).map((c) => (
+                  <li key={c.src}>
+                    <Link href="/about#certificates" className="pane" aria-label={`Certificate: ${c.title}`}>
+                      <Image src={c.src} alt="" width={420} height={300} sizes="(max-width: 860px) 40vw, 15rem" />
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            ))}
+          </div>
+        </section>
+
+        {/* 6. the last position: it is the visitor's move */}
+        <section className="slot slot--close" aria-label="Your move">
+          <div className="beat beat--close" data-sc-copy data-beat="close" data-sc-window={win('close')}>
+            <p className="lg-note">await <b>yourMove()</b></p>
+            <h2 className="lg-display lg-display--xl">Your move.</h2>
+            <p className="lg-body lg-body--lg">Six moves on the board and none answered yet. Tell me what you are building.</p>
+            <Link href="/contact" className="lg-cta" onClick={play} data-sc-magnet="0.22">
+              {reply ? 'e5. Good move.' : CTA_LABEL} <Arrow />
+            </Link>
+          </div>
+          <footer className="flight__foot" data-sc-copy data-beat="close" data-sc-window={win('close')}>
+            <span className="lg-note">Nizar Kadri · Toronto · {new Date().getFullYear()}</span>
+            <nav aria-label="Elsewhere">
+              <Link href="/about">About</Link>
+              <Link href="/blog">Blog</Link>
+              {SOCIALS.map((s) => (
+                <a key={s.name} href={s.url} target="_blank" rel="noreferrer noopener">{s.name}</a>
+              ))}
+            </nav>
+          </footer>
+        </section>
+
+        {/* What the pieces stand for: his stack, labelled on the board itself. */}
+        <ul className="tags" aria-hidden="true">
+          {TAGS.map((t, i) => (
+            <li key={t.piece} ref={(n) => { tags.current[i] = n; }} className="tag">
+              <span><i>{t.piece}</i> = <b>{t.value}</b></span>
+            </li>
+          ))}
+        </ul>
+
+      </div>
+
+      <div data-sc-spacer aria-hidden="true" />
     </div>
   );
 }

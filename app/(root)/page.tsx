@@ -12,7 +12,7 @@ const Home = async () => {
   const cover = (url: string) => (url === PROJECT_PLACEHOLDER_IMAGE ? '' : url);
   // A portrait image made for the doorway, when one exists; otherwise the regular cover.
   const doorCover = (slug: string, url: string) =>
-    fs.existsSync(path.join(process.cwd(), 'public/images/Projects/doors', `${slug}.webp`)) ? `/images/Projects/doors/${slug}.webp` : cover(url);
+    fs.existsSync(path.join(process.cwd(), 'public/images/Projects/gates', `${slug}.webp`)) ? `/images/Projects/gates/${slug}.webp` : cover(url);
 
   const doors: LandingDoor[] = featured.map((p) => ({
     slug: p.slug,
@@ -23,10 +23,16 @@ const Home = async () => {
     liveUrl: p.liveUrl,
   }));
 
-  const certificates = getCertificates();
-  const tower = [...certificates.map((c) => c.src), ...projects.map((p) => cover(p.imageUrl)).filter(Boolean)];
+  const certificates = getCertificates().map((c) => ({ src: c.src, title: c.title }));
 
-  return <Landing doors={doors} tower={tower} projectCount={projects.length} certificateCount={Math.max(CERTIFICATE_SLOTS, certificates.length)} />;
+  return (
+    <Landing
+      doors={doors}
+      certificates={certificates}
+      projectCount={projects.length}
+      certificateCount={Math.max(CERTIFICATE_SLOTS, certificates.length)}
+    />
+  );
 };
 
 export default Home;

@@ -6,8 +6,8 @@
 
 .lg-bar { position: fixed; inset: 0 0 auto 0; z-index: var(--sc-z-chrome); height: var(--lg-bar-h); transition: background-color 240ms var(--sc-ease-out), border-color 240ms var(--sc-ease-out); border-bottom: 1px solid transparent; }
 .lg-bar::before { content: ""; position: absolute; inset: 0 0 -2.5rem 0; background: linear-gradient(180deg, color-mix(in oklab, var(--sc-canvas) 82%, transparent), transparent); pointer-events: none; z-index: -1; transition: opacity 240ms var(--sc-ease-out); }
-.lg-bar.is-solid { background: color-mix(in oklab, var(--sc-canvas) 88%, transparent); backdrop-filter: blur(14px) saturate(1.2); border-bottom-color: var(--sc-hairline); }
-.lg-bar.is-solid::before { opacity: 0; }
+.lg-bar:not(.is-home) { background: color-mix(in oklab, var(--sc-canvas) 88%, transparent); backdrop-filter: blur(14px) saturate(1.2); border-bottom-color: var(--sc-hairline); }
+.lg-bar:not(.is-home)::before { opacity: 0; }
 .lg-bar__inner { height: 100%; width: min(100% - 2 * var(--sc-gutter), 96rem); margin-inline: auto; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 1.5rem; }
 .lg-bar__mark { display: inline-flex; align-items: center; gap: 0.6rem; font-family: var(--sc-font-display); font-weight: 700; font-stretch: 110%; letter-spacing: -0.015em; font-size: 1.02rem; color: var(--sc-ink); text-decoration: none; justify-self: start; }
 .lg-bar__king { width: 1.35rem; height: 1.35rem; color: var(--sc-accent); }
@@ -40,7 +40,7 @@ html.lg-menu-open { overflow: hidden; }
 }
 @media (max-width: 420px) { .lg-bar__cta { display: none; } }
 
-.lg-foot { border-top: 1px solid var(--sc-hairline); background: linear-gradient(180deg, var(--sc-canvas), #05070a); position: relative; z-index: 4; }
+.lg-foot { border-top: 1px solid var(--sc-hairline); background: linear-gradient(180deg, var(--sc-canvas), #04070e); position: relative; z-index: 4; }
 .lg-foot__ask { padding-block: clamp(4rem, 9vw, 8rem) clamp(3rem, 6vw, 5rem); display: grid; gap: 1.1rem; justify-items: start; }
 .lg-foot__ask .lg-display { margin: 0; }
 .lg-foot__ask .lg-cta { margin-top: 0.75rem; }

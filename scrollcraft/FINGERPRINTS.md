@@ -29,9 +29,17 @@ changes only grammar and world will fail it.
 | Build | Grammar | Nav treatment | Hero device | Act-sequence shape | Close pattern | Signature move | World | Port |
 |---|---|---|---|---|---|---|---|---|
 | nizar-portfolio (landing) | Continuous world, on one fixed real-time WebGL stage instead of worldflight video legs | Site bar plus a chess scoresheet that is the clickable map of the page | Establishing position: lit king on a stone board in fog, pointer-parallax camera, headline greeting at p=0 | One pinned act, 11vh, six waypoints (opening, calculation, three doors, city, authored fog silence, tower peak, last position) | Arrival on a fresh board; the CTA plays Black's reply (pawn to the lit e5 square) and carries the move to /contact; footer inside the stage | The scoresheet: scrolling writes the game in notation, Black's column stays empty until the visitor replies | The Long Game: black stone chessboard on Lake Ontario at night, Toronto skyline, one ember light | 3000 (Next.js dev) |
+| nizar-portfolio r2, light version (landing). **Superseding revision of the row above, same site, not a new build.** | Continuous world as native worldflight: one fixed stage, seven scroll-scrubbed video legs, copy in one fixed layer | Same as r1 by the owner's request: site bar plus the chess scoresheet written as function calls, which is the clickable map | Establishing frame of the flight: marble pieces on a mirror board in the sky, his name as the headline, stack labels pinned to the pieces, no pin | One flight, 10.1vh of track plus landing room: six scenes on seven legs at one pace (1.3vh per 5s leg, 2.6vh for the tower), authored cloud silence before the peak | Same as r1 by the owner's request: the CTA plays Black's reply and carries it to /contact; footer inside the final scene, which keeps drifting | Same as r1: the scoresheet | The Long Game from daylight to blue hour: marble, glass, blue light, cloud; a sculpture of the owner dissolving into glass cubes | 3000 (Next.js dev) |
 
-*(empty: your first build has nothing to clear, so build whatever the interview
-points at. From the second onwards, this table is the constraint.)*
+*(The registry is yours. From the second site onwards, this table is the
+constraint.)*
+
+**Gate note for r2.** Against the r1 row it differs on hero device and
+act-sequence shape, and on the stage technology inside the grammar; it shares
+grammar family, nav treatment, close pattern and signature move because the
+owner asked for the concept, flow and scoresheet to be kept. That is 2 of 6, so
+it does not clear the gate as a new build and is recorded as a revision of the
+same site instead. A different site must clear 4 of 6 against both rows.
 
 ---
 
@@ -42,7 +50,10 @@ reusing: a grammar, a nav treatment, a close pattern, a signature move, an
 act-count-and-length band. The shared columns are what the next build inherits
 as a constraint, so writing them down is the whole point.
 
-Nothing is taken yet.
+- Continuous world with a chess scoresheet as the map (nizar-portfolio, both revisions).
+- A scoresheet written by scrolling whose last line is the visitor's reply, carried to the contact page.
+- Worldflight at 10.1vh with a double-weight peak leg and a cloud white-out as the authored silence.
+- A subject (a sculpture) dissolving into glass cubes as the bridge between a craft and software.
 
 ---
 

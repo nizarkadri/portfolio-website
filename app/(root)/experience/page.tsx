@@ -35,7 +35,7 @@ const ExperiencePage = async () => {
   const roles = getRoles();
 
   return (
-    <div className="ae lg-page">
+    <div className="ae lg-page tone-day tone-ground">
       <section className="ae-xhero lg-wrap" aria-labelledby="ae-experience-title">
         <h1 id="ae-experience-title" className="lg-display lg-display--xl">The moves already played.</h1>
         <p className="lg-body lg-body--lg">

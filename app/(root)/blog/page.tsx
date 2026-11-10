@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 export default async function BlogPage() {
   const [posts, tags, featured] = await Promise.all([getAllPosts(), getAllTags(), getFeaturedPost()]);
   return (
-    <div className="lg-page bl">
+    <div className="lg-page bl tone-day tone-ground">
       <div className="lg-wrap">
         <header className="bl-head bc-rise">
           <h1 className="lg-display lg-display--xl">Engineering notes</h1>

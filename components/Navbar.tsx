@@ -30,17 +30,9 @@ export const Arrow = () => (
 const Navbar: React.FC = () => {
   const pathname = usePathname() || '/';
   const [open, setOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
   const isHome = pathname === '/';
 
   useEffect(() => setOpen(false), [pathname]);
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
-    onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
 
   useEffect(() => {
     document.documentElement.classList.toggle('lg-menu-open', open);
@@ -55,7 +47,7 @@ const Navbar: React.FC = () => {
   const active = (href: string) => pathname === href || pathname.startsWith(href + '/');
 
   return (
-    <header className={`lg-bar${scrolled && !isHome ? ' is-solid' : ''}${isHome ? ' is-home' : ''}${open ? ' is-open' : ''}`}>
+    <header className={`lg-bar${isHome ? ' is-home' : ''}${open ? ' is-open' : ''}`}>
       <div className="lg-bar__inner">
         <Link href="/" className="lg-bar__mark" aria-label="Nizar Kadri, home">
           <KingMark className="lg-bar__king" />

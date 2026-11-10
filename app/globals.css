@@ -6,25 +6,59 @@
 /* ==========================================================================
    The Long Game: tokens. Six colours, three faces. Everything derives.
    ========================================================================== */
+/* Two tones, one system. Night is the gallery after dark: blue-black stone and
+   blue light. Day is the marble in daylight. A section opts into day with
+   .tone-day; everything inside it re-derives from the same six roles. */
 :root {
-  --sc-canvas:     #07090c;
-  --sc-surface:    #0f1319;
-  --sc-ink:        #ece7df;
-  --sc-ink-soft:   #98a0ab;
-  --sc-accent:     #ff8a4c;
-  --sc-accent-ink: #140a04;
+  --sc-canvas:     #070b14;
+  --sc-surface:    #0e1524;
+  --sc-ink:        #eef2f7;
+  --sc-ink-soft:   #9aa7b8;
+  --sc-accent:     #7fb0ff;   /* blue light, safe as text on night stone */
+  --sc-accent-ink: #061024;
   --sc-font-display: var(--font-archivo), "Archivo", system-ui, sans-serif;
   --sc-font-text:    var(--font-geist), "Geist", system-ui, sans-serif;
   --sc-font-mono:    var(--font-geist-mono), "Geist Mono", ui-monospace, monospace;
-  --sc-shadow-color: 216 45% 2%;
+  --sc-shadow-color: 222 60% 3%;
   --lg-bar-h: 4.25rem;
-  --lg-surface-2: #151b23;
-  --lg-ember-soft: color-mix(in oklab, var(--sc-accent) 16%, transparent);
+  --lg-surface-2: #131c2e;
+  --lg-cta: #2a62f0;          /* the one solid blue: buttons, on either tone */
+  --lg-cta-hover: #3d74ff;
+  --lg-cta-ink: #ffffff;
+  --lg-gold: #b8935a;         /* hairlines only, never text */
+  --lg-glass: color-mix(in oklab, #9fc2ff 7%, transparent);
+  --lg-glass-edge: color-mix(in oklab, #b9d2ff 26%, transparent);
+  --lg-ember-soft: color-mix(in oklab, var(--sc-accent) 14%, transparent);
+  --lg-hover-ink: #ffffff;
   /* legacy variables some older components still read */
-  --white: #ece7df; --off-white: #dcd6cc; --light-gray: #c3c7cd; --mid-gray: #98a0ab;
-  --dark-gray: #2a313b; --off-black: #0f1319; --deep-black: #07090c;
+  --white: #eef2f7; --off-white: #dde3ec; --light-gray: #c3cad6; --mid-gray: #9aa7b8;
+  --dark-gray: #253046; --off-black: #0e1524; --deep-black: #070b14;
   --transition-speed: 0.24s;
 }
+.tone-day, html[data-tone="day"] .lg-bar.is-home:not(.is-open), html[data-tone="day"] .score {
+  --sc-canvas:     #f3f1ec;
+  --sc-surface:    #ffffff;
+  --sc-ink:        #10141b;
+  --sc-ink-soft:   #566070;
+  --sc-accent:     #1f4fd8;
+  --sc-accent-ink: #ffffff;
+  --sc-hairline:        color-mix(in oklab, var(--sc-ink) 13%, transparent);
+  --sc-hairline-strong: color-mix(in oklab, var(--sc-ink) 26%, transparent);
+  --sc-shadow-color: 220 30% 28%;
+  --sc-edge: inset 0 1px 0 rgb(255 255 255 / 0.9);
+  --sc-e1: 0 1px 2px hsl(var(--sc-shadow-color) / 0.08), 0 2px 6px -1px hsl(var(--sc-shadow-color) / 0.07);
+  --sc-e2: 0 2px 4px hsl(var(--sc-shadow-color) / 0.07), 0 12px 28px -10px hsl(var(--sc-shadow-color) / 0.16);
+  --sc-e3: 0 4px 10px hsl(var(--sc-shadow-color) / 0.08), 0 30px 60px -24px hsl(var(--sc-shadow-color) / 0.24);
+  --lg-surface-2: #ebe8e1;
+  --lg-glass: color-mix(in oklab, #ffffff 62%, transparent);
+  --lg-glass-edge: color-mix(in oklab, #10141b 14%, transparent);
+  --lg-hover-ink: #000000;
+  --white: #10141b; --off-white: #232a35; --light-gray: #3c4654; --mid-gray: #566070;
+  --dark-gray: #d9d5cc; --off-black: #ffffff; --deep-black: #f3f1ec;
+  color: var(--sc-ink);
+}
+/* a day section that also lays its own marble ground */
+.tone-ground { background-color: var(--sc-canvas); }
 
 html { scroll-behavior: auto; background: var(--sc-canvas); }
 html.lenis, html.lenis body { height: auto; }
@@ -59,15 +93,15 @@ main { min-height: 100svh; position: relative; }
 .lg-cta {
   display: inline-flex; align-items: center; gap: 0.7rem; white-space: nowrap;
   padding: 0.85rem 1.35rem; border-radius: var(--sc-r-sm);
-  background: var(--sc-accent); color: var(--sc-accent-ink);
+  background: var(--lg-cta); color: var(--lg-cta-ink);
   font-family: var(--sc-font-text); font-weight: 600; font-size: 0.95rem; letter-spacing: 0;
   text-decoration: none; border: 0; cursor: pointer;
-  box-shadow: 0 1px 0 color-mix(in oklab, white 35%, transparent) inset, 0 10px 30px -12px color-mix(in oklab, var(--sc-accent) 70%, transparent);
+  box-shadow: 0 1px 0 color-mix(in oklab, white 28%, transparent) inset, 0 8px 22px -12px color-mix(in oklab, var(--lg-cta) 80%, transparent);
   transition: transform 140ms var(--sc-ease-out), background-color 140ms var(--sc-ease-out);
 }
 .lg-cta svg { width: 1rem; height: 1rem; flex: none; }
 .lg-cta:active { transform: translateY(1px) scale(0.985); }
-@media (hover: hover) and (pointer: fine) { .lg-cta:hover { background: #ffa06c; } }
+@media (hover: hover) and (pointer: fine) { .lg-cta:hover { background: var(--lg-cta-hover); } }
 .lg-cta--sm { padding: 0.55rem 0.95rem; font-size: 0.875rem; }
 .lg-link {
   display: inline-flex; align-items: center; gap: 0.5rem; color: var(--sc-ink);
@@ -75,7 +109,7 @@ main { min-height: 100svh; position: relative; }
   text-decoration-color: var(--sc-hairline-strong); text-underline-offset: 0.3em;
   transition: text-decoration-color 160ms var(--sc-ease-out), color 160ms var(--sc-ease-out);
 }
-@media (hover: hover) and (pointer: fine) { .lg-link:hover { text-decoration-color: var(--sc-accent); color: #fff; } }
+@media (hover: hover) and (pointer: fine) { .lg-link:hover { text-decoration-color: var(--sc-accent); color: var(--lg-hover-ink); } }
 .lg-chip {
   display: inline-flex; align-items: center; padding: 0.22rem 0.55rem; border-radius: 4px;
   border: 1px solid var(--sc-hairline); color: var(--sc-ink-soft);
