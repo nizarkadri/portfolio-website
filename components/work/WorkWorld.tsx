@@ -12,6 +12,37 @@ const SETTLE = 0.62;      // how much the scroll slows as a project arrives (0 =
 
 const shortTitle = (t: string) => t.split(/\s+[-—]\s+|:\s+/)[0];
 const clamp = (v: number) => Math.min(1, Math.max(0, v));
+const ease = (v: number) => { const k = clamp(v); return k * k * (3 - 2 * k); };
+
+/**
+ * How far in a piece of the words is, 0 to 1, at distance d from its project.
+ * `s` (0 to 1) is its place in the order: the first piece arrives first and
+ * also leaves first, whichever way the scroll is going.
+ */
+const SPREAD = 0.16;
+function rise(d: number, s: number) {
+  const order = d < 0 ? s : 1 - s;
+  return ease((0.42 - Math.abs(d) - order * SPREAD) / 0.18);
+}
+
+/** A title as words of single letters, so the scroll can raise them one at a time. */
+function Letters({ text }: { text: string }) {
+  return (
+    <>
+      <span className="lg-sr">{text}</span>
+      <span aria-hidden="true">
+        {text.split(' ').map((word, wi, all) => (
+          <React.Fragment key={wi}>
+            <span className="pw__w">
+              {Array.from(word).map((ch, ci) => <span key={ci} className="pw__ch">{ch}</span>)}
+            </span>
+            {wi < all.length - 1 ? ' ' : null}
+          </React.Fragment>
+        ))}
+      </span>
+    </>
+  );
+}
 
 /**
  * Scroll progress to a place among the projects. The scene is scrubbed by the
@@ -45,6 +76,10 @@ export default function WorkWorld({ projects }: { projects: ProjectSummary[] }) 
   const canvas = useRef<HTMLCanvasElement>(null);
   const world = useRef<Orrery | null>(null);
   const label = useRef<HTMLDivElement>(null);
+  const lead = useRef<HTMLSpanElement>(null);
+  const dot = useRef<HTMLSpanElement>(null);
+  const chars = useRef<HTMLElement[]>([]);
+  const parts = useRef<HTMLElement[]>([]);
   const [active, setActive] = useState(0);
   const [mode, setMode] = useState<'pending' | 'live' | 'off'>('pending');
   const n = projects.length;
@@ -63,11 +98,38 @@ export default function WorkWorld({ projects }: { projects: ProjectSummary[] }) 
     if (lenis) lenis.scrollTo(y, { duration: 1.1 }); else window.scrollTo({ top: y, behavior: 'smooth' });
   }, [n]);
 
+  // the letters and lines of the words on show, found again whenever the project changes
+  useLayoutEffect(() => {
+    const el = act.current;
+    if (!el) return;
+    chars.current = Array.from(el.querySelectorAll<HTMLElement>('.pw__ch'));
+    parts.current = Array.from(el.querySelectorAll<HTMLElement>('[data-part]'));
+    chars.current.forEach((c) => { c.dataset.p = ''; });
+  }, [active, mode]);
+
   useEffect(() => {
     if (mode !== 'live' || !canvas.current || !act.current) return;
     const el = act.current, cv = canvas.current;
     const mobile = window.matchMedia('(max-width: 860px)').matches;
     let dead = false, raf = 0, last = -1, w: Orrery | null = null;
+    // On a wide screen the words sit level with the globe, joined to it by a line.
+    // Anywhere narrower they stay together at the foot of the scene.
+    let float = false, panelRight = 0, panelH = 0, headBottom = 0;
+    const measure = () => {
+      const lb = label.current, hd = el.querySelector<HTMLElement>('.pw__head');
+      panelRight = lb ? lb.offsetLeft + lb.offsetWidth : 0;
+      panelH = lb ? lb.offsetHeight : 0;
+      headBottom = hd ? hd.offsetTop + hd.offsetHeight : 0;
+    };
+    const layout = () => {
+      float = window.innerWidth > 860 && window.innerWidth / window.innerHeight >= 1.25;
+      el.classList.toggle('pw--float', float);
+      measure();
+    };
+    layout();
+    // the panel's size changes with each project's words
+    const sizes = new ResizeObserver(measure);
+    if (label.current) sizes.observe(label.current);
 
     const frame = () => {
       raf = requestAnimationFrame(frame);
@@ -80,12 +142,46 @@ export default function WorkWorld({ projects }: { projects: ProjectSummary[] }) 
       w?.draw(f);
       const here = Math.min(n - 1, Math.max(0, Math.round(f)));
       const d = f - here;
-      const k = Math.min(1, Math.max(0, (0.42 - Math.abs(d)) / 0.25));
-      const o = k * k * (3 - 2 * k);
-      if (label.current) {
-        label.current.style.opacity = o.toFixed(3);
-        label.current.style.transform = `translate3d(0, ${(-d * 34).toFixed(1)}px, 0)`;
-        label.current.style.pointerEvents = o > 0.5 ? 'auto' : 'none';
+      const o = ease((0.42 - Math.abs(d)) / 0.25);
+      const up = d < 0 ? 1 : -1;   // arriving words come up from below, leaving words carry on upwards
+
+      const lb = label.current;
+      if (float && w) {
+        const a = w.focusOnScreen();
+        // the panel sits level with the globe, but never climbs into the heading
+        const py = Math.max(a.y, headBottom + 20 + panelH / 2);
+        if (lb) lb.style.transform = `translate3d(0, ${py.toFixed(1)}px, 0) translateY(-50%)`;
+        // the line is drawn out of the globe towards the words, level with both
+        const ly = Math.min(Math.max(a.y, py - panelH / 2 + 28), py + panelH / 2 - 28);
+        const dy = Math.min(Math.abs(ly - a.y), a.r * 0.9);
+        const start = panelRight + 18, end = a.x - Math.sqrt(a.r * a.r - dy * dy) - 16, len = Math.max(0, end - start);
+        const p = rise(d, 0);
+        if (lead.current) lead.current.style.transform = `translate3d(${(end - len * p).toFixed(1)}px, ${ly.toFixed(1)}px, 0) scaleX(${(len * p / 100).toFixed(3)})`;
+        if (dot.current) dot.current.style.transform = `translate3d(${end.toFixed(1)}px, ${ly.toFixed(1)}px, 0) scale(${o.toFixed(3)})`;
+      } else if (lb) {
+        lb.style.transform = `translate3d(0, ${(-d * 34).toFixed(1)}px, 0)`;
+      }
+      if (lb) {
+        lb.style.opacity = o.toFixed(3);
+        lb.style.pointerEvents = o > 0.5 ? 'auto' : 'none';
+      }
+
+      // the name, letter by letter
+      const cs = chars.current, m = cs.length;
+      for (let j = 0; j < m; j++) {
+        const p = rise(d, m > 1 ? j / (m - 1) : 0);
+        const key = p.toFixed(3) + up;
+        if (cs[j].dataset.p === key) continue;
+        cs[j].dataset.p = key;
+        cs[j].style.opacity = p.toFixed(3);
+        cs[j].style.transform = p >= 1 ? '' : `translate3d(0, ${((1 - p) * 72 * up).toFixed(1)}%, 0)`;
+      }
+      // then the lines of the description, one after another
+      const ps = parts.current, k = ps.length;
+      for (let j = 0; j < k; j++) {
+        const p = rise(d, 0.25 + 0.75 * (k > 1 ? j / (k - 1) : 0));
+        ps[j].style.opacity = p.toFixed(3);
+        ps[j].style.transform = p >= 1 ? '' : `translate3d(0, ${((1 - p) * 16 * up).toFixed(1)}px, 0)`;
       }
       if (here !== last) { last = here; setActive(here); }
     };
@@ -110,7 +206,7 @@ export default function WorkWorld({ projects }: { projects: ProjectSummary[] }) 
     });
     raf = requestAnimationFrame(frame);
 
-    const onResize = () => w?.resize();
+    const onResize = () => { layout(); w?.resize(); };
     const onPointer = (e: PointerEvent) => {
       if (e.pointerType !== 'mouse' || !w) return;
       w.setPointer((e.clientX / window.innerWidth) * 2 - 1, -((e.clientY / window.innerHeight) * 2 - 1));
@@ -128,6 +224,7 @@ export default function WorkWorld({ projects }: { projects: ProjectSummary[] }) 
     return () => {
       dead = true;
       cancelAnimationFrame(raf);
+      sizes.disconnect();
       window.removeEventListener('resize', onResize);
       window.removeEventListener('pointermove', onPointer);
       cv.removeEventListener('click', onClick);
@@ -160,15 +257,18 @@ export default function WorkWorld({ projects }: { projects: ProjectSummary[] }) 
           <h1 className="lg-display pw__title"><Chars text="The work" /></h1>
         </header>
 
+        <span ref={lead} className="pw__lead" aria-hidden="true" />
+        <span ref={dot} className="pw__dot" aria-hidden="true" />
+
         {/* The label: flat markup. The scroll moves it in and out with its globe; it changes only while out of sight. */}
         <div ref={label} className="pw__label" aria-live="polite">
-          <p className="lg-note">{[current.year, current.status].filter(Boolean).join(' · ')}</p>
-          <h2 className="lg-display pw__name">{shortTitle(current.title)}</h2>
-          <p className="pw__sum">{current.summary}</p>
-          <ul className="pw__stack" aria-label="Stack">
+          <p className="lg-note" data-part="">{[current.year, current.status].filter(Boolean).join(' · ')}</p>
+          <h2 className="lg-display pw__name" data-long={shortTitle(current.title).length > 24 ? '' : undefined}><Letters text={shortTitle(current.title)} /></h2>
+          <p className="pw__sum" data-part="">{current.summary}</p>
+          <ul className="pw__stack" aria-label="Stack" data-part="">
             {current.technologies.slice(0, 5).map((t) => <li key={t} className="lg-chip">{t}</li>)}
           </ul>
-          <div className="pw__links">
+          <div className="pw__links" data-part="">
             <Link href={`/projects/${current.slug}`} className="lg-cta lg-cta--sm">Case study <Arrow /></Link>
             {current.liveUrl && (
               <a href={current.liveUrl} target="_blank" rel="noreferrer noopener" className="pj-pill" aria-label={`Live preview of ${shortTitle(current.title)} (opens in a new tab)`}>Live preview</a>

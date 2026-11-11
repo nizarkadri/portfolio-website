@@ -111,14 +111,14 @@
 .pj-index-title { font-weight: 300; letter-spacing: -0.05em; line-height: 1; font-size: clamp(2.2rem, 1.2rem + 3.4vw, 4.6rem); }
 
 .pw__stage { position: sticky; top: 0; height: 100svh; overflow: hidden; isolation: isolate;
-  background: linear-gradient(180deg, #c3d3e2 0%, #93a7bb 52%, #7d93a8 100%); }
+  background: #1f2a31; color: #eef6f7; }
 .pw__canvas { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; transition: opacity 1100ms var(--sc-ease-out); }
 .pw.is-live .pw__canvas { opacity: 1; }
 /* a breath of mist where the words sit, so ink always reads */
 .pw__stage::after { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 1;
-  background: radial-gradient(62% 78% at 0% 78%, rgba(206, 220, 233, 0.88), rgba(206, 220, 233, 0.5) 44%, transparent 70%),
-    radial-gradient(46% 42% at 0% 6%, rgba(206, 220, 233, 0.92), rgba(206, 220, 233, 0.55) 50%, transparent 78%),
-    linear-gradient(180deg, rgba(206, 220, 233, 0.5), transparent 24%); }
+  background: radial-gradient(62% 78% at 0% 78%, rgba(236, 242, 246, 0.85), rgba(236, 242, 246, 0.45) 44%, transparent 70%),
+    radial-gradient(46% 42% at 0% 6%, rgba(236, 242, 246, 0.9), rgba(236, 242, 246, 0.5) 50%, transparent 78%),
+    linear-gradient(180deg, rgba(236, 242, 246, 0.5), transparent 24%); }
 
 .pw__head { position: absolute; z-index: 3; left: var(--sc-gutter); top: calc(var(--lg-bar-h) + 1.2rem); display: grid; gap: 0.5rem; justify-items: start; pointer-events: none; }
 .pw__head > * { margin: 0; }
@@ -141,7 +141,7 @@
 @media (hover: hover) and (pointer: fine) { .pw__rail button:hover::after { background: var(--sc-ink); } }
 
 @media (max-width: 860px) {
-  .pw__stage::after { background: linear-gradient(0deg, rgba(206, 220, 233, 0.94) 0, rgba(206, 220, 233, 0.88) 36%, transparent 52%), linear-gradient(180deg, rgba(206, 220, 233, 0.9), rgba(206, 220, 233, 0.6) 10%, transparent 21%); }
+  .pw__stage::after { background: linear-gradient(0deg, rgba(236, 242, 246, 0.94) 0, rgba(236, 242, 246, 0.88) 36%, transparent 52%), linear-gradient(180deg, rgba(236, 242, 246, 0.9), rgba(236, 242, 246, 0.6) 10%, transparent 21%); }
   .pw__head { top: calc(var(--lg-bar-h) + 0.5rem); }
   .pw__title { font-size: clamp(2.2rem, 10vw, 3rem); }
   .pw__label { right: var(--sc-gutter); width: auto; bottom: 4.6rem; gap: 0.65rem; }
@@ -159,6 +159,27 @@
 /* the label is moved by the scroll, frame by frame: no transition of its own to lag behind */
 .pw__label { will-change: opacity, transform; }
 
+/* the name, letter by letter (each letter is raised by the scroll) */
+.pw__w { display: inline-block; white-space: nowrap; }
+.pw__ch { display: inline-block; will-change: transform, opacity; }
+
+/* Wide screens. The words sit level with the globe, the name large at their head, joined to the
+   globe by a hairline. Positions are set per frame from the scene itself. */
+.pw__lead, .pw__dot { display: none; }
+.pw--float .pw__lead { display: block; position: absolute; z-index: 2; left: 0; top: 0; width: 100px; height: 1px; transform-origin: 0 50%;
+  background: linear-gradient(90deg, color-mix(in oklab, var(--sc-ink) 15%, transparent), color-mix(in oklab, var(--sc-ink) 70%, transparent)); pointer-events: none; }
+.pw--float .pw__dot { display: block; position: absolute; z-index: 2; left: -4px; top: -4px; width: 9px; height: 9px; border-radius: 50%;
+  background: #12c9cf; box-shadow: 0 0 0 4px rgba(18, 201, 207, 0.18); pointer-events: none; }
+.pw--float .pw__title { font-size: clamp(2.2rem, min(3.4vw, 6vh), 3.8rem); }
+.pw--float .pw__name { font-size: clamp(2.6rem, min(4.4vw, 7.4vh), 4.8rem); line-height: 1; text-wrap: balance; }
+.pw--float .pw__name[data-long] { font-size: clamp(1.9rem, min(2.7vw, 5vh), 3.1rem); }
+.pw--float .pw__label { top: 0; bottom: auto; width: min(31rem, 35vw); gap: 1rem;
+  transform: translate3d(0, 52svh, 0) translateY(-50%); }
+.pw--float .pw__sum { font-size: 1.12rem; line-height: 1.5; color: var(--sc-ink); -webkit-line-clamp: 5; }
+/* a shade of the room's own dark behind the words on the left, so light words always read */
+.pw--float .pw__stage::after { background: radial-gradient(46% 66% at 0% 48%, rgba(14, 20, 24, 0.72), rgba(14, 20, 24, 0.38) 52%, transparent 82%),
+  radial-gradient(44% 40% at 0% 6%, rgba(14, 20, 24, 0.6), rgba(14, 20, 24, 0.25) 50%, transparent 76%); }
+
 /* ==========================================================================
    The list, paced. On a wide screen it pins like the world above it and the
    scroll moves it one row at a time: about a third of a screen of scroll for
@@ -171,3 +192,19 @@
   -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 14%, #000 74%, transparent 100%); mask-image: linear-gradient(180deg, transparent 0, #000 14%, #000 74%, transparent 100%); }
 .pj-board.is-paced .pj-list { will-change: transform; }
 .pj-board.is-paced .pj-view { position: static; align-self: center; }
+
+/* the room is dark: its words, buttons and marks are light */
+.pw__stage .lg-display, .pw__stage .pw__sum { color: #eef6f7; }
+.pw__stage .lg-note { color: rgba(222, 236, 238, 0.66); }
+.pw__stage .hero__eyebrow i { background: #12c9cf; }
+.pw__stage .lg-cta { background: #eef6f7; color: #0b0f15; }
+.pw__stage .pj-pill { background: rgba(255, 255, 255, 0.08); color: #eef6f7; border-color: rgba(238, 246, 247, 0.28); }
+@media (hover: hover) and (pointer: fine) { .pw__stage .pj-pill:hover { background: #eef6f7; color: #0b0f15; border-color: #eef6f7; } }
+.pw__stage .pw__stack .lg-chip { background: rgba(255, 255, 255, 0.08); color: #eef6f7; border-color: rgba(238, 246, 247, 0.24); }
+.pw__stage .pw__rail button::after { background: rgba(238, 246, 247, 0.3); }
+.pw__stage .pw__rail button[aria-current="true"]::after { background: #eef6f7; }
+@media (hover: hover) and (pointer: fine) { .pw__stage .pw__rail button:hover::after { background: #eef6f7; } }
+.pw--float .pw__lead { background: linear-gradient(90deg, rgba(238, 246, 247, 0.12), rgba(238, 246, 247, 0.6)); }
+@media (max-width: 860px) {
+  .pw__stage::after { background: linear-gradient(0deg, rgba(14, 20, 24, 0.9) 0, rgba(14, 20, 24, 0.75) 38%, transparent 56%), linear-gradient(180deg, rgba(14, 20, 24, 0.7), transparent 20%); }
+}
