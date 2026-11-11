@@ -6,16 +6,18 @@
 .world__canvas { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; opacity: 0; transition: opacity 900ms var(--sc-ease-out); background: var(--sc-canvas); }
 .world__act.is-live .world__canvas { opacity: 1; }
 .world__vignette { position: absolute; inset: 0; z-index: 1; pointer-events: none;
-  background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(3, 4, 6, 0.55) 100%); }
+  background:
+    linear-gradient(180deg, rgba(var(--veil), 0.82) 0, rgba(var(--veil), 0.6) 4.5rem, rgba(var(--veil), 0.28) 7.5rem, transparent 11rem),
+    radial-gradient(120% 90% at 50% 45%, transparent 58%, rgba(var(--veil), 0.42) 100%); }
 
 /* scrims: density only where the copy sits, never the whole frame */
 .scrim { position: absolute; z-index: 2; pointer-events: none; opacity: 0; }
 .scrim--on { opacity: 1; }
-.scrim--lead { inset: 0 38% 0 0; background: radial-gradient(100% 85% at 8% 62%, rgba(5, 7, 10, 0.96), rgba(5, 7, 10, 0.8) 46%, transparent 80%); }
-.scrim--trail { inset: 0 0 0 38%; background: linear-gradient(270deg, rgba(5, 7, 10, 0.94) 0%, rgba(5, 7, 10, 0.86) 48%, rgba(5, 7, 10, 0.4) 78%, transparent); }
-.scrim--top { inset: 0 0 55% 0; background: linear-gradient(180deg, rgba(5, 7, 10, 0.9), rgba(5, 7, 10, 0.45) 60%, transparent); }
-.scrim--low { inset: 35% 40% 0 0; background: radial-gradient(90% 80% at 10% 80%, rgba(5, 7, 10, 0.9), rgba(5, 7, 10, 0.5) 50%, transparent 78%); }
-.scrim--close { inset: 30% 0 0 0; background: linear-gradient(0deg, rgba(5, 7, 10, 0.86) 0%, rgba(5, 7, 10, 0.62) 40%, rgba(5, 7, 10, 0.3) 75%, transparent); }
+.scrim--lead { inset: 0 38% 0 0; background: radial-gradient(100% 85% at 8% 62%, rgba(var(--veil), 0.96), rgba(var(--veil), 0.8) 46%, transparent 80%); }
+.scrim--trail { inset: 0 0 0 38%; background: linear-gradient(270deg, rgba(var(--veil), 0.94) 0%, rgba(var(--veil), 0.86) 48%, rgba(var(--veil), 0.4) 78%, transparent); }
+.scrim--top { inset: 0 0 55% 0; background: linear-gradient(180deg, rgba(var(--veil), 0.9), rgba(var(--veil), 0.45) 60%, transparent); }
+.scrim--low { inset: 35% 40% 0 0; background: radial-gradient(90% 80% at 10% 80%, rgba(var(--veil), 0.9), rgba(var(--veil), 0.5) 50%, transparent 78%); }
+.scrim--close { inset: 30% 0 0 0; background: linear-gradient(0deg, rgba(var(--veil), 0.86) 0%, rgba(var(--veil), 0.62) 40%, rgba(var(--veil), 0.3) 75%, transparent); }
 
 /* waypoints */
 .wp { position: absolute; inset: 0; z-index: 3; display: grid; pointer-events: none;
@@ -36,12 +38,12 @@
 
 .wp--work { grid-template-rows: auto 1fr; }
 .wp--work .wp__copy { max-width: none; justify-items: center; text-align: center; justify-self: center; gap: 0.9rem; padding-top: clamp(0.5rem, 3vh, 2.5rem); }
-.wp--work .lg-display { max-width: 20ch; }
+.wp--work .wp__copy .lg-display { max-width: none; font-size: clamp(2rem, 1rem + 3.4vw, 3.6rem); }
 .doors { list-style: none; margin: 0; padding: 0; position: absolute; left: 0; right: 0; bottom: clamp(2rem, 7vh, 5rem); height: 9.5rem; pointer-events: none; }
-.door { position: absolute; left: 0; bottom: 0; width: min(21rem, 27vw); translate: calc(var(--x, 50vw) - 50%) 0; pointer-events: auto;
+.door { position: absolute; left: 0; bottom: 0; width: min(17rem, 21vw); translate: calc(var(--x, 50vw) - 50%) 0; pointer-events: auto;
   text-align: center; display: grid; gap: 0.45rem; padding: 1rem 1.1rem 1.05rem;
-  background: linear-gradient(180deg, rgba(10, 13, 18, 0.82), rgba(7, 9, 12, 0.92)); border: 1px solid var(--sc-hairline); border-radius: var(--sc-r-md);
-  box-shadow: var(--sc-edge), var(--sc-e2); backdrop-filter: blur(6px); }
+  background: rgba(255, 255, 255, 0.66); border: 1px solid var(--sc-hairline); border-radius: 18px;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.7) inset, 0 18px 40px -24px rgba(20, 40, 70, 0.35); backdrop-filter: blur(14px); }
 .door > * { margin: 0; }
 .door h3 a { color: var(--sc-ink); text-decoration: none; }
 .door h3 a::after { content: ""; position: absolute; inset: 0; border-radius: inherit; }
@@ -100,7 +102,7 @@
   .wp__copy { max-width: none; gap: 0.85rem; }
   .wp__copy .lg-display, .wp--open .lg-display, .wp--tower .lg-display { max-width: 14ch; }
   .lg-body--lg { font-size: 1.02rem; line-height: 1.5; }
-  .scrim { inset: 30% 0 0 0 !important; background: linear-gradient(0deg, rgba(5, 7, 10, 0.98) 0%, rgba(5, 7, 10, 0.96) 60%, rgba(5, 7, 10, 0.55) 84%, transparent) !important; }
+  .scrim { inset: 30% 0 0 0 !important; background: linear-gradient(0deg, rgba(var(--veil), 0.98) 0%, rgba(var(--veil), 0.96) 60%, rgba(var(--veil), 0.55) 84%, transparent) !important; }
   .wp--work { grid-template-rows: 1fr auto; }
   .wp--work .wp__copy { justify-items: start; text-align: left; justify-self: start; padding-top: 0; align-self: end; margin-bottom: 0.9rem; }
   .doors { position: static; height: auto; display: grid; gap: 0.5rem; pointer-events: auto; width: 100%; }
@@ -127,7 +129,7 @@
 .world[data-mode="static"] .world__canvas, .world[data-mode="static"] .world__vignette, .world[data-mode="static"] .scrim { display: none; }
 .world[data-mode="static"] .wp [data-sc-cue] { opacity: 1 !important; transform: none !important; visibility: visible !important; pointer-events: auto !important; }
 .world[data-mode="static"] .wp { position: relative; inset: auto; min-height: 100svh;
-  background: linear-gradient(90deg, rgba(5, 7, 10, 0.92) 0%, rgba(5, 7, 10, 0.66) 55%, rgba(5, 7, 10, 0.4) 100%), var(--poster, none) center / cover no-repeat, var(--sc-canvas);
+  background: linear-gradient(90deg, rgba(var(--veil), 0.92) 0%, rgba(var(--veil), 0.66) 55%, rgba(var(--veil), 0.4) 100%), var(--poster, none) center / cover no-repeat, var(--sc-canvas);
   border-bottom: 1px solid var(--sc-hairline); }
 .world[data-mode="static"] .wp > * { pointer-events: auto !important; }
 .world[data-mode="static"] .wp[data-wp="open"] { --poster: url("/images/world/poster-1.webp"); }
@@ -144,13 +146,13 @@
 /* small labels over the live scene carry more ink than they do on a flat ground */
 .wp .lg-note { color: color-mix(in oklab, var(--sc-ink) 78%, var(--sc-ink-soft)); }
 
-.world[data-mode="static"] .wp[data-wp="work"] { background: linear-gradient(180deg, rgba(5, 7, 10, 0.93) 0%, rgba(5, 7, 10, 0.7) 45%, rgba(5, 7, 10, 0.9) 100%), var(--poster, none) center / cover no-repeat, var(--sc-canvas); }
+.world[data-mode="static"] .wp[data-wp="work"] { background: linear-gradient(180deg, rgba(var(--veil), 0.93) 0%, rgba(var(--veil), 0.7) 45%, rgba(var(--veil), 0.9) 100%), var(--poster, none) center / cover no-repeat, var(--sc-canvas); }
 
 /* ---------------------------------------------------------- the hero name */
 .wp--open .hero__name { font-size: clamp(3.2rem, 1rem + 6.8vw, 7.2rem); line-height: 0.9; letter-spacing: -0.045em; font-stretch: 116%; font-weight: 900; margin-left: -0.04em !important; max-width: none !important; }
 .wp--open .hero__line { color: var(--sc-accent); max-width: none !important; font-size: clamp(1.35rem, 0.9rem + 1.5vw, 2.3rem); letter-spacing: -0.02em; font-stretch: 108%; font-weight: 700; }
 .wp--open .wp__copy { gap: 0.9rem; max-width: none; width: fit-content; }
-.wp--open .lg-body { max-width: 46ch; }
+.wp--open .lg-body { max-width: 40ch; }
 
 /* ------------------------------------------- stack labels on the pieces */
 .tags { list-style: none; margin: 0; padding: 0; position: absolute; inset: 0; z-index: 2; pointer-events: none; }
@@ -162,6 +164,8 @@
 .tag i { font-style: normal; color: var(--sc-ink-soft); }
 .tag b { font-weight: 500; color: var(--sc-ink); }
 .tag:first-child b { color: var(--sc-accent); }
+.tag:first-child > span { bottom: 3.9rem; }
+.tag:first-child > span::after { height: 3.7rem; }
 .world[data-mode="static"] .tags { display: none; }
 
 .score__label { font-family: var(--sc-font-mono) !important; font-size: 0.74rem !important; }
@@ -173,4 +177,118 @@
   .tag > span { font-size: 0.64rem; padding: 0.16rem 0.4rem; bottom: 1.1rem; }
   .tag > span::after { height: 0.95rem; }
   .tag:nth-child(n + 5) { display: none; }
+}
+
+/* ==========================================================================
+   Revision: a pale, quiet page. One subject, a lot of air, ink on mist.
+   ========================================================================== */
+.world {
+  --veil: 227, 242, 251;
+  --sc-canvas: #e3f2fb; --sc-surface: #f2f8fd; --sc-ink: #0b0f15; --sc-ink-soft: #55606e;
+  --sc-accent: #0b0f15; --sc-accent-ink: #f4f8fc;
+  --sc-hairline: color-mix(in oklab, #0b0f15 12%, transparent); --sc-hairline-strong: color-mix(in oklab, #0b0f15 22%, transparent);
+  color: var(--sc-ink);
+}
+.world__vignette { background: none; }
+.world .lg-note b, .world .lg-note strong { color: var(--sc-ink); }
+.wp .lg-note { color: var(--sc-ink-soft); }
+.wp .lg-body--lg { color: color-mix(in oklab, var(--sc-ink) 72%, var(--sc-canvas)); }
+
+/* the portrait: the first thing on the page, and it gives way to the board */
+.hero-plate { position: absolute; inset: 0; z-index: 1; pointer-events: none; will-change: opacity, transform; transform-origin: 78% 40%; background: var(--sc-canvas); }
+.hero-plate img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 100% 30%; }
+.world[data-mode="static"] .hero-plate { display: none; }
+
+.wp--open .hero__name { font-family: var(--sc-font-display); font-weight: 300; font-stretch: normal; letter-spacing: -0.055em; line-height: 0.95;
+  font-size: clamp(3.4rem, 1rem + 7.4vw, 8rem); margin-left: -0.05em !important; }
+.wp--open .hero__line { color: var(--sc-ink-soft); font-weight: 400; font-stretch: normal; letter-spacing: -0.03em; font-size: clamp(1.25rem, 0.9rem + 1.2vw, 1.9rem); }
+.wp--open .lg-body { max-width: 38ch; font-size: 1.02rem; line-height: 1.55; color: var(--sc-ink-soft); }
+.wp--open .wp__copy { gap: 1rem; }
+.hero__eyebrow { display: inline-flex; align-items: center; gap: 0.6rem; text-transform: none; letter-spacing: 0; font-family: var(--sc-font-text); font-size: 0.86rem; }
+.hero__eyebrow i { width: 0.42rem; height: 0.42rem; border-radius: 50%; background: var(--sc-ink); }
+.world .wp__actions { gap: 0.6rem; margin-top: 0.9rem; }
+.world .wp__actions .lg-link { text-decoration: none; padding: 0.85rem 1.4rem; border-radius: 999px; border: 1px solid var(--sc-hairline-strong); background: rgba(255, 255, 255, 0.5); font-size: 0.92rem; }
+@media (hover: hover) and (pointer: fine) { .world .wp__actions .lg-link:hover { border-color: var(--sc-ink); } }
+.wp--work .wp__copy > .lg-link { text-decoration: none; padding: 0.5rem 1rem; border-radius: 999px; border: 1px solid var(--sc-hairline-strong); background: rgba(255, 255, 255, 0.5); font-size: 0.82rem; }
+.door p:not(.lg-note) { color: var(--sc-ink-soft); }
+.ledger dt { font-family: var(--sc-font-display); font-weight: 500; font-stretch: normal; letter-spacing: -0.02em; }
+.wp--close .lg-cta { padding: 1.05rem 1.8rem; }
+
+/* stack labels: small white pills */
+.tag > span { background: rgba(255, 255, 255, 0.78); border-color: var(--sc-hairline); border-radius: 999px; padding: 0.28rem 0.7rem; backdrop-filter: blur(6px); }
+.tag > span::after { background: linear-gradient(180deg, color-mix(in oklab, var(--sc-ink) 45%, transparent), transparent); }
+.tag:first-child b { color: var(--sc-ink); }
+
+/* the scoresheet: six dots in the margin, and the move being played */
+@media (min-width: 861px) {
+  .score { left: auto; top: 50%; right: calc(var(--sc-gutter) * 0.5 - 0.5rem); transform: translateY(-50%); display: grid; justify-items: center; gap: 0.9rem; }
+  .score ol { display: grid; grid-template-columns: none; gap: 0.15rem; }
+  .score button { width: 1rem; min-height: 0; height: 1.5rem; padding: 0; border: 0; display: grid; place-items: center; overflow: visible; }
+  .score button > span { display: none; }
+  .score button::before { content: ""; width: 5px; height: 5px; border-radius: 999px; background: color-mix(in oklab, var(--sc-ink) 26%, transparent); transition: height 260ms var(--sc-ease-out), background-color 200ms var(--sc-ease-out); }
+  .score li.is-played button::before { background: color-mix(in oklab, var(--sc-ink) 60%, transparent); }
+  .score li[aria-current="step"] button::before { height: 1.3rem; background: var(--sc-ink); }
+  .score li.is-played button, .score li[aria-current="step"] button { border: 0; }
+  @media (hover: hover) and (pointer: fine) { .score button:hover::before { background: var(--sc-ink); } }
+  .score__now { margin: 0; writing-mode: vertical-rl; font-family: var(--sc-font-mono); font-size: 0.7rem; letter-spacing: 0.04em; color: var(--sc-ink-soft); white-space: nowrap; text-transform: none; }
+  .score__now b { color: var(--sc-ink); font-weight: 500; }
+}
+@media (max-width: 860px) {
+  .score__now { display: none; }
+  .score button { border-top-width: 1px; font-size: 0.66rem; }
+}
+.world[data-mode="static"] .wp[data-wp="open"] { --poster: url("/images/portraits/nizar-hero.webp"); background-position: 100% 30%; }
+@media (max-width: 860px) {
+  .hero-plate img { object-position: 80% 0; }
+  .wp--open .hero__name { font-size: clamp(3rem, 14vw, 4.4rem); }
+}
+
+/* ==========================================================================
+   Type that moves. Everything here is an entrance or an answer to the hand:
+   nothing loops except the two small signs of life (the dot, the caret).
+   ========================================================================== */
+.hero__word { display: inline-block; white-space: nowrap; overflow: hidden; padding: 0.06em 0.04em 0.12em 0.05em; margin: -0.06em -0.04em -0.12em -0.05em; vertical-align: bottom; }
+.hero__ch { display: inline-block; font-weight: 300; transition: font-weight 320ms var(--sc-ease-out); }
+.hero__w { display: inline-block; }
+.count { font-variant-numeric: tabular-nums; }
+.score__now { animation: none; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero__ch { animation: lgChIn 1000ms cubic-bezier(0.16, 0.84, 0.24, 1) both; animation-delay: calc(180ms + var(--i) * 42ms); }
+  .hero__eyebrow { animation: lgRise 700ms var(--sc-ease-out) 60ms both; }
+  .hero__w { animation: lgRise 760ms var(--sc-ease-out) both; animation-delay: calc(760ms + var(--i) * 70ms); }
+  .wp--open .lg-body { animation: lgRise 800ms var(--sc-ease-out) 1150ms both; }
+  .wp--open .wp__actions { animation: lgRise 800ms var(--sc-ease-out) 1300ms both; }
+  .hero-plate img { animation: lgPlate 1600ms cubic-bezier(0.16, 0.84, 0.24, 1) both; }
+  .hero__eyebrow i { position: relative; }
+  .hero__eyebrow i::after { content: ""; position: absolute; inset: 0; border-radius: 50%; background: var(--sc-ink); animation: lgPing 2600ms cubic-bezier(0.2, 0.6, 0.3, 1) 1400ms infinite; }
+  .score__now { animation: lgSwap 420ms var(--sc-ease-out) both; }
+
+  /* code notes type themselves when their waypoint arrives */
+  .world[data-mode="live"] .lg-note.type { display: inline-block; overflow: hidden; white-space: nowrap; width: 0; vertical-align: bottom; border-right: 1px solid transparent; padding-right: 0.25em; }
+  .world[data-mode="live"] .wp.is-on .lg-note.type { animation: lgType 1000ms steps(var(--n), end) 250ms forwards, lgCaret 900ms step-end 250ms 4; }
+
+  /* what arrives after the heading follows it in, one piece at a time */
+  .world[data-mode="live"] .ledger > div, .world[data-mode="live"] .door, .world[data-mode="live"] .wp:not(.wp--open) .wp__actions > *, .world[data-mode="live"] .wp:not(.wp--open) .lg-body {
+    opacity: 0; transform: translate3d(0, 0.9rem, 0); transition: opacity 620ms var(--sc-ease-out), transform 720ms var(--sc-ease-out); }
+  .world[data-mode="live"] .wp.is-on .ledger > div, .world[data-mode="live"] .wp.is-on .door, .world[data-mode="live"] .wp.is-on .wp__actions > *, .world[data-mode="live"] .wp.is-on .lg-body { opacity: 1; transform: none; }
+  .world[data-mode="live"] .wp.is-on .lg-body { transition-delay: 240ms; }
+  .world[data-mode="live"] .wp.is-on .ledger > div:nth-child(1), .world[data-mode="live"] .wp.is-on .door:nth-child(1), .world[data-mode="live"] .wp.is-on .wp__actions > :nth-child(1) { transition-delay: 320ms; }
+  .world[data-mode="live"] .wp.is-on .ledger > div:nth-child(2), .world[data-mode="live"] .wp.is-on .door:nth-child(2), .world[data-mode="live"] .wp.is-on .wp__actions > :nth-child(2) { transition-delay: 440ms; }
+  .world[data-mode="live"] .wp.is-on .door:nth-child(3) { transition-delay: 560ms; }
+}
+@keyframes lgChIn { from { transform: translate3d(0, 112%, 0) rotate(4deg); } to { transform: none; } }
+@keyframes lgRise { from { opacity: 0; transform: translate3d(0, 0.8rem, 0); } to { opacity: 1; transform: none; } }
+@keyframes lgPlate { from { opacity: 0; transform: scale(1.05); } to { opacity: 1; transform: none; } }
+@keyframes lgPing { 0% { transform: scale(1); opacity: 0.5; } 70%, 100% { transform: scale(3.4); opacity: 0; } }
+@keyframes lgSwap { from { opacity: 0; transform: translate3d(0, -0.5rem, 0); } to { opacity: 1; transform: none; } }
+@keyframes lgType { to { width: calc(var(--n) * (1ch + 0.06em)); } }
+@keyframes lgCaret { 0%, 100% { border-right-color: var(--sc-ink); } 50% { border-right-color: transparent; } }
+
+/* buttons answer the hand */
+.world .lg-cta svg, .lg-cta svg { transition: transform 260ms var(--sc-ease-out); }
+@media (hover: hover) and (pointer: fine) {
+  .lg-cta:hover svg { transform: translateX(0.22rem); }
+  .world .wp__actions .lg-link, .wp--work .wp__copy > .lg-link { transition: background-color 220ms var(--sc-ease-out), color 220ms var(--sc-ease-out), border-color 220ms var(--sc-ease-out); }
+  .world .wp__actions .lg-link:hover, .wp--work .wp__copy > .lg-link:hover { background: var(--sc-ink); color: var(--sc-canvas); border-color: var(--sc-ink); }
 }

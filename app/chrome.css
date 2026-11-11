@@ -48,3 +48,28 @@ html.lg-menu-open { overflow: hidden; }
 .lg-foot__base nav { display: flex; flex-wrap: wrap; gap: 0.5rem 1.6rem; }
 .lg-foot__base nav a { color: var(--sc-ink-soft); text-decoration: none; font-size: 0.9rem; padding: 0.35rem 0; }
 @media (hover: hover) and (pointer: fine) { .lg-foot__base nav a:hover { color: var(--sc-ink); } }
+
+/* ==========================================================================
+   Revision: a quieter bar. Name, one pill of links, one button.
+   ========================================================================== */
+.lg-bar__mark { font-family: var(--sc-font-text); font-weight: 500; font-stretch: normal; letter-spacing: -0.02em; font-size: 1.02rem; gap: 0.5rem; }
+.lg-bar__king { width: 1.05rem; height: 1.05rem; color: var(--sc-ink); }
+.lg-bar__links { gap: 0.1rem; padding: 0.26rem; border-radius: 999px; background: color-mix(in oklab, var(--sc-ink) 6%, transparent); justify-self: start; }
+.lg-bar__links a { font-size: 0.8rem; font-weight: 450; padding: 0.4rem 0.85rem; border-radius: 999px; }
+.lg-bar__links a[aria-current="page"] { background: color-mix(in oklab, var(--sc-ink) 10%, transparent); }
+.lg-bar__links a[aria-current="page"]::after { display: none; }
+.lg-bar__toggle { border-radius: 999px; }
+.lg-menu nav a { font-weight: 400; font-stretch: normal; letter-spacing: -0.04em; }
+.lg-menu nav a[aria-current="page"] { color: var(--sc-ink); }
+@media (min-width: 861px) { .lg-bar__inner { grid-template-columns: auto 1fr auto; gap: 1.4rem; } }
+
+/* on the landing page the bar sits on a pale ground */
+.lg-bar.is-home {
+  --sc-canvas: #e3f2fb; --sc-surface: #f2f8fd; --sc-ink: #0b0f15; --sc-ink-soft: #55606e;
+  --sc-accent: #0b0f15; --sc-accent-ink: #f4f8fc;
+  --sc-hairline: color-mix(in oklab, #0b0f15 12%, transparent); --sc-hairline-strong: color-mix(in oklab, #0b0f15 22%, transparent);
+}
+.lg-bar.is-home::before { display: none; }
+
+/* the footer on the pale ground */
+.lg-foot { background: linear-gradient(180deg, var(--sc-canvas), #d3e6f5); }

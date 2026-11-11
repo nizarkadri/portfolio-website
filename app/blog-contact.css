@@ -5,7 +5,7 @@
    ========================================================================== */
 :root {
   /* the one error colour: a desaturated red tuned for the dark ground */
-  --bc-danger: #ec9086;
+  --bc-danger: #b3382c;
   --bc-danger-soft: color-mix(in oklab, var(--bc-danger) 12%, transparent);
 }
 

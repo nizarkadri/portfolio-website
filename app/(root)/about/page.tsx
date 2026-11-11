@@ -2,6 +2,7 @@ import { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import AboutClient from './AboutClient'
+import { Chars } from '../../../components/Kinetic'
 import MyStory from '../../../components/MyStory'
 import Skills from '../../../components/Skills'
 import Education from '../../../components/about/Education'
@@ -34,33 +35,57 @@ export default function AboutPage() {
   return (
     <div className="ae lg-page">
       {/* The player */}
-      <section className="ae-hero lg-wrap" aria-labelledby="ae-about-title">
-        <div className="ae-hero__copy">
-          <h1 id="ae-about-title" className="lg-display lg-display--xl">The player behind<br className="ae-br" /> the board.</h1>
-          <p className="lg-body lg-body--lg">
+      <section className="ab-hero lg-wrap" aria-labelledby="ae-about-title">
+        <div className="ab-hero__copy">
+          <p className="lg-note hero__eyebrow lg-up"><i aria-hidden="true" />About</p>
+          <h1 id="ae-about-title" className="lg-display ab-hero__title"><Chars text={'The player\nbehind the board.'} /></h1>
+          <p className="lg-body lg-body--lg lg-up" style={{ ['--d' as string]: 720 }}>
             I&rsquo;m Nizar Kadri, a full stack developer in Toronto. I have played chess since I was a child, and I
             build software the same way: the whole board first, then the move.
           </p>
-          <div className="ae-hero__links">
-            <Link href="#certificates" className="lg-link">The certificates</Link>
-            <Link href="/experience" className="lg-link">Full experience</Link>
+          <div className="ab-hero__links lg-up" style={{ ['--d' as string]: 860 }}>
+            <Link href="#certificates" className="ab-pill ab-pill--ink">The certificates</Link>
+            <Link href="/experience" className="ab-pill">Full experience</Link>
           </div>
         </div>
-        <figure className="ae-hero__figure">
-          <div className="ae-hero__frame">
-            <Image
-              src="/images/portraits/nizar-coat.webp"
-              alt="Nizar Kadri in a black coat and turtleneck, photographed against a dark studio wall"
-              fill
-              priority
-              sizes="(max-width: 860px) 70vw, 29rem"
-            />
-          </div>
-          <figcaption className="lg-note ae-pgn">
-            <span>[White &quot;Kadri, Nizar&quot;]</span>
-            <span>[Site &quot;Toronto, Canada&quot;]</span>
+        <figure className="ab-hero__figure">
+          <Image
+            src="/images/portraits/nizar-hero.webp"
+            alt="Nizar Kadri in a dark navy jacket, looking to one side, against a pale blue studio wall"
+            fill
+            priority
+            sizes="(max-width: 860px) 100vw, 46vw"
+          />
+          <figcaption>
+            <ul className="ab-hero__pills">
+              <li className="lg-up" style={{ ['--d' as string]: 1000 }}>Toronto</li>
+              <li className="lg-up" style={{ ['--d' as string]: 1100 }}>Full stack and AI</li>
+              <li className="lg-up" style={{ ['--d' as string]: 1200 }}>Chess since childhood</li>
+            </ul>
           </figcaption>
         </figure>
+      </section>
+
+      {/* The record, in four numbers. Each one is from the work itself. */}
+      <section className="ab-stats lg-wrap" aria-label="In numbers">
+        <dl data-sc-in data-sc-stagger="90">
+          <div>
+            <dt><span data-sc-count="0 70">70</span>%</dt>
+            <dd>faster pages on Ontario&rsquo;s SEDAR Plus portal, at CGI</dd>
+          </div>
+          <div>
+            <dt><span data-sc-count="0 98">98</span>%</dt>
+            <dd>WCAG 2.1 compliance on the same portal</dd>
+          </div>
+          <div>
+            <dt><span data-sc-count="0 20">20</span>+</dt>
+            <dd>on-premise servers moved to Azure, at Fiera Capital</dd>
+          </div>
+          <div>
+            <dt><span data-sc-count={`0 ${slots}`}>{slots}</span></dt>
+            <dd>certifications, every one on the wall below</dd>
+          </div>
+        </dl>
       </section>
 
       <MyStory />
@@ -89,16 +114,6 @@ export default function AboutPage() {
         </header>
         <div className="ae-wall-room">
           <CertificateWall certificates={certificates} slots={slots} />
-          <div className="ae-wall__foot">
-            <Image
-              className="ae-wall__figure"
-              src="/images/portraits/figure.webp"
-              alt="Nizar Kadri standing at the foot of the wall, hands in his pockets"
-              width={423}
-              height={987}
-              sizes="10rem"
-            />
-          </div>
         </div>
       </section>
     </div>

@@ -43,7 +43,7 @@ function lathe(points: P[], segments = 56) {
 }
 
 function merge(parts: THREE.BufferGeometry[]) {
-  // Minimal merge (position + normal), enough for stone without UVs.
+  // Minimal merge: position, normal and uv, so the stone can carry its veining.
   let count = 0;
   const prepared = parts.map((p) => {
     const g = p.index ? p.toNonIndexed() : p;
@@ -52,16 +52,45 @@ function merge(parts: THREE.BufferGeometry[]) {
   });
   const pos = new Float32Array(count * 3);
   const nor = new Float32Array(count * 3);
+  const uv = new Float32Array(count * 2);
   let o = 0;
   for (const g of prepared) {
-    pos.set(g.attributes.position.array as Float32Array, o);
-    nor.set(g.attributes.normal.array as Float32Array, o);
-    o += g.attributes.position.count * 3;
+    pos.set(g.attributes.position.array as Float32Array, o * 3);
+    nor.set(g.attributes.normal.array as Float32Array, o * 3);
+    if (g.attributes.uv) uv.set(g.attributes.uv.array as Float32Array, o * 2);
+    o += g.attributes.position.count;
   }
   const out = new THREE.BufferGeometry();
   out.setAttribute('position', new THREE.BufferAttribute(pos, 3));
   out.setAttribute('normal', new THREE.BufferAttribute(nor, 3));
+  out.setAttribute('uv', new THREE.BufferAttribute(uv, 2));
   return out;
+}
+
+/**
+ * The CN Tower as one more piece on the board: a faceted shaft, the pod, the
+ * mast. Returned in parts so the pod can be a different stone. Height 6.4.
+ */
+export function cnTower() {
+  const shaft = new THREE.LatheGeometry(
+    [[0.0001, 0], [0.5, 0], [0.5, 0.06], [0.4, 0.1], [0.3, 0.7], [0.2, 1.8], [0.15, 3.0], [0.125, 3.86], [0.0001, 3.86]].map(([r, y]) => new THREE.Vector2(r, y)),
+    6
+  );
+  shaft.computeVertexNormals();
+  // the pod keeps its hard edges: a disc with the radome ring under it, not a bulb
+  const pod = new THREE.LatheGeometry(
+    [[0.0001, 3.8], [0.125, 3.8], [0.33, 3.85], [0.4, 3.9], [0.4, 3.97], [0.365, 3.985], [0.365, 4.0], [0.45, 4.03], [0.45, 4.19], [0.41, 4.25], [0.28, 4.29], [0.13, 4.33],
+      [0.095, 4.4], [0.085, 4.84], [0.15, 4.88], [0.15, 4.96], [0.075, 5.0], [0.0001, 5.0]].map(([r, y]) => new THREE.Vector2(r, y)),
+    64
+  );
+  const mast = new THREE.LatheGeometry(
+    [[0.0001, 4.98], [0.06, 4.98], [0.045, 5.5], [0.028, 5.95], [0.01, 6.5], [0.0001, 6.5]].map(([r, y]) => new THREE.Vector2(r, y)),
+    10
+  );
+  mast.computeVertexNormals();
+  const ring = new THREE.CylinderGeometry(0.455, 0.455, 0.02, 64, 1, true);
+  ring.translate(0, 4.11, 0);
+  return { shaft, pod, mast, ring };
 }
 
 function box(w: number, h: number, d: number, x: number, y: number, z: number, ry = 0) {
@@ -84,10 +113,17 @@ function knight() {
   s.bezierCurveTo(-0.21, 0.92, -0.31, 0.6, -0.27, 0.3);
   s.bezierCurveTo(-0.26, 0.15, -0.23, 0.07, -0.2, 0);
   const head = new THREE.ExtrudeGeometry(s, {
-    depth: 0.2, bevelEnabled: true, bevelThickness: 0.045, bevelSize: 0.04, bevelSegments: 4, curveSegments: 20,
+    depth: 0.2, bevelEnabled: true, bevelThickness: 0.085, bevelSize: 0.06, bevelSegments: 8, curveSegments: 28,
   });
   head.translate(0, 0, -0.1);
   head.scale(0.95, 0.95, 1);
+  // carved, not cut from a plank: thick through the chest, fine at the muzzle and ears
+  const hp = head.attributes.position as THREE.BufferAttribute;
+  for (let i = 0; i < hp.count; i++) {
+    const y = hp.getY(i), x = hp.getX(i);
+    const up = Math.min(1, Math.max(0, (y - 0.2) / 0.9));
+    hp.setZ(i, hp.getZ(i) * (1.15 - 0.42 * up * up) + 0 * x);
+  }
   head.translate(0, 0.27, 0);
   head.rotateY(Math.PI / 2);
   const base = lathe([...BASE, [0.25, 0.27], [0.2, 0.3], [0, 0.3]]);
