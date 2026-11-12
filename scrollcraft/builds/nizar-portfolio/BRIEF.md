@@ -500,3 +500,18 @@ diconnected, boring animations, no character". Direction: "all three ideas are g
 - Checked: desktop 1440x900, phone 390x844 (deviceScaleFactor 2), reduced motion, the dialog (open, Escape), every index
   jump, choosing a piece, frame time 16.7ms median / 17ms p95 in headless Chrome, no console errors, types and lint clean.
   Not checked: a real phone, a weak GPU, Safari.
+
+### Revision 8: the stack goes by with the scroll; the certificates as stacks
+Owner: "the certificates looks kinda dull and crowded if that can be fixed ! Also, during the flow the pieces i play with
+expects user to click but coming from previous flow its not intuitive to click on each pieces so better integrate the
+pieces so scroll can go through each piece nicely!"
+- The stack: the five pieces sit round a marble table in the world. Each piece's words are an ordinary block in the flow
+  (desktop, beside the table); as a block's middle passes the reading line the table turns that piece to the front,
+  where it rises a little onto its lit plinth and turns slowly, holding while it is read. Nothing to click. On a phone the
+  blocks stand in a row under the table and the scroll slides the row along as the table turns, so no card passes over it.
+- The certificates: three stacks by where they were earned (LinkedIn Learning, CGI Academia, and the three single
+  issuers together), newest on top, fanning out from a neat pile as each comes up the window; under each its name, count,
+  years and first titles. A stack or any title opens a viewer that steps through that stack (buttons and arrow keys).
+  Reduced motion: the stacks lie fanned.
+- Checked: desktop 1440x900, phone 390x844, reduced motion, the viewer (open from pile, title and "more"; step both ways
+  with wrap; Escape returns focus), index jumps, no console errors, types and lint clean.

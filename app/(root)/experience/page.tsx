@@ -5,9 +5,9 @@ import matter from 'gray-matter';
 import type { Metadata } from 'next';
 import type { Role } from '../../../components/Experience';
 import Education from '../../../components/about/Education';
-import CertDrift from '../../../components/about/CertDrift';
 import Skills, { GROUPS } from '../../../components/Skills';
 import ExperienceStage from '../../../components/experience/ExperienceStage';
+import CertStacks from '../../../components/experience/CertStacks';
 import { resultsOf } from '../../../components/experience/results';
 import { getCertificates } from '../../../components/about/certificates';
 import { Rise } from '../../../components/story/Rise';
@@ -47,9 +47,9 @@ const ExperiencePage = async () => {
       <div className="lg-wrap xp-cred__head" data-sc-in>
         <h2 className="lg-display xp-cred__title"><Rise text="Where I studied, and since." /></h2>
         <Education />
-        <p className="lg-body">{certificates.length} certificates, going by. Hover to hold a row; open any one to read it.</p>
+        <p className="lg-body">{certificates.length} certificates, stacked by where I earned them. Open a stack to go through it.</p>
       </div>
-      <CertDrift certificates={certificates} />
+      <CertStacks certificates={certificates} />
     </div>
   );
 

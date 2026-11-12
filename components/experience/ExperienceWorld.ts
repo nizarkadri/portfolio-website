@@ -12,8 +12,9 @@ import { boardTexture, clamp01, FOG, glowTexture, makeRenderer, shadowTexture, s
                     as a column as tall as its figure as the camera passes
      the migration  the servers lift off an on-premise rack one by one and
                     arc up into a cloud
-     the pieces     five pieces on plinths: the one chosen lifts and turns;
-                    then the page carries them away with their section
+     the stack      five pieces on a turning marble table: the scroll brings
+                    each one round to the front, where it lifts and turns;
+                    then the page carries the table away with its section
 
    Everything is a function of one number from the scroll (s, 0 to 5, one
    unit per section of the page), so nothing pops: it can only glide.
@@ -31,7 +32,7 @@ type Key = { s: number; pos: V3; look: V3; sx: number; sy: number; nx: number; p
 const GAP = 4.4, WALK_X = 1.5;
 const tall = (v: number) => 0.45 + (v / 100) * 3.4;
 const MAIN_R = 0.42;
-const PIECE_GAP = 2.05;
+const TABLE_R = 2.9, SEAT_R = 2.05;
 
 /** Where each place stands: the walk is as long as its results, and the others keep their distance from its end. */
 function layout(walkCount: number) {
@@ -41,8 +42,8 @@ function layout(walkCount: number) {
   return { last, rackX, cloud, piecesX: cloud.x + 15 };
 }
 
-/** The camera's route: where it stands and what it looks at, at each knot of s. After the pieces it holds; the page
- *  carries the pieces away with their section (see lift in draw) and the world steps back behind the credentials. */
+/** The camera's route: where it stands and what it looks at, at each knot of s. At the stack it holds; the page
+ *  carries the table away with its section (see lift in draw) and the world steps back behind the credentials. */
 function route(L: ReturnType<typeof layout>): Key[] {
   const mid = (L.rackX + L.cloud.x) / 2, P = L.piecesX;
   return [
@@ -52,9 +53,9 @@ function route(L: ReturnType<typeof layout>): Key[] {
     { s: 1.95, pos: [L.last + 0.4, 3.6, 11.8], look: [L.last + 2.6, 2.5, 0], sx: 0, sy: 0.16, nx: 0.48, pull: 1.15 },
     { s: 2.15, pos: [mid - 1.6, 4.9, 15.2], look: [mid, 2.9, -0.4], sx: 0.17, sy: 0.22, nx: 0, pull: 1.55 },
     { s: 2.9, pos: [mid - 0.8, 5.0, 15.4], look: [mid + 0.2, 2.9, -0.4], sx: 0.17, sy: 0.22, nx: 0, pull: 1.55 },
-    { s: 3.1, pos: [P - 1.0, 3.0, 10.8], look: [P, 1.05, -0.3], sx: 0, sy: -0.15, nx: 0, pull: 2.35 },
-    { s: 3.42, pos: [P - 0.5, 2.95, 10.6], look: [P, 1.05, -0.3], sx: 0, sy: -0.15, nx: 0, pull: 2.35 },
-    { s: 5.0, pos: [P - 0.3, 2.9, 10.5], look: [P, 1.05, -0.3], sx: 0, sy: -0.15, nx: 0, pull: 2.35 },
+    { s: 3.06, pos: [P - 0.9, 4.3, 11.4], look: [P, 1.0, 0.3], sx: 0.2, sy: -0.24, nx: 0, pull: 1.5 },
+    { s: 3.6, pos: [P - 0.5, 4.2, 11.3], look: [P, 1.0, 0.3], sx: 0.2, sy: -0.24, nx: 0, pull: 1.5 },
+    { s: 5.0, pos: [P - 0.3, 4.2, 11.2], look: [P, 1.0, 0.3], sx: 0.2, sy: -0.24, nx: 0, pull: 1.5 },
   ];
 }
 
@@ -76,7 +77,9 @@ export class ExperienceWorld {
   private fog: THREE.FogExp2;
   private cols: Array<{ meshes: THREE.Mesh[]; caps: THREE.Mesh[]; heights: number[]; x: number; z: number; king?: THREE.Mesh; mark: THREE.Mesh }> = [];
   private blocks: Array<{ m: THREE.Mesh; led: THREE.Mesh; from: THREE.Vector3; to: THREE.Vector3 }> = [];
-  private pieces: Array<{ piece: THREE.Mesh; ring: THREE.Mesh; base: THREE.Vector3; lift: number; turn: number; face: number }> = [];
+  private pieces: Array<{ piece: THREE.Mesh; ring: THREE.Mesh; seat: number; turn: number; face: number }> = [];
+  private table = new THREE.Group();
+  private pick = 0;
   private cloud = new THREE.Group();
   private shift = new THREE.Vector2();
   private shiftTo = new THREE.Vector2();
@@ -91,9 +94,8 @@ export class ExperienceWorld {
   private running = false;
   private disposed = false;
   private mobile: boolean;
-  /** Screen positions of each walk column's label, and of each piece, as last drawn. */
+  /** Screen positions of each walk column's label, as last drawn. */
   walkAnchors: Anchor[] = [];
-  pieceAnchors: Anchor[] = [];
 
   constructor(private canvas: HTMLCanvasElement, setup: WorldSetup, mobile: boolean) {
     this.mobile = mobile;
@@ -215,22 +217,30 @@ export class ExperienceWorld {
       this.blocks.push({ m, led, from, to });
     }
 
-    // ---- the pieces: five plinths in a shallow arc
+    // ---- the stack: five pieces seated round a marble table that turns with the scroll
+    const deckTop = 0.32;
+    const tableTop = new THREE.Mesh(new THREE.CylinderGeometry(TABLE_R, TABLE_R + 0.06, deckTop, 120), plinthStone);
+    tableTop.position.y = deckTop / 2; tableTop.castShadow = true; tableTop.receiveShadow = true;
+    const tableRim = new THREE.Mesh(new THREE.TorusGeometry(TABLE_R + 0.004, 0.018, 8, 180), new THREE.MeshBasicMaterial({ color: THREAD }));
+    tableRim.rotation.x = Math.PI / 2; tableRim.position.y = deckTop;
+    this.table.add(tableTop, tableRim);
     const pGeo = new THREE.CylinderGeometry(0.52, 0.54, 0.34, 72); pGeo.translate(0, 0.17, 0);
     const ringGeo = new THREE.TorusGeometry(0.49, 0.012, 8, 96); ringGeo.rotateX(Math.PI / 2);
     setup.kinds.forEach((kind, i) => {
-      const d = i - (setup.kinds.length - 1) / 2;
-      const base = new THREE.Vector3(L.piecesX + d * PIECE_GAP, 0, -Math.abs(d) * 0.3);
-      const p = new THREE.Mesh(pGeo, plinthStone); p.position.copy(base); p.castShadow = true; p.receiveShadow = true;
+      const seat = (i / setup.kinds.length) * Math.PI * 2;
+      const x = Math.sin(seat) * SEAT_R, z = Math.cos(seat) * SEAT_R;
+      const p = new THREE.Mesh(pGeo, plinthStone); p.position.set(x, deckTop, z); p.castShadow = true; p.receiveShadow = true;
       const face = kind === 'knight' ? Math.PI / 2.2 : 0;
-      const pc = piece(kind, dark, base.x, base.z, 1, 0.34, face);
+      const pc = new THREE.Mesh(pieceGeometry(kind), dark);
+      pc.position.set(x, deckTop + 0.34, z); pc.castShadow = true; pc.userData.shared = true;
       const ring = new THREE.Mesh(ringGeo, new THREE.MeshBasicMaterial({ color: THREAD, transparent: true, opacity: 0.2 }));
-      ring.position.copy(base).setY(0.344);
-      this.scene.add(p, ring);
-      shadow(base.x, base.z, 1.6);
-      this.pieces.push({ piece: pc, ring, base, lift: 0, turn: 0, face });
+      ring.position.set(x, deckTop + 0.344, z);
+      this.table.add(p, pc, ring);
+      this.pieces.push({ piece: pc, ring, seat, turn: 0, face });
     });
-    this.pieceAnchors = this.pieces.map(() => ({ x: 0, y: 0, on: 0 }));
+    this.table.position.set(L.piecesX, 0, 0);
+    this.scene.add(this.table);
+    shadow(L.piecesX, 0, 8.4);
 
     this.keys = route(L);
     this.posCurve = new THREE.CatmullRomCurve3(this.keys.map((k) => new THREE.Vector3(...k.pos)), false, 'centripetal');
@@ -259,8 +269,9 @@ export class ExperienceWorld {
     return out.set(a.sx + (b.sx - a.sx) * e, a.sy + (b.sy - a.sy) * e, a.nx + (b.nx - a.nx) * e, a.pull + (b.pull - a.pull) * e);
   }
 
-  /** s: where the page is (0 to 5); chosen and hover: the piece chosen and the one under the pointer (-1 for none). */
-  draw(s: number, chosen: number, hover: number, lift = 0) {
+  /** s: where the page is (0 to 5); pick: which piece of the stack is in front (0 to 4, between them while turning);
+   *  lift: pixels the page has carried the current place up by. */
+  draw(s: number, pick: number, lift = 0) {
     if (!this.running || this.disposed) return;
     const dt = Math.min(this.clock.getDelta(), 0.05), t = this.clock.elapsedTime;
     this.eased.lerp(this.pointer, 1 - Math.pow(0.03, dt));
@@ -334,19 +345,18 @@ export class ExperienceWorld {
       b.led.visible = k < 0.02 || k > 0.98 ? true : Math.sin(t * 9 + j) > 0;
     });
 
-    // the pieces: the chosen one lifts and turns slowly; the one under the pointer lifts a little
+    // the stack: the table turns the piece being read round to the front; that one lifts and turns slowly
+    this.pick += (pick - this.pick) * follow;
+    const n = this.pieces.length;
+    this.table.rotation.y = -(this.pick / n) * Math.PI * 2;
     this.pieces.forEach((p, i) => {
-      const target = i === chosen ? 0.42 : i === hover ? 0.14 : 0;
-      p.lift += (target - p.lift) * settle;
-      p.piece.position.y = 0.34 + p.lift;
-      p.piece.scale.setScalar(i === chosen ? 1.12 : 1);
-      if (i === chosen) p.turn += dt * 0.55; else p.turn += (Math.round(p.turn / (Math.PI * 2)) * Math.PI * 2 - p.turn) * settle * 0.6;
-      p.piece.rotation.y = p.face + p.turn;
-      const rm = p.ring.material as THREE.MeshBasicMaterial;
-      rm.opacity += ((i === chosen ? 0.95 : i === hover ? 0.5 : 0.2) - rm.opacity) * settle;
-      this.v.copy(p.base).project(this.camera);
-      const a = this.pieceAnchors[i];
-      a.x = (this.v.x + 1) * 0.5 * w; a.y = (1 - this.v.y) * 0.5 * h; a.on = this.v.z < 1 ? 1 : 0;
+      const f = smooth(1 - Math.abs(i - this.pick));
+      p.piece.position.y = 0.66 + 0.14 * f;
+      p.piece.scale.setScalar(1 + 0.14 * f);
+      p.turn += dt * 0.5 * f;
+      p.turn += (Math.round(p.turn / (Math.PI * 2)) * Math.PI * 2 - p.turn) * settle * 0.5 * (1 - f);
+      p.piece.rotation.y = p.face + p.seat + p.turn;
+      (p.ring.material as THREE.MeshBasicMaterial).opacity = 0.18 + 0.77 * f;
     });
 
     this.renderer.render(this.scene, this.camera);

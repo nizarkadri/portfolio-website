@@ -6,6 +6,7 @@ import { KingMark } from '../Navbar';
 import { webglOk } from '../marble/studio';
 import type { PieceKind } from '../world/pieces';
 import type { ExperienceWorld } from './ExperienceWorld';
+import { CREEP, ease, HOLD, paced } from '../pace';
 import { showFigure, type Result } from './results';
 
 /** One part of the stack, as a piece: its chess name (san), what it stands for, a line about it, and its skills. */
@@ -14,7 +15,7 @@ interface Role { company: string; position: string; location: string; technologi
 
 const PLACES = ['Experience', '', '', 'The stack', 'Credentials'];
 const WALK_PER = 0.5;   // viewport heights of scroll for each result on the walk
-const ARRIVE = [0, 0.06, 0.16, 0.12, 0];   // how far into each section the camera has arrived (see route in ExperienceWorld)
+const ARRIVE = [0, 0.06, 0.16, 0.06, 0];   // how far into each section the camera has arrived (see route in ExperienceWorld)
 
 /** The line with its percentages set in ink. */
 const emphasised = (line: string) =>
@@ -25,7 +26,7 @@ const emphasised = (line: string) =>
  * The page itself is ordinary sections in ordinary flow; each one is a place in the world, and what the world
  * shows there is what the words say: the first role's results stand up as columns along a runway, each carrying
  * its own words; the migration role's servers lift into the cloud as its figures count; the stack is five pieces
- * to choose from; the credentials sit over the world as it fades back. Every result can also be read in full at
+ * round a table that turns to each as its words are read; the credentials stand on the plain ground as it fades. Every result can also be read in full at
  * any moment from "All results". Without motion or WebGL the same sections stand without the world.
  */
 export default function ExperienceStage({ results, roles, groups, credentials, skills }: {
@@ -34,15 +35,10 @@ export default function ExperienceStage({ results, roles, groups, credentials, s
   const root = useRef<HTMLDivElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
   const labelEls = useRef<Array<HTMLDivElement | null>>([]);
-  const nameEls = useRef<Array<HTMLButtonElement | null>>([]);
   const countEls = useRef<HTMLElement[]>([]);
   const dialog = useRef<HTMLDialogElement>(null);
   const [live, setLive] = useState(true);
   const [place, setPlace] = useState(0);
-  const [chosen, setChosen] = useState(0);
-  const chosenRef = useRef(0);
-  const hoverRef = useRef(-1);
-  useEffect(() => { chosenRef.current = chosen; }, [chosen]);
 
   useLayoutEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || !webglOk()) setLive(false);
@@ -86,24 +82,55 @@ export default function ExperienceStage({ results, roles, groups, credentials, s
     };
     // the walk's words give way, each one as the next section's top edge comes up to it
     const after = sections.current[2] ?? null;
-    let labelH: number[] = [], labelW: number[] = [], nameW: number[] = [];
+    let labelH: number[] = [], labelW: number[] = [];
     // the servers' move takes less of the page on a phone, where its sentences follow on a card of their own
     const moveFrom = mobile ? 2.04 : 2.08, moveSpan = mobile ? 0.44 : 0.74;
 
-    const piecesIn = el.querySelector<HTMLElement>('.xw-pieces__in');
+    // the stack: which piece is being read, as one number. Each piece's words are an ordinary block in the flow; as a
+    // block's middle passes the reading line the table turns that piece round to the front, holding while it is read.
+    const piecesSec = el.querySelector<HTMLElement>('.xw-pieces');
+    const credSec = el.querySelector<HTMLElement>('.xw-cred');
+    const cards = Array.from(el.querySelectorAll<HTMLElement>('.xw-piece__card'));
+    // on a phone the blocks stand in a row held under the table, and the scroll slides the row along with it
+    const run = el.querySelector<HTMLElement>('.xw-pieces__run');
+    const track = el.querySelector<HTMLElement>('.xw-pieces__list');
+    let step = 0;
+    const pickAt = () => {
+      if (mobile && run && track) {
+        const r = run.getBoundingClientRect();
+        const p = -r.top / Math.max(1, r.height - window.innerHeight);
+        const pick = paced(p, cards.length);
+        // the row rests exactly on each card while it is read; the table keeps its slight creep
+        const x = Math.min(1, Math.max(0, p)) * (cards.length - 1), i = Math.min(cards.length - 2, Math.floor(x));
+        const rest = i + ease((x - i - HOLD) / (1 - 2 * HOLD));
+        if (!step) { const li = track.children[0] as HTMLElement | undefined; step = li ? li.offsetWidth + parseFloat(getComputedStyle(track).columnGap || '0') : 0; }
+        track.style.transform = `translate3d(${(-rest * step).toFixed(1)}px, 0, 0)`;
+        return pick;
+      }
+      const line = window.innerHeight * 0.5;
+      const mid = cards.map((c) => { const r = c.getBoundingClientRect(); return r.top + r.height / 2; });
+      if (!mid.length || mid[0] >= line) return 0;
+      for (let i = 0; i < mid.length - 1; i++) {
+        if (mid[i + 1] < line) continue;
+        const k = (mid[i] - line) / (mid[i] - mid[i + 1]);
+        return i + (1 - CREEP) * ease((k - HOLD) / (1 - 2 * HOLD)) + CREEP * k;
+      }
+      return mid.length - 1;
+    };
+
     const frame = () => {
       raf = 0;
       if (!inView) return;
       raf = requestAnimationFrame(frame);
       const s = where();
-      // the pieces leave with their section: however far the page has carried it up, the world goes too
-      const inTop = piecesIn ? piecesIn.getBoundingClientRect().top : 0;
-      const lift = s > 3 ? Math.max(0, -inTop) : 0;
+      const vh = window.innerHeight;
+      // the table leaves with its section: once the section's end comes up the window, the world goes up with it
+      const lift = s > 3 && piecesSec ? Math.max(0, vh - piecesSec.getBoundingClientRect().bottom) : 0;
       // and the world steps back, leaving the credentials on the plain ground
-      const fade = Math.min(1, Math.max(0, (s - 3.5) / 0.4));
-      const op = 1 - fade * fade * (3 - 2 * fade);
+      const credTop = credSec ? credSec.getBoundingClientRect().top : Infinity;
+      const op = ease((credTop - 0.15 * vh) / (0.55 * vh));
       cv.style.opacity = op.toFixed(3);
-      if (op > 0.001) world?.draw(s, chosenRef.current, hoverRef.current, lift);
+      if (op > 0.001) world?.draw(s, pickAt(), lift);
       if (world) {
         const edge = after ? after.getBoundingClientRect().top : Infinity;
         if (!labelH.length) { labelH = labelEls.current.map((x) => x?.offsetHeight ?? 0); labelW = labelEls.current.map((x) => x?.offsetWidth ?? 0); }
@@ -118,17 +145,6 @@ export default function ExperienceStage({ results, roles, groups, credentials, s
           lb.style.opacity = on.toFixed(3);
           lb.style.visibility = on > 0.01 ? 'visible' : 'hidden';
           lb.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0)`;
-        });
-        // each piece's name sits just under its plinth (the names live in the stage, which is where the window is),
-        // never outside the window, where a keyboard focus would drag the page sideways to reach it
-        if (!mobile) world.pieceAnchors.forEach((a, i) => {
-          const b = nameEls.current[i];
-          if (!b) return;
-          b.style.opacity = op.toFixed(3);
-          b.style.visibility = op > 0.02 ? 'visible' : 'hidden';
-          const bw = (nameW[i] ||= b.offsetWidth);
-          const x = Math.min(W - 12 - bw, Math.max(12, a.x - bw / 2));
-          if (a.on && op > 0.001) b.style.transform = `translate3d(${x.toFixed(1)}px, ${(a.y - inTop + 12).toFixed(1)}px, 0)`;
         });
       }
       // the migration's figures count as its servers land
@@ -157,7 +173,7 @@ export default function ExperienceStage({ results, roles, groups, credentials, s
       if (inView) { world?.start(); if (!raf) raf = requestAnimationFrame(frame); } else world?.stop();
     });
     seen.observe(el);
-    const onResize = () => { world?.resize(); labelH = []; labelW = []; nameW = []; };
+    const onResize = () => { world?.resize(); labelH = []; labelW = []; step = 0; };
     const onPointer = (e: PointerEvent) => {
       if (e.pointerType !== 'mouse') return;
       world?.setPointer((e.clientX / window.innerWidth) * 2 - 1, -((e.clientY / window.innerHeight) * 2 - 1));
@@ -177,7 +193,6 @@ export default function ExperienceStage({ results, roles, groups, credentials, s
   }, [live]);
 
   const openAll = () => dialog.current?.showModal();
-  const g = groups[chosen];
   const walkSpan = `${(walk.length * WALK_PER + 1).toFixed(2)} * 100svh`;
 
   return (
@@ -274,31 +289,30 @@ export default function ExperienceStage({ results, roles, groups, credentials, s
         </section>
       )}
 
-      {/* the stack: five pieces in the world, chosen from here */}
+      {/* the stack: five pieces round a table in the world; each one's words are a block in the flow, and reading
+          down the blocks turns the table to bring that piece to the front */}
       <section data-place="3" className="xw-sec xw-pieces" aria-labelledby="xw-pieces-title">
         {live ? (
-          <div className="xw-pieces__in">
+          <>
             <header className="xw-pieces__head lg-wrap">
               <h2 id="xw-pieces-title" className="lg-display">The pieces I play with.</h2>
-              <p className="lg-body">Each piece is one part of the stack. Pick one.</p>
+              <p className="lg-body">One piece for each part of the stack, brought round as you go.</p>
             </header>
-            <div className="xw-pieces__names" role="group" aria-label="Choose a piece">
-              {groups.map((x, i) => (
-                <button key={x.role} ref={(b) => { nameEls.current[i] = b; }} type="button" aria-pressed={i === chosen} onClick={() => setChosen(i)}
-                  onPointerEnter={() => { hoverRef.current = i; }} onPointerLeave={() => { hoverRef.current = -1; }}>
-                  <span className="pp__san">{x.san}</span>{x.role}
-                </button>
+            <div className="xw-pieces__run"><div className="xw-pieces__stage"><ol className="xw-pieces__list lg-wrap">
+              {groups.map((x) => (
+                <li key={x.role} className="xw-piece">
+                  <div className="xw-piece__card">
+                    <p className="lg-note pp__kind"><span className="pp__san" aria-hidden="true">{x.san}</span> The {x.piece}</p>
+                    <h3 className="lg-display pp__role">{x.role}</h3>
+                    <p className="pp__line">{x.line}</p>
+                    <ul className="pp__skills" aria-label={`${x.role} skills`}>
+                      {x.skills.map((s) => <li key={s} className="lg-chip">{s}</li>)}
+                    </ul>
+                  </div>
+                </li>
               ))}
-            </div>
-            <div className="xw-pieces__detail lg-wrap" key={g.role} aria-live="polite">
-              <p className="lg-note pp__kind">The {g.piece}</p>
-              <h3 className="lg-display pp__role">{g.role}</h3>
-              <p className="pp__line">{g.line}</p>
-              <ul className="pp__skills" aria-label={`${g.role} skills`}>
-                {g.skills.map((s, i) => <li key={s} className="lg-chip" style={{ ['--i' as string]: i }}>{s}</li>)}
-              </ul>
-            </div>
-          </div>
+            </ol></div></div>
+          </>
         ) : skills}
       </section>
 
