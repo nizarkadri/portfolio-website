@@ -351,7 +351,7 @@ export default function Landing({ doors, tower, projectCount, certificateCount }
                 <span className="count" ref={(n) => { counts.current[1] = n; }} data-to={certificateCount}>{certificateCount}</span> certifications. One long game.
               </p>
               <div className="wp__actions">
-                <Link href="/about#certificates" className="lg-link">The certificates</Link>
+                <Link href="/experience#certificates" className="lg-link">The certificates</Link>
                 <Link href="/projects" className="lg-link">The projects</Link>
               </div>
             </div>

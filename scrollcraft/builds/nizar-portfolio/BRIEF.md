@@ -398,3 +398,105 @@ ball inside the glass: "Yes, keep it".
   rejected ("very bad, revert to previous version"). Kept: the straight row that lowers onto the podium, with the
   geode in the gap between the words and the globe, the pillar back right, the ring at the right edge. One fix
   kept from that round: the stack band rewrites as soon as the project changes, so it is never blank after a jump.
+
+## Revision 5: About, Experience and Blog, new concepts
+
+Self-authored under explicit creative delegation ("be creative!", "think new concepts"), from the owner's
+own words this session. His verdicts, in order: on the plain pages "very generic"; on a dark band: "I didnt wanna
+change the colors palette i just wanted to make the pages more premium instead of simple flat design. Make it
+match the level of work page"; on pinned 3D stages that told results as chess moves: "making too hard for user to
+understand whats going on" and "I need a smooth continuos story telling instead of million scroll stoppers, with
+better motion effects and creativity keep minimal 3d"; on a thread down the margin over the same lists: "still
+looks ai slop ! I need it more consistent with my landing page and work page! It looks very tiring to get through
+all content and its plain and static ... dont stick to same straight scroll, change formats, change styles,
+keeping palette but add elements, be creative! more premium and high end dynamic style like the landing and work
+page. scrap entire current design for about, experience and blog".
+
+Constraints carried from him: the pale site palette (canvas #e3f2fb, ink #0b0f15, one blue: the landing's thread
+#4f8fff, set as #3f7fe0 in type); the landing's world (pale studio, Carrara and Marquina pieces, mist); plain words
+for what things are (no metaphor carrying information); no stop at every item; no floating DOM cards in 3D; no
+generation spend (existing assets only: portraits, the 14 pale project stills, the landing renders, certificates).
+
+### Experience: gallery of results on the board
+- Grammar: gallery (the results are the collection, each with the same label schema: figure, what moved, where).
+- Feeling: curiosity (the board in mist, the title) / momentum (the camera glides over the board and each result
+  rises out of its square as a marble column as tall as its number) / satisfaction (the camera lifts and the
+  whole board of results stands at once) / energy (the stack: scattered words snap into order) / calm (the degrees,
+  one pawn turning, the one action).
+- Peak: "the results rose out of a chessboard as marble columns, each as tall as its percentage". Largest span.
+- Signature move: the board of results (columns grow from the squares as the camera passes; labels ride their tops).
+
+### About: chaptered feature
+- Grammar: chaptered editorial (the story is long-form substance).
+- Feeling: recognition (title page: his portrait, a black marble king in front of it) / intimacy (the story as
+  spreads under a giant chapter word that wipes from Opening to Middlegame to Endgame) / proof (live training
+  numbers on a white band) / delight, the peak (five black marble pieces stand up on plinths; pick one and it lifts,
+  turns and shows that part of the stack) / weight (the certificates drift past as two rows of frames) / intent
+  (a quiet colophon, the action as a line of text).
+- Signature move: the piece picker (a real 3D lineup the visitor chooses from).
+
+### Blog: typographic poster
+- Grammar: typographic poster (four notes, the titles are the imagery).
+- Feeling: attention (NOTES at extreme scale, a marble knight floating in front of it) / appetite (each note a
+  title slab that wipes in from alternating sides, a small marble piece following the pointer as its preview) /
+  quiet (the smallest type on the page, one line to the action).
+- Signature move: the preview piece that follows the pointer and changes with the note under it.
+
+Tell-someone sentence: "on his experience page the results grow out of a chessboard as marble columns, and on
+his about page you pick a chess piece and it shows you what he builds with."
+
+### Revision 5, as built and checked
+- Score: Experience = pin with a bespoke WebGL scene (opening, walk, overview) / flow with a scrubbed assembly / flow close with a
+  pointer-and-scroll 3D object. About = flow title page with depth planes and pointer response / count / flow spreads with a
+  held, wiping folio / plain band / interactive 3D / drifting pointer-held wall. Blog = poster with a 3D plane in front of the
+  type / reveal wipes per slab / pointer-following 3D preview. No page uses one device twice in a row.
+- Feel check (cold, desktop): Experience: curious (empty board, route faint) / absorbed (columns rising under the camera) /
+  satisfied (the whole board) / lively (words snapping into order) / calm. About: recognised / reading / proof / play (picking a
+  piece) / weight. Blog: struck (NOTES) / browsing / done. Diff against the intended curve: the Experience opening read flatter
+  than meant, so the route is laid out faintly and two black pieces stand beside the board; the walk first read crowded and
+  occluded, so the camera now walks sideways from the front and the passed columns slide left behind pale air.
+- Checked: desktop 1440x900 and 1280x800, phone 390x844, reduced motion (Experience becomes a gallery of labels, About's
+  picker becomes the plain list, everything else holds without motion), pointer interactions (blog preview, picker by click
+  and by name), no console errors, types and lint clean. Not checked: a real phone, a weak GPU.
+
+### Revision 6: no repeats between pages; the experience record reads at a glance
+Owner: "informatiion is repeated between about and experience page. The pieces i play with goes to experience section and
+removed from about section, remove the stats from about page . certificates also go to experience, the hero for experience
+page is not smooth and forces user to stop scroll for each sentence . rethink that and come up with new concept. Also
+remove the small description under the title in about section. For experience keep a good balance between animations and
+redability with the option to read all at a glance always available."
+- About is the person only: title page (portrait, king, two links), the story chapters, the live training numbers. The
+  numbers band, the paragraph under the title, the piece picker and the credentials are gone from it.
+- Experience is everything professional: the record, the piece picker, the degrees and every certificate (#certificates).
+- New concept for the record: the ledger and the board side by side, nothing pinned. Every result is written out in the
+  ledger, and all of them are named at a glance at the top (one tap goes to the line). The board stays in view beside the
+  ledger (sticky): its columns rise once by themselves; after that the result being read, or pointed at on either side,
+  lights on the board and in the ledger, and the camera turns toward it with a one-second damped glide. The scroll is never
+  held. On a phone the board shows once as an overview between the glance and the ledger. Reduced motion: no board, the
+  ledger at full width.
+
+### Revision 7: Experience rethought as one world with a place for each part of the record
+Owner: "bad ! Rethink the entire experience again". What was wrong, in the owner's words: "glitching description, feels
+diconnected, boring animations, no character". Direction: "all three ideas are great! maybe combining three would work"
+(one world behind the page, a place per company with its own visual, a sideways gallery walk).
+- Grammar: one world held behind the whole page (fixed WebGL canvas), the page itself ordinary sections in ordinary flow
+  over it. Nothing pinned except short sticky copy; the camera glides between places on a Catmull-Rom route keyed to s
+  (one unit per section), damped, never stopping.
+- Places: the start (the landing's black king on its plinth, a pawn and a knight in the mist); CGI as a sideways gallery
+  walk along a marble runway, each result a column as tall as its figure, rising as it comes in from the right, with its
+  words riding beside it (never swapped in place); Fiera as the migration, twenty dark server blocks lifting one by one off
+  an on-premise rack in an arc onto a deck held up by a marble cloud, while the pinned figures count up with them; the
+  stack as five pieces on plinths (pick one: it lifts and turns, its name sits under it, the detail below), carried away
+  with its section; the degrees and certificates on the plain ground as the world steps back.
+- Reading at a glance: "All results" is fixed in the corner on every screen and opens every result in full; a fixed index
+  names each place and jumps to where the camera has arrived. Both come first in the reading order.
+- Phone: its own framing per place (the walk closer with the passing column centred and its words over it; the migration
+  further back below pinned figures, the sentences following on a card that slides up over them; the pieces further back
+  above their names). Reduced motion or no WebGL: no world, the same sections as plain lists.
+- Feel check (cold, desktop): recognised (the king) / absorbed (columns rising and passing, words travelling with them) /
+  delight (servers flying into the cloud as the numbers count) / play (picking a piece) / settled (credentials). Diff
+  against the intended curve: the walk first crowded three labels over the columns, so the columns are spaced wider and the
+  words hang off each column's shoulder; the cloud first read as grey cards, so it is now marble puffs under a deck.
+- Checked: desktop 1440x900, phone 390x844 (deviceScaleFactor 2), reduced motion, the dialog (open, Escape), every index
+  jump, choosing a piece, frame time 16.7ms median / 17ms p95 in headless Chrome, no console errors, types and lint clean.
+  Not checked: a real phone, a weak GPU, Safari.

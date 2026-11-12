@@ -42,7 +42,7 @@ reusing: a grammar, a nav treatment, a close pattern, a signature move, an
 act-count-and-length band. The shared columns are what the next build inherits
 as a constraint, so writing them down is the whole point.
 
-Nothing is taken yet.
+- Gallery-on-a-board with results as data columns (/experience). Chaptered feature with a held poster-size folio (/about). Typographic poster with a pointer-following 3D preview (/blog).
 
 ---
 
@@ -64,3 +64,12 @@ If you want to see what a filled-in table looks like, and which shapes tend to
 collide, read `EXAMPLES.md` in the scroll-craft repository. Treat it as
 illustration only: those rows are somebody else's builds and they do **not**
 constrain yours.
+
+| nizar-portfolio /experience (rev 5) | Gallery: the results are the collection, one label schema (figure, what moved, company and role) | Site bar plus an index of results along the foot of the board, grouped by company, each one a jump | The empty landing board in mist with the route faintly laid out; title and roles at the left | One pinned WebGL act (~6vh: opening, a sideways walk along nine results, the whole board), then a flow act (scattered words drawn into order), then a flow close | Degrees as a ledger beside one black marble pawn turning with the scroll; the site footer carries the action | The board of results: each result rises out of its square as a marble column as tall as its percentage, a tag riding its top | Pale studio, Carrara and Marquina, the landing's blue thread | 3477 (Next.js dev) |
+| nizar-portfolio /about (rev 5) | Chaptered editorial: title page, three story spreads, then working sections | Site bar plus a held folio beside the story (chapter name at poster size and a progress rule) | Title page: heading at the front, the portrait set back (slower), a black marble king nearest (faster) | Flow throughout, no pin: title page, numbers, three spreads, a white band of live numbers, a 3D lineup, a drifting wall | The certificates drifting by on two rows, each opening larger; the site footer carries the action | The piece picker: five marble pieces on plinths stand up as the section arrives; choose one and it lifts, turns and sets out that part of the stack | Same | 3477 |
+| nizar-portfolio /blog (rev 5) | Typographic poster: the titles are the imagery | Site bar plus topic words and a search line | NOTES at the full width of the page with a marble knight standing in front of its last letter | Flow: the poster, then title slabs wiping in from alternate sides, alternately set left and right | The smallest line on the page, the action as a link inside it, then the site footer | The preview piece: a marble piece follows the pointer over the notes, a different piece for each | Same | 3477 |
+
+Shared with prior rows: the site bar and the landing's world (stone, mist, blue thread) on all three; nothing else. Each differs from the landing row on grammar, nav, hero, act shape, close and signature move.
+| nizar-portfolio /experience (rev 7) | One world held behind the page: ordinary flow sections over a fixed WebGL world, a place in it per part of the record | Site bar, a fixed index pill naming each place (jumps to where the camera has arrived), and a fixed "All results" that opens every result | The landing's black king on its plinth in the mist, pawn and knight standing off; title and roles at the left | Flow throughout over one glide: start, a sideways gallery walk (one unit per result), the migration (sticky figures), the stack (sticky, carried off with its section), credentials on plain ground | The degrees and the drifting certificates on the plain ground as the world steps back; the site footer carries the action | The migration: twenty server blocks lift off an on-premise rack one by one and arc onto a marble cloud while the figures count up with them | Same | 3477 |
+
+Rev 7 /experience against every row: differs from /experience rev 5 on grammar, hero, act shape, close and signature move (5 of 6; the index along the foot is the shared trait). Its close is the one /about rev 5 had; that close moved here in revision 6, and /about no longer has it.

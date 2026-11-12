@@ -778,3 +778,17 @@ html.lenis, html.lenis body {
 @keyframes lgCharUp { from { transform: translate3d(0, 112%, 0) rotate(4deg); } to { transform: none; } }
 @keyframes lgUp { from { opacity: 0; transform: translate3d(0, 0.9rem, 0); } to { opacity: 1; transform: none; } }
 .lg-sr { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+
+/* letters that rise into place when their block scrolls in (components/story/Rise) */
+.rt__w { display: inline-block; white-space: nowrap; overflow: hidden; padding: 0.06em 0.04em 0.14em 0.05em; margin: -0.06em -0.04em -0.14em -0.05em; vertical-align: bottom; }
+.rt__c { display: inline-block; }
+@media (prefers-reduced-motion: no-preference) {
+  .rt__c { transform: translate3d(0, 112%, 0) rotate(4deg); transition: transform 950ms cubic-bezier(0.16, 0.84, 0.24, 1); transition-delay: calc(80ms + var(--i) * 22ms); }
+  .sc-in .rt__c { transform: none; }
+}
+html.sc-failed .rt__c { transform: none; }
+
+/* a marble piece on a clear canvas, set into the page (components/marble/PieceCanvas) */
+.mk-piece { position: relative; opacity: 0; transition: opacity 900ms var(--sc-ease-out); }
+.mk-piece.is-on { opacity: 1; }
+.mk-piece canvas { display: block; width: 100%; height: 100%; }
