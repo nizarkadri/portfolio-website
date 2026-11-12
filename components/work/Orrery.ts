@@ -31,6 +31,8 @@ const ROW_Y = 6.3, ROW_Z = -11, ROW_GAP = 3.6;      // the waiting globes hang i
 const OPEN = new THREE.Vector3(-3.6, 8.1, -12.5);   // the opening in the roof of the cave
 const OPEN_R = 3.6;
 
+type Spot = [x: number, z: number, size: number];
+
 const clamp = (v: number, a = 0, b = 1) => Math.min(b, Math.max(a, v));
 const smooth = (t: number) => { const k = clamp(t); return k * k * (3 - 2 * k); };
 const rnd = (i: number, s = 1) => { const x = Math.sin(i * 127.1 + s * 311.7) * 43758.5453; return x - Math.floor(x); };
@@ -54,7 +56,7 @@ export class Orrery {
   private eased = new THREE.Vector2();
   private ray = new THREE.Raycaster();
   private v = new THREE.Vector3();
-  private planets: Array<{ mesh: THREE.Mesh; card: THREE.Mesh; smoke: THREE.Mesh; halo: THREE.Sprite; small: number; lean: number }> = [];
+  private planets: Array<{ mesh: THREE.Mesh; card: THREE.Mesh; smoke: THREE.Mesh; halo: THREE.Sprite; small: number; lean: number; focus: number }> = [];
   private ring = new THREE.Group();
   private aura!: THREE.Sprite;
   private pool!: THREE.Mesh;
@@ -74,7 +76,8 @@ export class Orrery {
   private floes: Array<{ pts: THREE.Vector2[]; dist: number[]; len: number; at: number; lat: number; speed: number; w: number; size: number; spin: number }> = [];
   private floeMesh: THREE.InstancedMesh | null = null;
   private smokeTime = { value: 0 };
-  private relics: Array<{ g: THREE.Object3D; y: number; ry: number; ph: number }> = [];
+  private relics: Array<{ g: THREE.Object3D; pool: THREE.Mesh; h: number; y: number; ry: number; ph: number; wide: Spot; tall: Spot }> = [];
+  private roofGlow: THREE.Vector3[] = [];
   private relicTime: { value: number } = { value: 0 };
   private mist: Array<{ s: THREE.Sprite; z: number; y: number; w: number; rate: number; off: number; peak: number }> = [];
 
@@ -619,10 +622,11 @@ export class Orrery {
     // the haze would lighten it to grey at this distance, so the ceiling is kept out of it: it stays matte black
     // dark stone, fine teal veins that breathe, a scatter of crystal points that twinkle, and on it the
     // soft pools of colour thrown up by whatever glows below (the podium and the three objects)
+    this.roofGlow = [new THREE.Vector3(0, 0, 0), new THREE.Vector3(6.5, 0, -22), new THREE.Vector3(-9, 0, -21), new THREE.Vector3(13, 0, -14)];
     const roofMat = new THREE.ShaderMaterial({
       uniforms: {
         uTime: this.relicTime,
-        uPos: { value: [new THREE.Vector3(0, 0, 0), new THREE.Vector3(6.5, 0, -22), new THREE.Vector3(-9, 0, -21), new THREE.Vector3(13, 0, -14)] },
+        uPos: { value: this.roofGlow },
         uCol: { value: [new THREE.Color(TEAL), new THREE.Color(0x4ab3ff), new THREE.Color(0x3fd2d6), new THREE.Color(0x4a8dff)] },
         uRad: { value: [7.5, 8.0, 9.0, 6.0] },
       },
@@ -731,15 +735,19 @@ export class Orrery {
   private buildRelics() {
     // the pillar where the falls were, right of the globe; the geode, large, where the left wall stood,
     // rising out of the lake at the edge of the frame; the ring at the right edge by the wall
-    const items: Array<{ src: string; video?: string; x: number; z: number; h: number; aspect: number; glow: number; ph: number; lit?: number }> = [
-      { src: '/images/world/relics/crystal-column', video: '/images/world/relics/crystal-column.mp4', x: 6.5, z: -22, h: 6.2, aspect: 576 / 1064, glow: 0x4ab3ff, ph: 0 },
-      { src: '/images/world/relics/geode-monolith', video: '/images/world/relics/geode-monolith.mp4', x: -9, z: -21, h: 7.0, aspect: 640 / 1014, glow: 0x3fd2d6, ph: 2.1, lit: 1 },
-      { src: '/images/world/relics/agate-ring', video: '/images/world/relics/agate-ring.mp4', x: 13, z: -14, h: 6.6, aspect: 700 / 1012, glow: 0x4a8dff, ph: 4.3 },
+    // Where each stands depends on the shape of the window (see placeRelics): [x, z, size]. On a wide
+    // window the words sit on the left and a line runs from them to the globe, so all three stand to
+    // the right, below the row of waiting globes, and the space between words and globe is left empty.
+    // On a tall window there are no words beside the globe, so they stand either side. Every spot is
+    // inside the room's round wall (radius 25), or the wall hides it.
+    const items: Array<{ src: string; video?: string; wide: Spot; tall: Spot; h: number; aspect: number; glow: number; ph: number; lit?: number }> = [
+      { src: '/images/world/relics/crystal-column', video: '/images/world/relics/crystal-column.mp4', wide: [6.1, -22, 0.8], tall: [6.5, -22, 0.66], h: 6.2, aspect: 576 / 1064, glow: 0x4ab3ff, ph: 0 },
+      { src: '/images/world/relics/geode-monolith', video: '/images/world/relics/geode-monolith.mp4', wide: [10.0, -21, 0.7], tall: [-8.6, -21, 0.64], h: 7.0, aspect: 640 / 1014, glow: 0x3fd2d6, ph: 2.1, lit: 1 },
+      { src: '/images/world/relics/agate-ring', video: '/images/world/relics/agate-ring.mp4', wide: [13.9, -17.5, 0.68], tall: [13, -14, 0.66], h: 6.6, aspect: 700 / 1012, glow: 0x4a8dff, ph: 4.3 },
     ];
     const loader = new THREE.TextureLoader();
     for (const it of items) {
       const g = new THREE.Group();
-      g.position.set(it.x, 0, it.z);
       const w = it.h * it.aspect;
       const mat = this.relicMat(!!it.video);
       mat.uniforms.uLit.value = it.lit ?? 0;
@@ -778,16 +786,27 @@ export class Orrery {
       g.add(glow, card, lamp);
       // a pool of its light on the water under it
       const pool = new THREE.Mesh(new THREE.PlaneGeometry(Math.min(w * 2.4, 12), Math.min(w * 1.6, 8)), new THREE.MeshBasicMaterial({ map: this.glow, color: it.glow, transparent: true, opacity: 0.3, depthWrite: false, blending: THREE.AdditiveBlending }));
-      pool.rotation.x = -Math.PI / 2; pool.position.set(it.x, 0.05, it.z); pool.renderOrder = 4;
+      pool.rotation.x = -Math.PI / 2; pool.position.y = 0.05; pool.renderOrder = 4;
       this.scene.add(pool);
-      // each faces where the viewer stands, so it never shows an edge
-      const ry = Math.atan2(-it.x, 11.4 - it.z);
-      g.rotation.y = ry;
-      const y = it.h / 2 + 0.5;                     // just clear of the water
-      this.relics.push({ g, y, ry, ph: it.ph });
-      g.position.y = y;
+      this.relics.push({ g, pool, h: it.h, y: 0, ry: 0, ph: it.ph, wide: it.wide, tall: it.tall });
       this.scene.add(g);
     }
+    this.placeRelics(true);
+  }
+
+  /** Stand the three objects for this shape of window, each just clear of the water and turned to the viewer. */
+  private placeRelics(wide: boolean) {
+    this.relics.forEach((r, i) => {
+      const [x, z, s] = wide ? r.wide : r.tall;
+      r.g.scale.setScalar(s);
+      r.y = (r.h / 2) * s + 0.5;
+      r.ry = Math.atan2(-x, 11.4 - z);            // faces where the viewer stands, so it never shows an edge
+      r.g.position.set(x, r.y, z);
+      r.g.rotation.y = r.ry;
+      r.pool.position.x = x; r.pool.position.z = z;
+      r.pool.scale.setScalar(s);
+      this.roofGlow[i + 1]?.set(x, 0, z);          // the roof catches its light where it now stands
+    });
   }
 
   /** The project's picture for the inside of a globe, cropped to fill 4:3. */
@@ -810,7 +829,7 @@ export class Orrery {
   /** Shiny glass with a little white in it: milky low down, a bright rim, a crisp window of sky high on one side and a small second catch-light. */
   private glassMat() {
     return new THREE.ShaderMaterial({
-      uniforms: THREE.UniformsUtils.merge([THREE.UniformsLib.fog, { uTint: { value: new THREE.Color(TEAL) }, uFade: { value: 1 } }]),
+      uniforms: THREE.UniformsUtils.merge([THREE.UniformsLib.fog, { uTint: { value: new THREE.Color(TEAL) }, uFade: { value: 1 }, uClear: { value: 0 } }]),
       vertexShader: /* glsl */ `
         varying vec3 vN; varying vec3 vV; varying vec3 vWN;
         #include <fog_pars_vertex>
@@ -823,21 +842,23 @@ export class Orrery {
           #include <fog_vertex>
         }`,
       fragmentShader: /* glsl */ `
-        uniform vec3 uTint; uniform float uFade;
+        uniform vec3 uTint; uniform float uFade; uniform float uClear;
         varying vec3 vN; varying vec3 vV; varying vec3 vWN;
         #include <fog_pars_fragment>
         void main() {
           vec3 N = normalize(vWN);
           float f = pow(1.0 - clamp(dot(normalize(vN), normalize(vV)), 0.0, 1.0), 2.2);
           float d = dot(N, normalize(vec3(-0.45, 0.75, 0.5)));
-          float sheen = smoothstep(0.55, 0.95, d) * 0.16;
+          // the globe over the podium clears (uClear): its face goes glassy so the picture inside reads,
+          // while the rim, the high catch-light and the edge keep it a glass ball
+          float sheen = smoothstep(0.55, 0.95, d) * 0.16 * (1.0 - 0.6 * uClear);
           float spec = smoothstep(0.952, 0.982, d) * 0.9;
-          float spec2 = smoothstep(0.972, 0.99, dot(N, normalize(vec3(0.65, -0.15, 0.75)))) * 0.55;
-          float milk = smoothstep(-0.1, -0.95, N.y) * 0.14;
+          float spec2 = smoothstep(0.972, 0.99, dot(N, normalize(vec3(0.65, -0.15, 0.75)))) * 0.55 * (1.0 - 0.8 * uClear);
+          float milk = smoothstep(-0.1, -0.95, N.y) * 0.14 * (1.0 - 0.75 * uClear);
           float low = smoothstep(0.4, 0.95, -N.y) * f;
           vec3 c = mix(vec3(1.0), vec3(0.84, 0.89, 0.92), milk * 3.0);
           c = mix(c, uTint, low * 0.5);
-          gl_FragColor = vec4(c, clamp(0.1 + f * 0.62 + sheen + spec + spec2 + milk, 0.0, 1.0) * uFade);
+          gl_FragColor = vec4(c, clamp(0.1 * (1.0 - 0.7 * uClear) + f * 0.62 + sheen + spec + spec2 + milk, 0.0, 1.0) * uFade);
           #include <tonemapping_fragment>
           #include <colorspace_fragment>
           #include <fog_fragment>
@@ -907,7 +928,7 @@ export class Orrery {
    */
   private orbMat(map: THREE.Texture) {
     return new THREE.ShaderMaterial({
-      uniforms: THREE.UniformsUtils.merge([THREE.UniformsLib.fog, { uMap: { value: map }, uFade: { value: 1 } }]),
+      uniforms: THREE.UniformsUtils.merge([THREE.UniformsLib.fog, { uMap: { value: map }, uFade: { value: 1 }, uOpen: { value: 0 } }]),
       vertexShader: /* glsl */ `
         varying vec3 vNv;
         #include <fog_pars_vertex>
@@ -918,19 +939,22 @@ export class Orrery {
           #include <fog_vertex>
         }`,
       fragmentShader: /* glsl */ `
-        uniform sampler2D uMap; uniform float uFade;
+        uniform sampler2D uMap; uniform float uFade; uniform float uOpen;
         varying vec3 vNv;
         #include <fog_pars_fragment>
         void main() {
           vec3 n = normalize(vNv);
-          // the face of the ball toward you carries the picture (4:3), bulging like a lens
-          vec2 uv = vec2(n.x * 0.6, n.y * 0.8) + 0.5;
+          // the face of the ball toward you carries the picture (4:3), bulging like a lens. A waiting globe
+          // shows the middle of it in a small window; the one over the podium (uOpen) opens the window
+          // until nearly the whole picture shows
+          float hw = mix(0.83, 0.74, uOpen);                            // half the picture's width, across the ball
+          vec2 uv = vec2(n.x / hw, n.y / (hw * 0.75)) * 0.5 + 0.5;
           // round, not square: the picture fades out in a soft circle so it melts into the smoke
-          float r = length((uv - 0.5) * vec2(2.0, 2.0 * 0.75 / 0.6 * 0.6));
-          float inside = 1.0 - smoothstep(0.55, 0.95, r);
+          float r = length(n.xy);
+          float inside = 1.0 - smoothstep(mix(0.46, 0.7, uOpen), mix(0.79, 0.95, uOpen), r);
           vec3 c = texture2D(uMap, clamp(uv, 0.0, 1.0)).rgb;
           c *= 0.82 + 0.18 * n.z;                                      // a touch darker as it curves away
-          float a = inside * smoothstep(0.2, 0.62, n.z);
+          float a = inside * smoothstep(mix(0.2, 0.06, uOpen), mix(0.62, 0.36, uOpen), n.z);
           gl_FragColor = vec4(c, a * uFade);
           #include <tonemapping_fragment>
           #include <colorspace_fragment>
@@ -973,7 +997,7 @@ export class Orrery {
       // a soft light round each globe, cool white with a breath of teal
       const halo = new THREE.Sprite(new THREE.SpriteMaterial({ map: this.glow, color: 0x7fe6ea, transparent: true, opacity: 0.05, depthWrite: false, fog: false, blending: THREE.AdditiveBlending }));
       halo.renderOrder = 7;
-      this.planets.push({ mesh, card, smoke, halo, small: 0.62 + rnd(i, 5) * 0.12, lean: (rnd(i, 6) - 0.5) * 0.5 });
+      this.planets.push({ mesh, card, smoke, halo, small: 0.62 + rnd(i, 5) * 0.12, lean: (rnd(i, 6) - 0.5) * 0.5, focus: 0 });
       this.scene.add(halo, card, smoke, mesh);
     });
 
@@ -1090,8 +1114,11 @@ export class Orrery {
     let lead = 0;
     this.planets.forEach((p, i) => {
       const d = i - f;
-      const k = smooth(1 - Math.abs(d));                          // 1 when it is the one over the podium
+      // 1 when it is the one over the podium; it stays fully there while f is within 0.1 of it, so it is
+      // not already drifting away while you read. Two neighbours always add up to 1, so they pass evenly.
+      const k = smooth((0.9 - Math.abs(d)) / 0.8);
       lead = Math.max(lead, k);
+      p.focus = k;
       const edge = smooth((3.7 - Math.abs(d)) / 0.9);             // the row fades out at either end
       slot(d, this.v);
       const bob = Math.sin(t * 0.5 + i * 1.3) * 0.05;
@@ -1157,10 +1184,15 @@ export class Orrery {
     this.camera.lookAt(x * 0.12 - px * 0.2, m ? 3.9 : 3.5, -2.0);
     // the podium, round, always turned to you
     if (this.podium) this.podium.quaternion.copy(this.camera.quaternion);
-    // each picture faces you from inside its glass
+    // each picture faces you from inside its glass; the one over the podium opens up, with less smoke
+    // round it and clearer glass in front, so the project can be recognised from its picture
     for (const p of this.planets) {
+      const k = p.focus;
+      (p.card.material as THREE.ShaderMaterial).uniforms.uOpen.value = k;
+      (p.smoke.material as THREE.ShaderMaterial).uniforms.uFade.value = 1 - 0.55 * k;
+      (p.mesh.material as THREE.ShaderMaterial).uniforms.uClear.value = k;
       p.card.position.copy(p.mesh.position);
-      p.card.scale.copy(p.mesh.scale);
+      p.card.scale.copy(p.mesh.scale).multiplyScalar(1 + 0.12 * k);
       p.card.visible = p.mesh.visible;
       p.smoke.position.copy(p.mesh.position);
       p.smoke.scale.copy(p.mesh.scale);
@@ -1201,6 +1233,7 @@ export class Orrery {
     else if (w / h < 0.8) this.camera.setViewOffset(w, h, 0, h * 0.17, w, h);
     else this.camera.clearViewOffset();
     this.camera.updateProjectionMatrix();
+    this.placeRelics(w / h >= 1.25);
     if (this.mirror) {
       const k = this.renderer.getPixelRatio() * (this.opts.mobile ? 0.4 : 0.5);
       const mw = Math.max(64, Math.round(w * k)), mh = Math.max(64, Math.round(h * k));

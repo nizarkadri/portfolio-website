@@ -71,5 +71,14 @@ html.lg-menu-open { overflow: hidden; }
 }
 .lg-bar.is-home::before { display: none; }
 
+/* over a dark scene (the Work room) the bar turns to dark glass with light ink, instead of a pale
+   strip across the top of the room. WorkWorld sets the class while the room is under the bar. */
+html.lg-bar-dark .lg-bar {
+  --sc-canvas: #11181d; --sc-surface: #1a2329; --sc-ink: #eef6f7; --sc-ink-soft: rgba(222, 236, 238, 0.66);
+  --sc-accent: #eef6f7; --sc-accent-ink: #0b0f15;
+  --sc-hairline: rgba(238, 246, 247, 0.1); --sc-hairline-strong: rgba(238, 246, 247, 0.24);
+}
+html.lg-bar-dark .lg-bar.is-solid { background: color-mix(in oklab, var(--sc-canvas) 62%, transparent); }
+
 /* the footer on the pale ground */
 .lg-foot { background: linear-gradient(180deg, var(--sc-canvas), #d3e6f5); }

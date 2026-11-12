@@ -208,3 +208,12 @@
 @media (max-width: 860px) {
   .pw__stage::after { background: linear-gradient(0deg, rgba(14, 20, 24, 0.9) 0, rgba(14, 20, 24, 0.75) 38%, transparent 56%), linear-gradient(180deg, rgba(14, 20, 24, 0.7), transparent 20%); }
 }
+
+/* Out of the room and onto the page. The foot of the room settles into one dark (--pw-floor), and below
+   the room that dark fades into the page's own pale ground, so the list is reached without a hard edge. */
+.pw { --pw-floor: #0e1418; }
+.pw__stage::before { content: ""; position: absolute; inset: auto 0 0 0; height: 16%; z-index: 1; pointer-events: none;
+  background: linear-gradient(0deg, var(--pw-floor), color-mix(in oklab, var(--pw-floor) 55%, transparent) 45%, transparent); }
+.pw__after { --pw-floor: #0e1418; height: clamp(12rem, 42svh, 26rem); margin-bottom: calc(-1 * clamp(2rem, 6vw, 5rem));
+  background: linear-gradient(180deg, var(--pw-floor) 0%, color-mix(in oklab, var(--pw-floor) 78%, var(--sc-canvas)) 22%,
+    color-mix(in oklab, var(--pw-floor) 42%, var(--sc-canvas)) 52%, color-mix(in oklab, var(--pw-floor) 12%, var(--sc-canvas)) 80%, var(--sc-canvas) 100%); }

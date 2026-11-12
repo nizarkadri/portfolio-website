@@ -8,7 +8,8 @@ import { Chars } from '../Kinetic';
 import type { Orrery } from './Orrery';
 
 const STEP = 0.82;        // viewport heights of scroll each project owns
-const SETTLE = 0.62;      // how much the scroll slows as a project arrives (0 = not at all). It never stops.
+const HOLD = 0.2;         // at each end of a step, the share of it where the project is all but still
+const CREEP = 0.14;       // how much it still moves while held, so the scroll never feels stuck
 
 const shortTitle = (t: string) => t.split(/\s+[-—]\s+|:\s+/)[0];
 const clamp = (v: number) => Math.min(1, Math.max(0, v));
@@ -17,12 +18,14 @@ const ease = (v: number) => { const k = clamp(v); return k * k * (3 - 2 * k); };
 /**
  * How far in a piece of the words is, 0 to 1, at distance d from its project.
  * `s` (0 to 1) is its place in the order: the first piece arrives first and
- * also leaves first, whichever way the scroll is going.
+ * also leaves first, whichever way the scroll is going. Every piece is fully
+ * in while d is within FULL, which covers most of each project's scroll.
  */
-const SPREAD = 0.16;
+const GONE = 0.42, FADE = 0.18, FULL = 0.12;
+const SPREAD = GONE - FADE - FULL;
 function rise(d: number, s: number) {
   const order = d < 0 ? s : 1 - s;
-  return ease((0.42 - Math.abs(d) - order * SPREAD) / 0.18);
+  return ease((GONE - Math.abs(d) - order * SPREAD) / FADE);
 }
 
 /** A title as words of single letters, so the scroll can raise them one at a time. */
@@ -46,15 +49,16 @@ function Letters({ text }: { text: string }) {
 
 /**
  * Scroll progress to a place among the projects. The scene is scrubbed by the
- * scroll: every bit of scroll moves it, forwards or back. It only eases a
- * little as each project arrives, so there is a moment to read it.
+ * scroll: every bit of scroll moves it, forwards or back. Near each project it
+ * only creeps, so there is time to read it; the change from one to the next
+ * happens in the middle of the step.
  */
 function place(p: number, n: number) {
   if (n < 2) return 0;
   const x = clamp(p) * (n - 1);
   const i = Math.min(n - 2, Math.floor(x));
   const t = x - i;
-  return i + t + (t * t * (3 - 2 * t) - t) * SETTLE;
+  return i + (1 - CREEP) * ease((t - HOLD) / (1 - 2 * HOLD)) + CREEP * t;
 }
 
 function webglOk() {
@@ -76,6 +80,7 @@ export default function WorkWorld({ projects }: { projects: ProjectSummary[] }) 
   const canvas = useRef<HTMLCanvasElement>(null);
   const world = useRef<Orrery | null>(null);
   const label = useRef<HTMLDivElement>(null);
+  const after = useRef<HTMLDivElement>(null);
   const lead = useRef<HTMLSpanElement>(null);
   const dot = useRef<HTMLSpanElement>(null);
   const chars = useRef<HTMLElement[]>([]);
@@ -131,9 +136,20 @@ export default function WorkWorld({ projects }: { projects: ProjectSummary[] }) 
     const sizes = new ResizeObserver(measure);
     if (label.current) sizes.observe(label.current);
 
+    // the bar at the top of the window goes dark while the room, or the dark half of the
+    // fade below it, is what it sits on
+    const root = document.documentElement;
+    let barDark = false;
+    const setBar = (on: boolean) => { if (on !== barDark) { barDark = on; root.classList.toggle('lg-bar-dark', on); } };
+    let barMid = 34;
+    const measureBar = () => { barMid = (document.querySelector<HTMLElement>('.lg-bar')?.offsetHeight ?? 68) / 2; };
+    measureBar();
+
     const frame = () => {
       raf = requestAnimationFrame(frame);
       const r = el.getBoundingClientRect();
+      const fade = after.current?.getBoundingClientRect();
+      setBar(r.top < barMid && (fade ? fade.top + fade.height * 0.45 : r.bottom) > barMid);
       if (r.bottom < -100 || r.top > window.innerHeight + 100) return;
       const f = place(-r.top / Math.max(1, r.height - window.innerHeight), n);
       // one number, one frame: the scene is drawn at this place now, and the words are set
@@ -142,7 +158,7 @@ export default function WorkWorld({ projects }: { projects: ProjectSummary[] }) 
       w?.draw(f);
       const here = Math.min(n - 1, Math.max(0, Math.round(f)));
       const d = f - here;
-      const o = ease((0.42 - Math.abs(d)) / 0.25);
+      const o = ease((GONE - Math.abs(d)) / 0.25);
       const up = d < 0 ? 1 : -1;   // arriving words come up from below, leaving words carry on upwards
 
       const lb = label.current;
@@ -163,7 +179,9 @@ export default function WorkWorld({ projects }: { projects: ProjectSummary[] }) 
       }
       if (lb) {
         lb.style.opacity = o.toFixed(3);
-        lb.style.pointerEvents = o > 0.5 ? 'auto' : 'none';
+        // while the words are mostly out of sight, nothing in them can be clicked, tabbed to or read out
+        const away = o <= 0.5;
+        if (lb.inert !== away) lb.inert = away;
       }
 
       // the name, letter by letter
@@ -206,7 +224,7 @@ export default function WorkWorld({ projects }: { projects: ProjectSummary[] }) 
     });
     raf = requestAnimationFrame(frame);
 
-    const onResize = () => { layout(); w?.resize(); };
+    const onResize = () => { layout(); measureBar(); w?.resize(); };
     const onPointer = (e: PointerEvent) => {
       if (e.pointerType !== 'mouse' || !w) return;
       w.setPointer((e.clientX / window.innerWidth) * 2 - 1, -((e.clientY / window.innerHeight) * 2 - 1));
@@ -224,6 +242,7 @@ export default function WorkWorld({ projects }: { projects: ProjectSummary[] }) 
     return () => {
       dead = true;
       cancelAnimationFrame(raf);
+      setBar(false);
       sizes.disconnect();
       window.removeEventListener('resize', onResize);
       window.removeEventListener('pointermove', onPointer);
@@ -248,6 +267,7 @@ export default function WorkWorld({ projects }: { projects: ProjectSummary[] }) 
   const span = (n * STEP + 1).toFixed(2);
 
   return (
+    <>
     <section ref={act} className="pw" data-sc-act="pin" data-sc-span={span} data-sc-drift="#e3f2fb" aria-label="The work">
       <div data-sc-stage className="pw__stage">
         <canvas ref={canvas} className="pw__canvas" aria-hidden="true" />
@@ -260,8 +280,11 @@ export default function WorkWorld({ projects }: { projects: ProjectSummary[] }) 
         <span ref={lead} className="pw__lead" aria-hidden="true" />
         <span ref={dot} className="pw__dot" aria-hidden="true" />
 
+        {/* One short line for screen readers when the project changes, instead of the whole label read out again. */}
+        <p className="lg-sr" aria-live="polite" aria-atomic="true">{`Project ${active + 1} of ${n}: ${shortTitle(current.title)}`}</p>
+
         {/* The label: flat markup. The scroll moves it in and out with its globe; it changes only while out of sight. */}
-        <div ref={label} className="pw__label" aria-live="polite">
+        <div ref={label} className="pw__label">
           <p className="lg-note" data-part="">{[current.year, current.status].filter(Boolean).join(' · ')}</p>
           <h2 className="lg-display pw__name" data-long={shortTitle(current.title).length > 24 ? '' : undefined}><Letters text={shortTitle(current.title)} /></h2>
           <p className="pw__sum" data-part="">{current.summary}</p>
@@ -291,5 +314,8 @@ export default function WorkWorld({ projects }: { projects: ProjectSummary[] }) 
         </div>
       </div>
     </section>
+    {/* the room's dark floor fading into the pale page, so the list is reached without a hard edge */}
+    <div ref={after} className="pw__after" aria-hidden="true" />
+    </>
   );
 }
