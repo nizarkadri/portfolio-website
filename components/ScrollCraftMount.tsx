@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation';
 type Instance = { destroy?: () => void };
 type Engine = { mount: (root: Element | Document) => Instance };
 declare global {
-  interface Window { ScrollCraft?: Engine; __sc?: Instance }
+  interface Window { ScrollCraft?: Engine }
 }
 
 let loading: Promise<void> | null = null;
@@ -41,8 +41,6 @@ export default function ScrollCraftMount() {
         raf = requestAnimationFrame(() => {
           if (dead || !window.ScrollCraft) return;
           instance = window.ScrollCraft.mount(document.body);
-          // The skill's verification scripts read the live instance from here.
-          window.__sc = instance;
           document.documentElement.classList.add('sc-ready');
         });
       })
@@ -51,7 +49,6 @@ export default function ScrollCraftMount() {
       dead = true;
       cancelAnimationFrame(raf);
       instance?.destroy?.();
-      if (window.__sc === instance) delete window.__sc;
     };
   }, [pathname]);
 

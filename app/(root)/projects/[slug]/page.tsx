@@ -6,6 +6,8 @@ import { getAllProjectSlugs, getProjectData, getSortedProjectsData } from '../..
 import { ProjectMetaBadges, ProjectTechnologyBadges } from '../../../../components/projects/ProjectBadges';
 import { ProjectImage } from '../../../../components/projects/ProjectImage';
 import { ProjectLinks } from '../../../../components/projects/ProjectLinks';
+import { Chars } from '../../../../components/Kinetic';
+import '../../../case-study.css';
 
 export async function generateStaticParams() {
   return getAllProjectSlugs();
@@ -52,82 +54,74 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
   ].filter(Boolean) as { label: string; value: string }[];
 
   return (
-    <div className="lg-page min-h-screen pb-20">
-      <div className="container mx-auto max-w-6xl px-4">
-        <nav aria-label="Breadcrumb" className="mb-8 flex flex-wrap items-center gap-2 text-sm text-soft-white/50">
-          <Link href="/" className="hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF8A4C] rounded">Home</Link>
+    <div className="cs lg-page">
+      <div className="lg-wrap">
+        <nav aria-label="Breadcrumb" className="cs-crumbs lg-up">
+          <Link href="/">Home</Link>
           <span aria-hidden>/</span>
-          <Link href="/projects" className="hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF8A4C] rounded">Projects</Link>
+          <Link href="/projects">Work</Link>
           <span aria-hidden>/</span>
-          <span aria-current="page" className="text-white">{project.title}</span>
+          <span aria-current="page">{project.title}</span>
         </nav>
 
-        {/* Hero */}
-        <header className="relative overflow-hidden rounded-xl border border-white/10 bg-[#0F1319]">
-          <div className="relative aspect-[16/8] min-h-[280px] overflow-hidden bg-[#0B0F15]">
-            <ProjectImage src={project.imageUrl} alt={project.title} fill priority sizes="(max-width:768px) 100vw, 1100px" />
-            <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-[#0F1319] via-[#0F1319]/30 to-transparent" />
-          </div>
-          <div className="p-7 md:p-10">
-            <ProjectMetaBadges year={project.year} status={project.status} showFeatured featured={project.featured} className="mb-4" />
-            <h1 className="lg-display lg-display--lg max-w-3xl">{project.title}</h1>
-            <p className="mt-4 max-w-2xl text-lg leading-8 text-soft-white/70">{project.description}</p>
-            <div className="mt-6 flex flex-wrap items-center gap-4">
-              <ProjectLinks liveUrl={project.liveUrl} repoUrl={project.repoUrl} />
-              <ProjectTechnologyBadges technologies={project.technologies} />
-            </div>
+        {/* What it is, in ink on the pale ground; then the picture */}
+        <header className="cs-hero">
+          <ProjectMetaBadges year={project.year} status={project.status} showFeatured featured={project.featured} className="lg-up" />
+          <h1 className="lg-display cs-title"><Chars text={project.title} /></h1>
+          <p className="cs-lede lg-up" style={{ ['--d' as string]: 520 }}>{project.description}</p>
+          <div className="cs-hero__row lg-up" style={{ ['--d' as string]: 640 }}>
+            <ProjectLinks liveUrl={project.liveUrl} repoUrl={project.repoUrl} />
+            <ProjectTechnologyBadges technologies={project.technologies} />
           </div>
         </header>
 
-        {/* Metrics */}
+        <div className="cs-cover">
+          <ProjectImage src={project.imageUrl} alt="" fill priority sizes="(max-width: 860px) 100vw, 1300px" />
+        </div>
+
+        {/* The facts */}
         {metrics.length > 0 ? (
-          <dl className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <dl className="cs-facts" data-sc-in data-sc-stagger="80">
             {metrics.map((m) => (
-              <div key={m.label} className="rounded-lg border border-white/10 bg-white/[0.03] p-5">
-                <dt className="text-xs font-semibold uppercase tracking-[0.22em] text-[#FFB083]">{m.label}</dt>
-                <dd className="mt-2 text-sm leading-6 text-soft-white/75">{m.value}</dd>
+              <div key={m.label}>
+                <dt className="lg-note">{m.label}</dt>
+                <dd>{m.value}</dd>
               </div>
             ))}
           </dl>
         ) : null}
 
-        {/* Body + highlights rail */}
-        <div className="mt-10 grid gap-10 lg:grid-cols-[minmax(0,1fr)_300px]">
-          <article
-            className="prose prose-invert prose-lg max-w-none prose-p:text-soft-white/80 prose-headings:text-white prose-li:text-soft-white/70 prose-a:text-[#FFB083] prose-strong:text-white prose-pre:border prose-pre:border-white/10 prose-pre:bg-black/50 prose-code:text-[#FFB083]"
-            dangerouslySetInnerHTML={{ __html: project.contentHtml }}
-          />
+        {/* The write-up, with the highlights beside it */}
+        <div className="cs-body">
+          <article className="cs-prose" dangerouslySetInnerHTML={{ __html: project.contentHtml }} />
           {project.highlights.length > 0 ? (
-            <aside aria-label="Highlights" className="h-fit rounded-lg border border-white/10 bg-white/[0.03] p-6 lg:sticky lg:top-24">
-              <h2 className="text-sm font-semibold uppercase tracking-[0.22em] text-[#FFB083]">Highlights</h2>
-              <ul className="mt-4 grid gap-3 text-sm leading-6 text-soft-white/75">
+            <aside aria-label="Highlights" className="cs-rail lg-panel">
+              <h2 className="lg-note">Highlights</h2>
+              <ul>
                 {project.highlights.map((h) => (
-                  <li key={h} className="flex items-start gap-2.5">
-                    <span aria-hidden className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-[#FF8A4C]" />
-                    <span>{h}</span>
-                  </li>
+                  <li key={h}>{h}</li>
                 ))}
               </ul>
-              <div className="mt-6 border-t border-white/10 pt-5">
-                <ProjectTechnologyBadges technologies={project.technologies} />
+              <div className="cs-rail__stack">
+                <ProjectTechnologyBadges technologies={project.technologies} compact />
               </div>
             </aside>
           ) : null}
         </div>
 
-        {/* Prev / Next */}
+        {/* On to the next one */}
         {all.length > 1 ? (
-          <nav aria-label="More projects" className="mt-14 grid gap-4 sm:grid-cols-2">
+          <nav aria-label="More projects" className="cs-more">
             {prev && prev.slug !== slug ? (
-              <Link href={`/projects/${prev.slug}`} className="group rounded-lg border border-white/10 bg-white/[0.03] p-5 transition-colors hover:border-[#FF8A4C]/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF8A4C]">
-                <span className="text-xs uppercase tracking-[0.22em] text-soft-white/50">Previous</span>
-                <span className="mt-1 block font-medium text-white group-hover:text-[#FFB083]">{prev.title}</span>
+              <Link href={`/projects/${prev.slug}`} className="cs-more__card">
+                <span className="lg-note">Previous</span>
+                <span className="cs-more__title">{prev.title}</span>
               </Link>
             ) : <span />}
             {next && next.slug !== slug ? (
-              <Link href={`/projects/${next.slug}`} className="group rounded-lg border border-white/10 bg-white/[0.03] p-5 text-right transition-colors hover:border-[#FF8A4C]/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF8A4C]">
-                <span className="text-xs uppercase tracking-[0.22em] text-soft-white/50">Next</span>
-                <span className="mt-1 block font-medium text-white group-hover:text-[#FFB083]">{next.title}</span>
+              <Link href={`/projects/${next.slug}`} className="cs-more__card cs-more__card--next">
+                <span className="lg-note">Next</span>
+                <span className="cs-more__title">{next.title}</span>
               </Link>
             ) : null}
           </nav>

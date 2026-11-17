@@ -5,7 +5,7 @@
    ========================================================================== */
 :root {
   /* the one error colour: a desaturated red tuned for the dark ground */
-  --bc-danger: #ec9086;
+  --bc-danger: #b3382c;
   --bc-danger-soft: color-mix(in oklab, var(--bc-danger) 12%, transparent);
 }
 
@@ -389,8 +389,3 @@ textarea.fx-input--short { min-height: 6rem; }
 .bc-toast button { width: 2.75rem; height: 2.75rem; display: grid; place-items: center; background: transparent; border: 0; color: var(--sc-ink-soft); cursor: pointer; }
 .bc-toast button svg { width: 0.8rem; height: 0.8rem; }
 @media (prefers-reduced-motion: reduce) { .bc-toast { animation-name: bcFade; } }
-
-/* Light version: the contact page opens on the last position of the flight. */
-.ct { position: relative; isolation: isolate; }
-.ct::before { content: ""; position: absolute; inset: 0 0 auto 0; height: min(110svh, 64rem); z-index: -1; pointer-events: none;
-  background: linear-gradient(180deg, rgb(7 11 20 / 0.5) 0%, rgb(7 11 20 / 0.78) 50%, var(--sc-canvas) 100%), url("/world/k6.webp") 72% 0 / cover no-repeat; }

@@ -12,7 +12,7 @@ interface Group {
 }
 
 /** The skill set, grouped by the piece each part of the stack plays. */
-const GROUPS: Group[] = [
+export const GROUPS: Group[] = [
   {
     piece: 'queen',
     san: 'Q',

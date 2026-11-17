@@ -260,57 +260,67 @@ button.ae-frame:focus-visible .ae-frame__mat::after { opacity: 0; }
 @media (max-width: 520px) { .ae-roster a { grid-template-columns: minmax(0, 1fr) auto; } .ae-roster a .lg-note { grid-column: 1; grid-row: 2; } .ae-roster a svg { grid-column: 2; grid-row: 1 / span 2; } }
 
 /* ==========================================================================
-   Light version: bands, the day hero, the facts ledger, how I think
+   Revision: these pages on the pale ground. Light type, white glass, air.
    ========================================================================== */
-.ae-band { position: relative; }
-.ae-band--gap { margin-top: clamp(4rem, 8vw, 9rem); }
-.ae-band__end { height: clamp(4rem, 8vw, 9rem); }
-.ae-band.tone-day .ae-section:first-child { padding-top: clamp(4rem, 8vw, 8rem); }
+.ab-hero { position: relative; display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr); align-items: end; gap: clamp(1.5rem, 4vw, 4.5rem);
+  min-height: calc(100svh - var(--lg-bar-h) - clamp(2.5rem, 6vw, 6rem)); padding-bottom: clamp(2rem, 4vw, 3.5rem); }
+.ab-hero__copy { display: grid; gap: 1.3rem; justify-items: start; padding-bottom: clamp(0.5rem, 3vw, 2.5rem); }
+.ab-hero__title { font-weight: 300; letter-spacing: -0.055em; line-height: 0.96; font-size: clamp(2.9rem, 0.8rem + 6vw, 6.6rem); }
+.ab-hero__copy .lg-body { max-width: 44ch; }
+.ab-hero__links { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 0.4rem; }
+.ab-pill { display: inline-flex; align-items: center; padding: 0.8rem 1.35rem; border-radius: 999px; border: 1px solid var(--sc-hairline-strong); background: rgba(255, 255, 255, 0.5);
+  color: var(--sc-ink); font-size: 0.92rem; font-weight: 500; text-decoration: none; transition: background-color 220ms var(--sc-ease-out), color 220ms var(--sc-ease-out), border-color 220ms var(--sc-ease-out); }
+.ab-pill--ink { background: var(--sc-ink); color: var(--sc-canvas); border-color: var(--sc-ink); }
+@media (hover: hover) and (pointer: fine) {
+  .ab-pill:hover { background: var(--sc-ink); color: var(--sc-canvas); border-color: var(--sc-ink); }
+  .ab-pill--ink:hover { background: color-mix(in oklab, var(--sc-ink) 84%, var(--sc-canvas)); }
+}
+.ab-hero__figure { position: relative; align-self: stretch; min-height: min(74svh, 46rem); border-radius: 28px; overflow: hidden; background: linear-gradient(180deg, #d6e9f8, #e9f4fc); }
+.ab-hero__figure img { object-fit: cover; object-position: 80% 16%; }
+.ab-hero__figure figcaption { position: absolute; right: 1.1rem; bottom: 1.1rem; }
+.ab-hero__pills { display: grid; gap: 0.4rem; justify-items: end; }
+.ab-hero__pills li { padding: 0.44rem 0.95rem; border-radius: 999px; background: rgba(255, 255, 255, 0.74); backdrop-filter: blur(8px); font-size: 0.8rem; font-weight: 500; color: var(--sc-ink); }
+@media (prefers-reduced-motion: no-preference) {
+  .ab-hero__figure { animation: abReveal 1200ms cubic-bezier(0.16, 0.84, 0.24, 1) both; }
+  .ab-hero__figure img { animation: abSettle 1800ms cubic-bezier(0.16, 0.84, 0.24, 1) both; }
+}
+@keyframes abReveal { from { clip-path: inset(100% 0 0 0 round 28px); } to { clip-path: inset(0 0 0 0 round 28px); } }
+@keyframes abSettle { from { transform: scale(1.12); } to { transform: none; } }
 
-.tone-day .ae-hero__copy .lg-display { text-shadow: none; }
-.ae-hero__copy .lg-note { text-transform: none; letter-spacing: 0.02em; }
-.ae-hero__frame { aspect-ratio: 4 / 5; border-radius: 4px; box-shadow: var(--sc-e3); border: 0; outline: 1px solid var(--sc-hairline); outline-offset: 0.6rem; }
-.ae-hero__frame img { object-position: 50% 30%; }
-.ae-hero__frame::after { background: linear-gradient(0deg, color-mix(in oklab, var(--sc-canvas) 30%, transparent), transparent 22%); }
-.ae-hero__figure { max-width: 30rem; padding: 0.6rem; }
-.ae-hero { align-items: center; padding-bottom: clamp(2.5rem, 5vw, 5rem); }
+.ab-stats { padding-top: clamp(1.5rem, 4vw, 4rem); }
+.ab-stats dl { margin: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 1px solid var(--sc-hairline-strong); }
+.ab-stats dl > div { display: grid; gap: 0.6rem; align-content: start; padding: 1.5rem 1.5rem 0.5rem 0; }
+.ab-stats dl > div + div { padding-left: 1.5rem; border-left: 1px solid var(--sc-hairline); }
+.ab-stats dt { font-family: var(--sc-font-display); font-weight: 300; letter-spacing: -0.055em; line-height: 1; font-size: clamp(2.6rem, 1.4rem + 3.8vw, 5.2rem); font-variant-numeric: tabular-nums; color: var(--sc-ink); }
+.ab-stats dd { margin: 0; color: var(--sc-ink-soft); font-size: 0.95rem; line-height: 1.45; max-width: 24ch; }
 
-.ae-facts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; border-top: 1px solid var(--sc-hairline-strong); padding-bottom: clamp(3rem, 6vw, 6rem); }
-.ae-facts > div { display: grid; gap: 0.55rem; align-content: start; padding: 1.25rem 1.5rem 0 0; }
-.ae-facts > div + div { padding-left: 1.5rem; border-left: 1px solid var(--sc-hairline); }
-.ae-facts dd { font-family: var(--sc-font-display); font-weight: 700; font-stretch: 106%; letter-spacing: -0.015em; font-size: clamp(1.02rem, 0.95rem + 0.4vw, 1.3rem); line-height: 1.25; color: var(--sc-ink); text-wrap: balance; }
 @media (max-width: 860px) {
-  .ae-facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .ae-facts > div { padding: 1rem 1rem 1rem 0; border-bottom: 1px solid var(--sc-hairline); }
-  .ae-facts > div + div { padding-left: 0; border-left: 0; }
-  .ae-facts > div:nth-child(even) { padding-left: 1rem; border-left: 1px solid var(--sc-hairline); }
+  .ab-hero { grid-template-columns: minmax(0, 1fr); min-height: 0; gap: 1.5rem; }
+  .ab-hero__figure { order: -1; min-height: 0; height: min(52svh, 30rem); border-radius: 22px; }
+  .ab-hero__figure img { object-position: 78% 10%; }
+  .ab-hero__title { font-size: clamp(2.6rem, 12vw, 3.6rem); }
+  .ab-stats dl { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ab-stats dl > div:nth-child(3) { padding-left: 0; border-left: 0; }
+  .ab-stats dl > div:nth-child(n + 3) { border-top: 1px solid var(--sc-hairline); }
 }
 
-/* how I think: the sculpture stands in the night hall */
-.ae-think { position: relative; padding-block: clamp(4.5rem, 9vw, 10rem); overflow: clip;
-  background: radial-gradient(90% 70% at 22% 40%, #132040 0%, transparent 62%), var(--sc-canvas); }
-.ae-think__grid { display: grid; grid-template-columns: minmax(0, 0.82fr) minmax(0, 1fr); gap: clamp(2rem, 5vw, 5.5rem); align-items: center; }
-.ae-think__art { position: relative; border-radius: 4px; overflow: hidden; box-shadow: 0 0 0 1px rgb(190 214 255 / 0.22), var(--sc-e3); }
-.ae-think__art img { display: block; width: 100%; height: auto; }
-.ae-think__art::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(0deg, rgb(7 11 20 / 0.5), transparent 30%); }
-.ae-think__copy .ae-head { margin-bottom: clamp(1.5rem, 3vw, 2.5rem); }
-.ae-think__copy .ae-head .lg-display { max-width: 16ch; }
-.ae-habits { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-top: 1px solid var(--sc-hairline-strong); }
-.ae-habits > li { display: grid; gap: 0.6rem; align-content: start; padding: 1.4rem 1.5rem 1.6rem 0; border-bottom: 1px solid var(--sc-hairline); }
-.ae-habits > li:nth-child(even) { padding-left: 1.5rem; border-left: 1px solid var(--sc-hairline); }
-.ae-habits p { color: var(--sc-ink-soft); line-height: 1.6; font-size: 0.98rem; }
-.ae-habits .lg-note { text-transform: none; }
-@media (max-width: 860px) {
-  .ae-think__grid { grid-template-columns: minmax(0, 1fr); }
-  .ae-habits { grid-template-columns: minmax(0, 1fr); }
-  .ae-habits > li, .ae-habits > li:nth-child(even) { padding: 1.2rem 0 1.3rem; border-left: 0; }
-}
-/* on marble the heading sits beside the portrait, not across it */
-.tone-day .ae-hero__copy .lg-display { margin-right: 0; white-space: normal; max-width: 11ch; }
-@media (min-width: 861px) { .tone-day .ae-hero__copy .lg-display { font-size: clamp(2.5rem, 0.6rem + 4.9vw, 5.4rem); } }
-@media (max-width: 860px) {
-  .tone-day .ae-hero__copy { margin-top: 1.25rem; }
-  .tone-day .ae-hero__copy .lg-display { max-width: 12ch; }
-  .ae-hero__figure { padding: 0.6rem 0.6rem 0; align-items: stretch; }
-  .ae-hero__frame { height: auto; width: min(100%, 22rem); margin-inline: auto; }
-}
+/* light weights for the numbers and names these pages set in the display face */
+.ae-figs dd, .ae-entry__figs { font-weight: 300; font-stretch: normal; letter-spacing: -0.05em; }
+.ae-principles dt, .ae-studies dt, .ae-role__meta strong, .ae-roster a strong { font-weight: 500; font-stretch: normal; }
+.ae-entry__figs i { font-weight: 400; }
+
+/* panels and frames: white, with air under them instead of a lit edge */
+.ae-live--chess { box-shadow: 0 1px 0 rgba(255, 255, 255, 0.8) inset, 0 24px 50px -34px hsl(var(--sc-shadow-color) / 0.45); }
+.ae-seg { border-radius: 999px; }
+.ae-seg button { border-radius: 999px; }
+.ae-btn { border-radius: 999px; }
+.ae-wall-room::before { display: none; }
+.ae-frame { background: #fff; border-radius: 12px; box-shadow: 0 20px 40px -26px hsl(var(--sc-shadow-color) / 0.55); }
+.ae-frame__mat { border-radius: 6px; }
+button.ae-frame .ae-frame__mat::after { display: none; }
+button.ae-frame { transition: border-color 160ms var(--sc-ease-out), transform 320ms var(--sc-ease-out), box-shadow 320ms var(--sc-ease-out); }
+@media (hover: hover) and (pointer: fine) { button.ae-frame:hover { transform: translate3d(0, -0.35rem, 0); box-shadow: 0 30px 50px -28px hsl(var(--sc-shadow-color) / 0.6); border-color: var(--sc-hairline-strong); } }
+.ae-frame--reserved { border-color: var(--sc-hairline-strong); background: transparent; }
+.ae-lightbox { box-shadow: 0 40px 80px -40px hsl(var(--sc-shadow-color) / 0.6); border-radius: 20px; }
+.ae-piece__sq { background: #fff; }
+.ae-piece:first-child .ae-piece__sq { color: var(--sc-ink); }

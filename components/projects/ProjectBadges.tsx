@@ -2,9 +2,9 @@ import clsx from 'clsx';
 import type { ProjectSummary } from '../../app/lib/project-shared';
 
 /**
- * Design system for project badges.
- * Neutral white/gray pills on dark; lime reserved for featured/status-live accents.
- * Avoids per-index rainbow colors: scannable, accessible, consistent across new projects.
+ * Badges for a project, on the pale ground: quiet pills in ink, one filled pill
+ * for "featured". No colour per technology: scannable, consistent, and it stays
+ * right when a new project is added.
  */
 
 interface ProjectTechnologyBadgesProps {
@@ -22,31 +22,17 @@ interface ProjectMetaBadgesProps {
   featured?: boolean;
 }
 
-export function ProjectTechnologyBadges({
-  technologies,
-  compact = false,
-  max,
-}: ProjectTechnologyBadgesProps) {
+export function ProjectTechnologyBadges({ technologies, compact = false, max }: ProjectTechnologyBadgesProps) {
   if (!technologies?.length) return null;
   const shown = typeof max === 'number' ? technologies.slice(0, max) : technologies;
 
   return (
-    <ul aria-label="Technologies" className="flex flex-wrap gap-2">
+    <ul aria-label="Technologies" className="cs-chips">
       {shown.map((tech) => (
-        <li
-          key={tech}
-          className={clsx(
-            'inline-flex items-center rounded-full border border-white/10 bg-white/[0.04] font-medium text-soft-white/70 backdrop-blur-sm',
-            compact ? 'px-2.5 py-1 text-[11px]' : 'px-3 py-1 text-xs',
-          )}
-        >
-          {tech}
-        </li>
+        <li key={tech} className={clsx('lg-chip', compact && 'cs-chip--sm')}>{tech}</li>
       ))}
       {typeof max === 'number' && technologies.length > max ? (
-        <li className="inline-flex items-center rounded-full border border-white/10 bg-white/[0.04] px-2.5 py-1 text-[11px] font-medium text-soft-white/50">
-          +{technologies.length - max} more
-        </li>
+        <li className="lg-chip cs-chip--sm">+{technologies.length - max} more</li>
       ) : null}
     </ul>
   );
@@ -54,35 +40,22 @@ export function ProjectTechnologyBadges({
 
 export function ProjectFeaturedBadge() {
   return (
-    <span className="inline-flex items-center gap-1.5 rounded-full border border-[#FF8A4C]/40 bg-[#FF8A4C]/15 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#FFB083] backdrop-blur-sm">
-      <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-[#FF8A4C]" />
+    <span className="cs-tag cs-tag--ink">
+      <span aria-hidden className="cs-tag__dot" />
       Featured
     </span>
   );
 }
 
-export function ProjectMetaBadges({
-  year,
-  status,
-  impact,
-  className = '',
-  showFeatured = false,
-  featured = false,
-}: ProjectMetaBadgesProps) {
+export function ProjectMetaBadges({ year, status, impact, className = '', showFeatured = false, featured = false }: ProjectMetaBadgesProps) {
   const items = [year, status, impact].filter(Boolean);
-
   if (items.length === 0 && !(showFeatured && featured)) return null;
 
   return (
-    <div className={clsx('flex flex-wrap items-center gap-2', className)} aria-label="Project meta">
+    <div className={clsx('cs-tags', className)} aria-label="Project meta">
       {showFeatured && featured ? <ProjectFeaturedBadge /> : null}
       {items.map((item) => (
-        <span
-          key={item}
-          className="inline-flex items-center rounded-full border border-white/10 bg-black/30 px-3 py-1 text-[11px] font-medium uppercase tracking-[0.16em] text-soft-white/60 backdrop-blur-sm"
-        >
-          {item}
-        </span>
+        <span key={item} className="cs-tag">{item}</span>
       ))}
     </div>
   );

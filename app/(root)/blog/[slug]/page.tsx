@@ -44,7 +44,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
   const more = related.filter((p) => !beside.has(p.slug));
 
   return (
-    <div className="lg-page bl tone-day tone-ground">
+    <div className="lg-page bl">
       <BlogProgress target={PROSE_ID} />
       <Script id="blogposting-jsonld" type="application/ld+json" strategy="beforeInteractive">{JSON.stringify(jsonLd)}</Script>
       <article className="lg-wrap">

@@ -2,7 +2,7 @@
 import type { NextWebVitalsMetric } from 'next/app';
 import { Suspense } from 'react';
 import type { Metadata } from 'next';
-import { Archivo, Geist, Geist_Mono } from 'next/font/google';
+import { Geist, Geist_Mono } from 'next/font/google';
 import Navbar from '../components/Navbar';
 import NewFooter from '../components/NewFooter';
 import GoogleAnalytics from '../components/GoogleAnalytics';
@@ -14,7 +14,6 @@ import './globals.css';
 import './chrome.css';
 import './world.css';
 
-const archivo = Archivo({ subsets: ['latin'], variable: '--font-archivo', axes: ['wdth'], display: 'swap' });
 const geist = Geist({ subsets: ['latin'], variable: '--font-geist', display: 'swap' });
 const geistMono = Geist_Mono({ subsets: ['latin'], variable: '--font-geist-mono', display: 'swap' });
 
@@ -35,7 +34,7 @@ export const metadata: Metadata = siteMetadata;
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${archivo.variable} ${geist.variable} ${geistMono.variable}`}>
+    <html lang="en" className={`${geist.variable} ${geistMono.variable}`}>
       <body>
         <Suspense fallback={null}>
           <GoogleAnalytics />

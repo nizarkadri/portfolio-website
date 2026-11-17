@@ -6,59 +6,25 @@
 /* ==========================================================================
    The Long Game: tokens. Six colours, three faces. Everything derives.
    ========================================================================== */
-/* Two tones, one system. Night is the gallery after dark: blue-black stone and
-   blue light. Day is the marble in daylight. A section opts into day with
-   .tone-day; everything inside it re-derives from the same six roles. */
 :root {
-  --sc-canvas:     #070b14;
-  --sc-surface:    #0e1524;
-  --sc-ink:        #eef2f7;
-  --sc-ink-soft:   #9aa7b8;
-  --sc-accent:     #7fb0ff;   /* blue light, safe as text on night stone */
-  --sc-accent-ink: #061024;
-  --sc-font-display: var(--font-archivo), "Archivo", system-ui, sans-serif;
+  --sc-canvas:     #e3f2fb;
+  --sc-surface:    #f2f8fd;
+  --sc-ink:        #0b0f15;
+  --sc-ink-soft:   #55606e;
+  --sc-accent:     #0b0f15;
+  --sc-accent-ink: #f4f8fc;
+  --sc-font-display: var(--font-geist), "Geist", system-ui, sans-serif;
   --sc-font-text:    var(--font-geist), "Geist", system-ui, sans-serif;
   --sc-font-mono:    var(--font-geist-mono), "Geist Mono", ui-monospace, monospace;
-  --sc-shadow-color: 222 60% 3%;
+  --sc-shadow-color: 212 48% 30%;
   --lg-bar-h: 4.25rem;
-  --lg-surface-2: #131c2e;
-  --lg-cta: #2a62f0;          /* the one solid blue: buttons, on either tone */
-  --lg-cta-hover: #3d74ff;
-  --lg-cta-ink: #ffffff;
-  --lg-gold: #b8935a;         /* hairlines only, never text */
-  --lg-glass: color-mix(in oklab, #9fc2ff 7%, transparent);
-  --lg-glass-edge: color-mix(in oklab, #b9d2ff 26%, transparent);
-  --lg-ember-soft: color-mix(in oklab, var(--sc-accent) 14%, transparent);
-  --lg-hover-ink: #ffffff;
+  --lg-surface-2: #ffffff;
+  --lg-ember-soft: color-mix(in oklab, var(--sc-accent) 16%, transparent);
   /* legacy variables some older components still read */
-  --white: #eef2f7; --off-white: #dde3ec; --light-gray: #c3cad6; --mid-gray: #9aa7b8;
-  --dark-gray: #253046; --off-black: #0e1524; --deep-black: #070b14;
+  --white: #ece7df; --off-white: #dcd6cc; --light-gray: #c3c7cd; --mid-gray: #98a0ab;
+  --dark-gray: #2a313b; --off-black: #0f1319; --deep-black: #07090c;
   --transition-speed: 0.24s;
 }
-.tone-day, html[data-tone="day"] .lg-bar.is-home:not(.is-open), html[data-tone="day"] .score {
-  --sc-canvas:     #f3f1ec;
-  --sc-surface:    #ffffff;
-  --sc-ink:        #10141b;
-  --sc-ink-soft:   #566070;
-  --sc-accent:     #1f4fd8;
-  --sc-accent-ink: #ffffff;
-  --sc-hairline:        color-mix(in oklab, var(--sc-ink) 13%, transparent);
-  --sc-hairline-strong: color-mix(in oklab, var(--sc-ink) 26%, transparent);
-  --sc-shadow-color: 220 30% 28%;
-  --sc-edge: inset 0 1px 0 rgb(255 255 255 / 0.9);
-  --sc-e1: 0 1px 2px hsl(var(--sc-shadow-color) / 0.08), 0 2px 6px -1px hsl(var(--sc-shadow-color) / 0.07);
-  --sc-e2: 0 2px 4px hsl(var(--sc-shadow-color) / 0.07), 0 12px 28px -10px hsl(var(--sc-shadow-color) / 0.16);
-  --sc-e3: 0 4px 10px hsl(var(--sc-shadow-color) / 0.08), 0 30px 60px -24px hsl(var(--sc-shadow-color) / 0.24);
-  --lg-surface-2: #ebe8e1;
-  --lg-glass: color-mix(in oklab, #ffffff 62%, transparent);
-  --lg-glass-edge: color-mix(in oklab, #10141b 14%, transparent);
-  --lg-hover-ink: #000000;
-  --white: #10141b; --off-white: #232a35; --light-gray: #3c4654; --mid-gray: #566070;
-  --dark-gray: #d9d5cc; --off-black: #ffffff; --deep-black: #f3f1ec;
-  color: var(--sc-ink);
-}
-/* a day section that also lays its own marble ground */
-.tone-ground { background-color: var(--sc-canvas); }
 
 html { scroll-behavior: auto; background: var(--sc-canvas); }
 html.lenis, html.lenis body { height: auto; }
@@ -73,13 +39,13 @@ main { min-height: 100svh; position: relative; }
 /* ------------------------------------------------------------ primitives */
 .lg-wrap { width: min(100% - 2 * var(--sc-gutter), var(--sc-maxw)); margin-inline: auto; }
 .lg-display {
-  font-family: var(--sc-font-display); font-weight: 800; font-stretch: 112%;
-  letter-spacing: -0.035em; line-height: 0.98; text-wrap: balance; color: var(--sc-ink);
+  font-family: var(--sc-font-display); font-weight: 400; font-stretch: normal;
+  letter-spacing: -0.045em; line-height: 1; text-wrap: balance; color: var(--sc-ink);
 }
 .lg-display--xl { font-size: clamp(2.5rem, 1.2rem + 5.6vw, 6.25rem); }
 .lg-display--lg { font-size: clamp(2.1rem, 1.3rem + 3.6vw, 4.5rem); }
 .lg-display--md { font-size: clamp(1.7rem, 1.25rem + 1.9vw, 2.9rem); line-height: 1.04; }
-.lg-display--sm { font-size: clamp(1.25rem, 1.1rem + 0.7vw, 1.7rem); line-height: 1.12; letter-spacing: -0.02em; font-stretch: 105%; font-weight: 700; }
+.lg-display--sm { font-size: clamp(1.25rem, 1.1rem + 0.7vw, 1.7rem); line-height: 1.12; letter-spacing: -0.025em; font-stretch: normal; font-weight: 500; }
 .lg-body { color: var(--sc-ink-soft); font-size: var(--sc-t-base); line-height: 1.68; max-width: 58ch; letter-spacing: 0.002em; }
 .lg-body--lg { font-size: var(--sc-t-lg); line-height: 1.5; color: color-mix(in oklab, var(--sc-ink) 82%, var(--sc-canvas)); }
 /* notation: the mono face is reserved for chess notation and data */
@@ -92,16 +58,15 @@ main { min-height: 100svh; position: relative; }
 
 .lg-cta {
   display: inline-flex; align-items: center; gap: 0.7rem; white-space: nowrap;
-  padding: 0.85rem 1.35rem; border-radius: var(--sc-r-sm);
-  background: var(--lg-cta); color: var(--lg-cta-ink);
-  font-family: var(--sc-font-text); font-weight: 600; font-size: 0.95rem; letter-spacing: 0;
+  padding: 0.85rem 1.4rem; border-radius: 999px;
+  background: var(--sc-accent); color: var(--sc-accent-ink);
+  font-family: var(--sc-font-text); font-weight: 500; font-size: 0.92rem; letter-spacing: -0.005em;
   text-decoration: none; border: 0; cursor: pointer;
-  box-shadow: 0 1px 0 color-mix(in oklab, white 28%, transparent) inset, 0 8px 22px -12px color-mix(in oklab, var(--lg-cta) 80%, transparent);
   transition: transform 140ms var(--sc-ease-out), background-color 140ms var(--sc-ease-out);
 }
 .lg-cta svg { width: 1rem; height: 1rem; flex: none; }
 .lg-cta:active { transform: translateY(1px) scale(0.985); }
-@media (hover: hover) and (pointer: fine) { .lg-cta:hover { background: var(--lg-cta-hover); } }
+@media (hover: hover) and (pointer: fine) { .lg-cta:hover { background: color-mix(in oklab, var(--sc-accent) 84%, var(--sc-canvas)); } }
 .lg-cta--sm { padding: 0.55rem 0.95rem; font-size: 0.875rem; }
 .lg-link {
   display: inline-flex; align-items: center; gap: 0.5rem; color: var(--sc-ink);
@@ -109,7 +74,7 @@ main { min-height: 100svh; position: relative; }
   text-decoration-color: var(--sc-hairline-strong); text-underline-offset: 0.3em;
   transition: text-decoration-color 160ms var(--sc-ease-out), color 160ms var(--sc-ease-out);
 }
-@media (hover: hover) and (pointer: fine) { .lg-link:hover { text-decoration-color: var(--sc-accent); color: var(--lg-hover-ink); } }
+@media (hover: hover) and (pointer: fine) { .lg-link:hover { text-decoration-color: var(--sc-ink); color: var(--sc-ink); } }
 .lg-chip {
   display: inline-flex; align-items: center; padding: 0.22rem 0.55rem; border-radius: 4px;
   border: 1px solid var(--sc-hairline); color: var(--sc-ink-soft);
@@ -795,3 +760,35 @@ html.lenis, html.lenis body {
 .preserve-3d {
   transform-style: preserve-3d;
 }
+/* ==========================================================================
+   Pale ground: surfaces are white glass, edges are hairlines, shadows are air.
+   ========================================================================== */
+.lg-panel { background: rgba(255, 255, 255, 0.62); border: 1px solid var(--sc-hairline); border-radius: 20px; box-shadow: 0 1px 0 rgba(255, 255, 255, 0.8) inset, 0 24px 50px -34px hsl(var(--sc-shadow-color) / 0.45); }
+.lg-chip { border-radius: 999px; padding: 0.26rem 0.7rem; background: rgba(255, 255, 255, 0.5); }
+.lg-note b, .lg-note strong { color: var(--sc-ink); }
+
+/* letters that rise into place: used by every page's first heading */
+.lg-chars { display: inline; }
+.lg-chars__w { display: inline-block; white-space: nowrap; overflow: hidden; padding: 0.06em 0.04em 0.14em 0.05em; margin: -0.06em -0.04em -0.14em -0.05em; vertical-align: bottom; }
+.lg-chars__c { display: inline-block; }
+@media (prefers-reduced-motion: no-preference) {
+  .lg-chars__c { animation: lgCharUp 950ms cubic-bezier(0.16, 0.84, 0.24, 1) both; animation-delay: calc(120ms + var(--i) * 26ms); }
+  .lg-up { animation: lgUp 760ms var(--sc-ease-out) both; animation-delay: calc(var(--d, 0) * 1ms); }
+}
+@keyframes lgCharUp { from { transform: translate3d(0, 112%, 0) rotate(4deg); } to { transform: none; } }
+@keyframes lgUp { from { opacity: 0; transform: translate3d(0, 0.9rem, 0); } to { opacity: 1; transform: none; } }
+.lg-sr { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+
+/* letters that rise into place when their block scrolls in (components/story/Rise) */
+.rt__w { display: inline-block; white-space: nowrap; overflow: hidden; padding: 0.06em 0.04em 0.14em 0.05em; margin: -0.06em -0.04em -0.14em -0.05em; vertical-align: bottom; }
+.rt__c { display: inline-block; }
+@media (prefers-reduced-motion: no-preference) {
+  .rt__c { transform: translate3d(0, 112%, 0) rotate(4deg); transition: transform 950ms cubic-bezier(0.16, 0.84, 0.24, 1); transition-delay: calc(80ms + var(--i) * 22ms); }
+  .sc-in .rt__c { transform: none; }
+}
+html.sc-failed .rt__c { transform: none; }
+
+/* a marble piece on a clear canvas, set into the page (components/marble/PieceCanvas) */
+.mk-piece { position: relative; opacity: 0; transition: opacity 900ms var(--sc-ease-out); }
+.mk-piece.is-on { opacity: 1; }
+.mk-piece canvas { display: block; width: 100%; height: 100%; }
