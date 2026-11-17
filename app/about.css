@@ -64,6 +64,49 @@
 .ch__rules span { color: var(--sc-ink-soft); line-height: 1.6; }
 .ch__close { font-size: clamp(1.08rem, 1rem + 0.3vw, 1.25rem); line-height: 1.65; max-width: 58ch; }
 
+/* ------------------------------------------------------------- the daily repertoire: six squares of one board */
+.rp { padding-block: clamp(3rem, 6vw, 6rem) clamp(4rem, 9vw, 8rem); border-top: 1px solid var(--sc-hairline); }
+.rp__head { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); align-items: end; gap: 1.5rem clamp(2rem, 5vw, 6rem); margin-bottom: clamp(2.25rem, 4.5vw, 4rem); }
+.rp__lead { display: grid; gap: 1.1rem; justify-items: start; }
+.rp__title { font-weight: 300; letter-spacing: -0.055em; line-height: 0.98; font-size: clamp(2.6rem, 1.1rem + 5vw, 6rem); }
+.rp__lede { font-size: clamp(1.08rem, 1rem + 0.35vw, 1.3rem); line-height: 1.6; max-width: 46ch; color: color-mix(in oklab, var(--sc-ink) 80%, transparent); }
+
+/* the board: squares touch, like the one on the landing page. Matte: flat colour, one soft shadow under the whole board. */
+.rp__board { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-radius: 22px; overflow: hidden;
+  border: 1px solid var(--sc-hairline); box-shadow: 0 40px 80px -56px rgba(30, 50, 80, 0.5); }
+.rp__sq { --sq: #f8fcff; position: relative; display: grid; grid-template-rows: auto auto auto 1fr auto; align-content: start; gap: 0.9rem;
+  padding: clamp(1.4rem, 2.4vw, 2.4rem); min-width: 0; background: var(--sq);
+  transition: opacity 620ms var(--sc-ease-out), transform 620ms var(--sc-ease-out), background-color 320ms var(--sc-ease-out); }
+.rp__sq:nth-child(even) { --sq: #d6e7f5; }
+.rp__role { display: flex; align-items: baseline; gap: 0.8rem; }
+.rp__role span { color: var(--ab-blue); }
+.rp__name { font-family: var(--sc-font-display); font-weight: 300; letter-spacing: -0.05em; line-height: 1; font-size: clamp(2rem, 1.2rem + 2vw, 3.2rem); margin-top: 0.4rem; }
+.rp__name a { display: inline-flex; align-items: baseline; gap: 0.5rem; color: inherit; text-decoration: none; }
+.rp__name a span { background: linear-gradient(var(--ab-blue), var(--ab-blue)) 0 100% / 0 1px no-repeat; padding-bottom: 0.08em; transition: background-size 520ms cubic-bezier(0.65, 0, 0.35, 1); }
+.rp__name a:focus-visible { outline: 2px solid var(--sc-ink); outline-offset: 4px; border-radius: 4px; }
+.rp__out { width: 0.42em; height: 0.42em; flex: none; color: var(--sc-ink-soft); transition: transform 320ms var(--sc-ease-out), color 320ms var(--sc-ease-out); }
+.rp__verdict { font-size: clamp(1.08rem, 1rem + 0.3vw, 1.22rem); line-height: 1.35; letter-spacing: -0.01em; color: var(--sc-ink); text-wrap: balance; }
+.rp__why { font-size: 0.98rem; line-height: 1.65; color: color-mix(in oklab, var(--sc-ink) 72%, transparent); }
+.rp__marks { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.5rem; }
+.rp__marks li { padding: 0.28rem 0.72rem; border-radius: 999px; border: 1px solid color-mix(in oklab, var(--sc-ink) 16%, transparent); font-size: 0.8rem; line-height: 1.3; color: color-mix(in oklab, var(--sc-ink) 80%, transparent); }
+@media (hover: hover) and (pointer: fine) {
+  .rp__sq:hover { background: color-mix(in oklab, var(--sq) 86%, #ffffff); }
+  .rp__sq:hover .rp__name a span, .rp__name a:focus-visible span { background-size: 100% 1px; }
+  .rp__sq:hover .rp__out { transform: translate3d(0.12em, -0.12em, 0); color: var(--ab-blue); }
+}
+@media (max-width: 1080px) {
+  .rp__board { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .rp__sq:nth-child(even) { --sq: #f8fcff; }
+  .rp__sq:nth-child(4n + 2), .rp__sq:nth-child(4n + 3) { --sq: #d6e7f5; }
+}
+@media (max-width: 680px) {
+  .rp__head { grid-template-columns: minmax(0, 1fr); }
+  .rp__title { font-size: clamp(2.4rem, 11vw, 3.4rem); }
+  .rp__board { grid-template-columns: minmax(0, 1fr); border-radius: 18px; }
+  .rp__sq:nth-child(n) { --sq: #f8fcff; }
+  .rp__sq:nth-child(even) { --sq: #d6e7f5; }
+}
+
 /* ------------------------------------------------------------- live training, on white */
 .ab2-band { background: #f7fbfe; border-block: 1px solid var(--sc-hairline); }
 .ab2-band .ae-section { padding-block: clamp(4rem, 8vw, 7rem); }

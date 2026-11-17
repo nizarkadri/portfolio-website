@@ -5,6 +5,7 @@ import AboutClient from './AboutClient'
 import { Chars } from '../../../components/Kinetic'
 import Depth from '../../../components/about/Depth'
 import StoryChapters from '../../../components/about/StoryChapters'
+import Repertoire from '../../../components/about/Repertoire'
 import PieceCanvas from '../../../components/marble/PieceCanvas'
 import '../../about-experience.css'
 import '../../about.css'
@@ -28,7 +29,7 @@ export const metadata: Metadata = {
 
 /**
  * About is the person: a title page with the portrait and a marble king in front of it, the story as three spreads
- * under a chapter name at poster size, and the live training numbers. Everything professional (results, stack,
+ * under a chapter name at poster size, the software he opens every day, and the live training numbers. Everything professional (results, stack,
  * degrees, certificates) is on the experience page.
  */
 export default function AboutPage() {
@@ -55,6 +56,9 @@ export default function AboutPage() {
       </Depth>
 
       <StoryChapters />
+
+      {/* What he opens every day: six squares of one board, everything readable at once */}
+      <Repertoire />
 
       {/* Live numbers on their own white ground */}
       <div className="ab2-band">
