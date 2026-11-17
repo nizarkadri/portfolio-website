@@ -6,7 +6,7 @@ imageUrl: /images/Projects/ev-gpt.webp
 slug: ev-gpt
 technologies: ['Python', 'Streamlit', 'Google Gemini', 'LangChain', 'ChromaDB', 'AWS', 'Docker', 'Git']
 featured: true
-order: 2
+order: 4
 repoUrl: https://github.com/nizarkadri/EV-GPT
 liveUrl: http://18.117.102.197:8501/
 year: '2025'

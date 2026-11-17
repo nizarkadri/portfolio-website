@@ -183,7 +183,7 @@ export default function ProjectsClient({ projects }: { projects: ProjectSummary[
         <label className="pj-sort">
           <span className="lg-sr">Order</span>
           <select value={sort} onChange={(e) => setSort(e.target.value as typeof sort)}>
-            <option value="featured">Featured first</option>
+            <option value="featured">My order</option>
             <option value="year">Newest</option>
             <option value="title">A to Z</option>
           </select>

@@ -87,13 +87,14 @@ function normalizeProject(slug: string, data: ProjectFrontmatter): ProjectSummar
   };
 }
 
+/** The hand-set order (the `order` field) comes first; featured, year and title only settle ties. */
 function compareProjects(a: ProjectSummary, b: ProjectSummary) {
-  if (a.featured !== b.featured) {
-    return a.featured ? -1 : 1;
-  }
-
   if (a.order !== b.order) {
     return a.order - b.order;
+  }
+
+  if (a.featured !== b.featured) {
+    return a.featured ? -1 : 1;
   }
 
   const aYear = Number.parseInt(a.year || '', 10) || 0;

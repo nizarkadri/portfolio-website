@@ -6,7 +6,7 @@ imageUrl: /images/Projects/automated-login.webp
 slug: automated-login
 technologies: ['Python', 'IBM Watson', 'Gmail API', 'Web Scraping']
 featured: false
-order: 14
+order: 9
 year: '2019'
 status: Archived
 impact: Automated login flows for repetitive web tasks

@@ -6,7 +6,7 @@ imageUrl: /images/Projects/portfolio-website.webp
 slug: portfolio-website
 technologies: ['Next.js', 'TypeScript', 'Tailwind CSS']
 featured: true
-order: 1
+order: 2
 repoUrl: https://github.com/nizarkadri/portfolio-website
 year: '2026'
 status: Live

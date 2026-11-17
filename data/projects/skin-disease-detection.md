@@ -6,7 +6,7 @@ imageUrl: /images/Projects/skin-disease-detection.webp
 slug: skin-disease-detection
 technologies: ['Node.js', 'Express.js', 'EJS', 'CSS3', 'JavaScript', 'Machine Learning', 'Computer Vision', 'Git']
 featured: true
-order: 3
+order: 6
 repoUrl: https://github.com/nizarkadri/SkinDiseaseDetection
 year: '2024'
 status: Case Study

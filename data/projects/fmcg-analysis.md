@@ -6,7 +6,7 @@ imageUrl: /images/Projects/fmcg-analysis.webp
 slug: fmcg-analysis
 technologies: ['IBM Cognos', 'Android Studio', 'Python', 'IBM Db2']
 featured: false
-order: 13
+order: 8
 year: '2019'
 status: Archived
 impact: Visual business insights for FMCG data

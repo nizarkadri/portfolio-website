@@ -6,7 +6,7 @@ imageUrl: /images/Projects/ui-palette-explorer.webp
 slug: ui-palette-explorer
 technologies: ['Google Cloud Run', 'Cloud Tasks', 'Firestore', 'Chromium', 'TypeScript', 'AI']
 featured: true
-order: 4
+order: 3
 repoUrl: https://github.com/nizarkadri/palette-mvp
 year: '2024'
 status: Live

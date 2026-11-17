@@ -6,7 +6,7 @@ imageUrl: /images/Projects/ircc-genie.webp
 slug: ircc-genie
 technologies: ['Python', 'Scrapy', 'ChromaDB', 'HuggingFace', 'Gemini', 'pytest']
 featured: false
-order: 6
+order: 5
 repoUrl: https://github.com/nizarkadri/IRCC_Genie
 year: '2024'
 status: Live

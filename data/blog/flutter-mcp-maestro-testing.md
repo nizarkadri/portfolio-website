@@ -13,7 +13,7 @@ featured: false
 
 Every mobile team says it will write end-to-end tests. Few keep them green for long. The usual causes are familiar: tests that tap coordinates instead of finding elements, assertions that pass whether or not the feature works, and setup steps so fragile that a redesign breaks the suite instead of a regression.
 
-Working on CondoConnect — a Flutter app for condo living, from payments to maintenance requests — forced a better discipline. Combined with MCP (Model Context Protocol) tooling, where an agent can drive device and test harnesses through typed tools, I rebuilt our testing approach around three rules: **find elements semantically, wait deterministically, and assert outcomes users care about**.
+Working on Condo Social — a Flutter app for condo living, from payments to maintenance requests — forced a better discipline. Combined with MCP (Model Context Protocol) tooling, where an agent can drive device and test harnesses through typed tools, I rebuilt our testing approach around three rules: **find elements semantically, wait deterministically, and assert outcomes users care about**.
 
 ## Rule 1: Semantic selectors, never coordinates
 
