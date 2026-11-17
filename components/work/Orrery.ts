@@ -10,6 +10,14 @@ import { asTexture, gradientCanvas, radialCanvas, stoneCanvas } from '../world/t
    Scroll turns the ring; the ball that comes round to the podium leaves the
    ring and settles on it. White, matte black and one blue: the same three as
    every other page.
+   Past the last project the same number goes on by one more place, and the
+   room opens out into its own plan: the view rises until it looks straight
+   down, the ball on the podium goes back to the ring, and all of them stand
+   round it at once, evenly, as the hours stand round a dial. That plan is
+   the page's index: pick a ball and it leaves the ring, comes down on the
+   podium in the middle and grows, as it did in the room, while the ring
+   slides aside to make room for what the project is. The others stay on
+   the ring round it, to be picked next.
    Everything is a pure function of one number (which project, as a fraction),
    so nothing can pop: it can only glide.
    ========================================================================== */
@@ -32,6 +40,8 @@ const ROOF = 8.1;                                   // how high the room is
 type Spot = [x: number, z: number, size: number];
 
 const clamp = (v: number, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+/** `v` moved toward `to` by at most `by`: for what runs on the clock, not the scroll. */
+const toward = (v: number, to: number, by: number) => (v < to ? Math.min(to, v + by) : Math.max(to, v - by));
 const smooth = (t: number) => { const k = clamp(t); return k * k * (3 - 2 * k); };
 /** As `smooth`, but it starts and stops more gently still: for the travel of a globe. */
 const gentle = (t: number) => { const k = clamp(t); return k * k * k * (k * (k * 6 - 15) + 10); };
@@ -42,10 +52,12 @@ const DISC = 2.95;                                  // the radius of the black d
  * behind the podium. The first ball either side stands well round to the side: seen whole past the ball on the
  * podium, and clear of the words that are set either side of it.
  */
-function slot(d: number, out: THREE.Vector3) {
-  const n = Math.abs(d), a = Math.sign(d) * (n <= 1 ? n * NEAR : NEAR + (n - 1) * ARC);
-  return out.set(Math.sin(a) * ORBIT, SMALL, -Math.cos(a) * ORBIT);
+function slot(d: number) {
+  const n = Math.abs(d);
+  return Math.sign(d) * (n <= 1 ? n * NEAR : NEAR + (n - 1) * ARC);   // the angle round the ring, from directly behind the podium
 }
+const TAU = Math.PI * 2;
+const ALL = 0.8;                                    // the size of a ball when all of them stand round the ring at once
 
 export class Orrery {
   private renderer: THREE.WebGLRenderer;
@@ -60,7 +72,7 @@ export class Orrery {
   private eased = new THREE.Vector2();
   private ray = new THREE.Raycaster();
   private v = new THREE.Vector3();
-  private planets: Array<{ mesh: THREE.Mesh; card: THREE.Mesh; focus: number; edge: number }> = [];
+  private planets: Array<{ mesh: THREE.Mesh; card: THREE.Mesh; focus: number; edge: number; pick: number }> = [];
   private turn = { value: 0 };                      // how far the scroll has turned the ring, in radians: the scale on the floor turns by it
   private aura!: THREE.Sprite;
   private glowK = { value: 0 };                     // how settled the globe on the podium is: the room's lights rise with it
@@ -75,6 +87,17 @@ export class Orrery {
   private glow!: THREE.Texture;                     // the soft round glow, shared by every pool of light
   private forms: Array<{ g: THREE.Object3D; shade: THREE.Mesh; wide: Spot; tall: Spot }> = [];
   private time: { value: number } = { value: 0 };     // one clock for whatever breathes: the roof's veins, the light on the ring
+  private plan = { value: 0 };                      // how far the room has opened into its plan, with every ball on the ring at once
+  private roof!: THREE.Mesh;
+  private planH = 34;                               // how high the view stands over the floor when it looks straight down, and how far
+  // Where the picture sits in the window is a shift of the lens, never of the view: the view always stands straight
+  // over the podium, so the ring stays a true circle and a ball on the podium stays in the middle of it. In pixels:
+  // how far down the picture is taken in the room and in the plan, how far aside when a project is picked, and
+  // what was last set.
+  private lens = { w: 1, h: 1, room: 0, plan: 0, aside: 0, x: NaN, y: NaN };
+  private sel = -1;                                 // the project picked out of the plan, if any
+  private slide = 0;                                // 0 to 1: how far the ring has slid aside for it
+  private step = 0;                                 // seconds since the last frame
 
   constructor(private canvas: HTMLCanvasElement, private opts: OrreryOptions) {
     const r = (this.renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance', alpha: false }));
@@ -159,12 +182,12 @@ export class Orrery {
     const outer = this.opts.mobile ? 0 : 1;        // on a phone the outer ring would run behind the words
     const mat = new THREE.ShaderMaterial({
       uniforms: {
-        uTime: this.time, uTurn: this.turn, uGlow: this.glowK, uR: { value: ORBIT }, uOuter: { value: outer },
+        uTime: this.time, uTurn: this.turn, uGlow: this.glowK, uR: { value: ORBIT }, uOuter: { value: outer }, uPlan: this.plan,
         uInk: { value: new THREE.Color(0x171b21) }, uBlue: { value: new THREE.Color(BLUE) }, uPale: { value: new THREE.Color(0xa9ccff) },
       },
       vertexShader: /* glsl */ `varying vec2 vP; void main() { vP = position.xy; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
       fragmentShader: /* glsl */ `
-        uniform float uTime; uniform float uTurn; uniform float uGlow; uniform float uR; uniform float uOuter;
+        uniform float uTime; uniform float uTurn; uniform float uGlow; uniform float uR; uniform float uOuter; uniform float uPlan;
         uniform vec3 uInk; uniform vec3 uBlue; uniform vec3 uPale;
         varying vec2 vP;
         const float TAU = 6.28318530718;
@@ -189,8 +212,8 @@ export class Orrery {
           // and the stroke of light that rides it
           over(mix(uBlue, uPale, w * w), ring(r, uR, mix(0.006, 0.052, w), dr) * smoothstep(0.03, 0.22, w));
 
-          // one hairline more, further out
-          if (uOuter > 0.5) over(uInk, ring(r, uR * 1.62, 0.009, dr) * 0.22);
+          // one hairline more, further out (it belongs to the room: in the plan the list's heading is set there instead)
+          if (uOuter > 0.5) over(uInk, ring(r, uR * 1.62, 0.009, dr) * 0.22 * (1.0 - uPlan));
 
           if (al < 0.003) discard;
           gl_FragColor = vec4(pm / al, al);
@@ -250,9 +273,9 @@ export class Orrery {
     // to 1 a little inside the step's edge, and everything is multiplied by a fade that reaches nothing at 1.
     const UNDER = 3.6;                             // where the glow has gone: just inside the step's edge (3.7)
     const under = new THREE.Mesh(new THREE.CircleGeometry(3.7, 160), new THREE.ShaderMaterial({
-      uniforms: { ...uniforms(), uEdge: { value: UNDER } }, vertexShader: vert,
+      uniforms: { ...uniforms(), uEdge: { value: UNDER }, uPlan: this.plan, uDisc: { value: DISC } }, vertexShader: vert,
       fragmentShader: head + /* glsl */ `
-        uniform float uEdge;
+        uniform float uEdge; uniform float uPlan; uniform float uDisc;
         float h(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
         float n(vec2 p) { vec2 i = floor(p), f = fract(p); f = f * f * (3.0 - 2.0 * f);
           return mix(mix(h(i), h(i + vec2(1, 0)), f.x), mix(h(i + vec2(0, 1)), h(i + vec2(1, 1)), f.x), f.y); }
@@ -267,9 +290,12 @@ export class Orrery {
           float puff = n(p * 1.7 + vec2(0.0, uTime * 0.12)) * 0.6 + n(p * 3.6 - uTime * 0.2) * 0.4;
           float roll = exp(-pow((t - at * 0.86) / (0.2 + 0.1 * at), 2.0)) * (0.55 + 0.75 * puff);
           float cloud = roll * pow(1.0 - uPulse, 1.3) * smoothstep(0.0, 0.08, uPulse) * (1.0 - t * 0.6);
-          float a = clamp(base * 0.8 + cloud * 0.75, 0.0, 0.95) * (1.0 - smoothstep(0.8, 1.0, t));
+          // Seen from straight overhead the disc hides the middle of the glow, so what is left of it is drawn
+          // up into a fine corona just clear of the disc's edge: an eclipse. It is still inside the step.
+          float halo = exp(-pow((length(p) - uDisc - 0.1) / 0.3, 2.0)) * uPlan * (0.6 + 0.4 * s) * (0.9 + 0.1 * sin(uTime * 0.6));
+          float a = clamp(base * 0.8 + cloud * 0.75 + halo * 0.9, 0.0, 0.95) * (1.0 - smoothstep(0.8, 1.0, t));
           if (a < 0.004) discard;
-          gl_FragColor = vec4(mix(uBlue, uCore, clamp(base * 0.5 + cloud, 0.0, 1.0)), a);
+          gl_FragColor = vec4(mix(uBlue, uCore, clamp(base * 0.5 + cloud + halo * 0.5, 0.0, 1.0)), a);
           #include <colorspace_fragment>
         }`,
       transparent: true, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2,
@@ -346,6 +372,7 @@ export class Orrery {
     });
     const roof = new THREE.Mesh(new THREE.RingGeometry(0.01, 90, 96, 1), roofMat);
     roof.rotation.x = Math.PI / 2; roof.position.set(0, ROOF, 0);
+    this.roof = roof;
     this.scene.add(roof);
   }
 
@@ -500,7 +527,7 @@ export class Orrery {
       if (url) this.skin(url, cardMat);
       const card = new THREE.Mesh(geo, cardMat);
       card.renderOrder = 8;
-      this.planets.push({ mesh, card, focus: 0, edge: 0 });
+      this.planets.push({ mesh, card, focus: 0, edge: 0, pick: 0 });
       this.scene.add(mesh, card);
     });
 
@@ -543,6 +570,41 @@ export class Orrery {
   private probe = new THREE.Vector3();
   private side = new THREE.Vector3();
 
+  /** How far the room has opened into its plan, 0 to 1. */
+  get opened() { return this.plan.value; }
+
+  /** Pick a project out of the plan (or none, with -1). It only means anything once the room has opened. */
+  select(i: number) { this.sel = this.plan.value > 0.6 && i >= 0 && i < this.planets.length ? i : -1; }
+  get selected() { return this.sel; }
+  /** How far the ring has slid aside for the picked project, 0 to 1. */
+  get slid() { return smooth(this.slide); }
+
+  /**
+   * Where the whole ring sits on the canvas, in CSS pixels, as last drawn: its centre, and how far it reaches
+   * to either side of that with the balls standing on it. When the room has opened into its plan this is a
+   * circle, and the list's heading is set either side of it as a project's name is set either side of its globe.
+   */
+  ringOnScreen() {
+    const w = this.canvas.clientWidth, h = this.canvas.clientHeight;
+    const px = (v: THREE.Vector3) => { v.project(this.camera); return { x: (v.x + 1) * 0.5 * w, y: (1 - v.y) * 0.5 * h }; };
+    const c = px(this.probe.set(0, 0, 0));
+    const e = px(this.probe.set(ORBIT, 0, 0));
+    const ring = Math.abs(e.x - c.x), r = ring * (1 + ALL / ORBIT);
+    return { x: c.x, y: c.y, top: c.y - r, r, ring };
+  }
+
+  /** Where one project's ball is on the canvas, in CSS pixels, as last drawn: its centre and its radius. */
+  globeOnScreen(i: number) {
+    const p = this.planets[i];
+    if (!p) return null;
+    const w = this.canvas.clientWidth, h = this.canvas.clientHeight;
+    const px = (v: THREE.Vector3) => { v.project(this.camera); return { x: (v.x + 1) * 0.5 * w, y: (1 - v.y) * 0.5 * h }; };
+    const c = px(this.probe.copy(p.mesh.position));
+    this.side.setFromMatrixColumn(this.camera.matrixWorld, 0).multiplyScalar(p.mesh.scale.x);
+    const e = px(this.probe.copy(p.mesh.position).add(this.side));
+    return { x: c.x, y: c.y, r: Math.hypot(e.x - c.x, e.y - c.y) };
+  }
+
   /**
    * Where a point of the ring in the floor sits on the canvas, in CSS pixels, as last drawn. `phi` is the angle
    * round the ring from its nearest point to you (positive to the right); `k` scales the radius, for a point
@@ -555,46 +617,74 @@ export class Orrery {
   }
 
   private apply(t: number) {
-    const f = this.f;
+    const f = this.f, count = this.planets.length;
+    // Past the last project, the room opens into its plan. 'u' is how far through that last passage the scroll is;
+    // 'open' how far the balls have come round to their places on the whole ring; 'rise' how far the view has
+    // gone up over them. The ball leaves the podium first and its words go with it; only then does the view
+    // rise, so the words are never carried up the window with their globe; and the ring fills last.
+    const u = clamp(f - (count - 1));
+    const open = smooth((u - 0.34) / 0.56), rise = smooth((u - 0.3) / 0.56);
+    this.plan.value = open;
     // The landing, as it stood last frame: the disc gives a little under the globe and comes back, once.
     const land = this.pulse.value;
-    const give = -0.085 * Math.exp(-land * 5.5) * Math.sin(Math.min(1, land * 3.2) * Math.PI);
+    const give = this.pulseFor !== count ? -0.085 * Math.exp(-land * 5.5) * Math.sin(Math.min(1, land * 3.2) * Math.PI) : 0;
+    // A project picked out of the plan. This runs on the clock: the ring slides aside, the ball that was on the
+    // podium goes back to its place first, and only then does the picked one come in, so the two never cross.
+    if (open < 0.6) this.sel = -1;
+    this.slide = toward(this.slide, this.sel >= 0 ? 1 : 0, this.step / 1.1);
+    let leaving = 0;
+    this.planets.forEach((p, i) => { if (i !== this.sel) leaving = Math.max(leaving, p.pick); });
     let lead = 0;
     this.planets.forEach((p, i) => {
       const d = i - f;
       // 1 when it is the one over the podium; it stays fully there while f is within 0.1 of it, so it is
       // not already drifting away while you read. Two neighbours always add up to 1, so they pass evenly.
-      const k = gentle((0.92 - Math.abs(d)) / 0.84);
+      const k0 = gentle((0.92 - Math.abs(d)) / 0.84);
+      // or when it has been picked out of the plan, which brings it to the podium by the same path
+      if (i !== this.sel) p.pick = toward(p.pick, 0, this.step / 0.7);
+      else if (leaving < 0.5) p.pick = toward(p.pick, 1, this.step / 1.0);
+      const k = Math.max(k0, gentle(p.pick));
       lead = Math.max(lead, k);
       p.focus = k;
-      const edge = smooth((3.4 - Math.abs(d)) / 0.9);             // three stand either side; beyond that they dwindle to nothing
-      slot(d, this.v);
+      // three stand either side; beyond that they dwindle to nothing. In the plan all of them stand, whole.
+      const few = smooth((3.4 - Math.abs(d)) / 0.9), edge = few + (1 - few) * open;
+      // Its place on the ring: where it waits, carried round to its hour on the dial as the room opens. The
+      // first project stands at the top of the dial and the rest follow clockwise, so they all go round the same way.
+      const a = slot(d) + ((i - count) * TAU / count - slot(d)) * open, small = SMALL + (ALL - SMALL) * open;
+      this.v.set(Math.sin(a) * ORBIT, small, -Math.cos(a) * ORBIT);
       // It lifts off the ring first, clear of the podium's edge, comes in over the podium on a long arc a little
       // higher than it needs, and is let down onto it: never a swoop, never a straight line.
       const kx = k, ky = smooth(k * 1.6), arc = Math.sin(Math.PI * k) * 0.75;
       p.mesh.position.set(
-        this.v.x + (FOCUS.x - this.v.x) * kx + Math.sign(d) * k * (1 - k) * 2.2,   // they pass with room between them
+        this.v.x + (FOCUS.x - this.v.x) * kx + Math.sign(d) * k0 * (1 - k0) * 2.2,   // they pass with room between them
         (this.v.y + (FOCUS.y - this.v.y) * ky + arc + give * k) * (k > 0 ? 1 : edge),
         this.v.z + (FOCUS.z - this.v.z) * kx
       );
-      p.mesh.scale.setScalar((SMALL + (BIG - SMALL) * k) * edge);
+      p.mesh.scale.setScalar((small + (BIG - small) * k) * edge);
       p.mesh.rotation.set(0, -Math.PI / 2, 0);
       p.mesh.visible = edge > 0.01;
       p.edge = edge;
     });
 
     // what belongs to the globe over the podium comes and goes with it
-    (this.aura.material as THREE.SpriteMaterial).opacity = 0.03 + lead * 0.1;
+    (this.aura.material as THREE.SpriteMaterial).opacity = (0.03 + lead * 0.1) * (1 - rise);
     // The room's lights rise as a globe settles and sink while two are passing: the glow under the podium,
     // the ring in the ceiling and the light on the track all follow this one number.
+    // In the plan they are up again, with nothing on the podium: the dial is complete.
     const lit = smooth((lead - 0.55) / 0.45);
-    this.glowK.value = lit;
+    this.glowK.value = Math.max(lit, open);
     this.turn.value = f * ARC;
     // Each time a different project comes down onto the disc, it lands: the disc gives, and a cloud of the
     // underglow's light is pressed out. The landing runs on the clock, not the scroll, so it plays through at
     // its own pace wherever the scroll stops.
-    const settled = Math.round(clamp(f, 0, this.planets.length - 1));
-    if (lit > 0.9 && settled !== this.pulseFor) { this.pulseFor = settled; this.pulseAt = t; }
+    // The plan settling counts as one too: no globe lands, so the disc keeps still, but the light goes out once.
+    const settled = Math.round(clamp(f, 0, count));
+    // And so does a ball picked out of the plan, when it comes down on the disc.
+    const picked = this.sel >= 0 ? this.planets[this.sel].pick : 0;
+    if (this.sel >= 0) {
+      if (picked > 0.88 && this.pulseFor !== 100 + this.sel) { this.pulseFor = 100 + this.sel; this.pulseAt = t; }
+    } else if (this.pulseFor >= 100) this.pulseFor = count;
+    else if ((settled < count ? lit > 0.9 : open > 0.97) && settled !== this.pulseFor) { this.pulseFor = settled; this.pulseAt = t; }
     const pulse = clamp((t - this.pulseAt) / 2.4);
     this.pulse.value = pulse;
     this.disc.position.y = TOP - 0.1 + give;
@@ -615,16 +705,43 @@ export class Orrery {
 
     // the camera drifts, answers the pointer, and leans into each change of project and back out of it
     const m = this.opts.mobile;
-    const px = this.eased.x, py = this.eased.y;
+    const still = 1 - rise;                                   // over the plan the view holds still: it is a diagram now
+    const px = this.eased.x * still, py = this.eased.y * still;
     const frac = f - Math.floor(f);
-    const swing = Math.sin(Math.PI * frac) * (Math.floor(f) % 2 ? 1 : -1);
-    const x = Math.sin(t * 0.09) * 0.32 + px * 0.9 + swing * 0.16;
-    this.camera.position.set(x, (m ? 5.0 : 3.9) + py * 0.32 + Math.abs(swing) * 0.12, (m ? 22.5 : 17.2) - Math.abs(swing) * 0.3);
-    this.camera.lookAt(x * 0.12 - px * 0.2, m ? 3.9 : 3.5, -2.0);
+    const swing = Math.sin(Math.PI * frac) * (Math.floor(f) % 2 ? 1 : -1) * (u > 0 ? 0 : 1);
+    const x = (Math.sin(t * 0.09) * 0.32 + swing * 0.16) * still + px * 0.9;
+    const y0 = (m ? 5.0 : 3.9) + py * 0.32 + Math.abs(swing) * 0.12, z0 = (m ? 22.5 : 17.2) - Math.abs(swing) * 0.3;
+    if (rise <= 0) {
+      this.camera.up.set(0, 1, 0);
+      this.camera.position.set(x, y0, z0);
+      this.camera.lookAt(x * 0.12 - px * 0.2, m ? 3.9 : 3.5, -2.0);
+    } else {
+      // The rise: the view goes up and over on an arc round the podium until it looks straight down on it, and
+      // draws back as it goes until the whole ring is in sight. It looks down at the podium early, so the ceiling
+      // has left the top of the picture well before the view passes through where the ceiling is.
+      const r0 = Math.hypot(y0, z0), phi0 = Math.atan2(y0, z0);
+      const phi = phi0 + (Math.PI / 2 - 0.004 - phi0) * rise, far = r0 + (this.planH - r0) * rise * rise;
+      const aim = smooth(rise / 0.09);
+      this.camera.up.set(0, Math.cos(phi), -Math.sin(phi));
+      this.camera.position.set(x, far * Math.sin(phi), far * Math.cos(phi));
+      this.camera.lookAt((x * 0.12 - px * 0.2) * (1 - aim), (m ? 3.9 : 3.5) * (1 - aim), -2.0 * (1 - aim));
+    }
+    // Where the picture sits in the window: as the room has it; then, in the plan, where this shape of window wants
+    // the ring; and over to one side when a project is picked out of it, to make room for its words.
+    const L = this.lens, lx = L.aside * smooth(this.slide), ly = L.room + (L.plan - L.room) * rise;
+    if (lx !== L.x || ly !== L.y) {
+      L.x = lx; L.y = ly;
+      this.camera.setViewOffset(L.w, L.h, lx, ly, L.w, L.h);
+      this.camera.updateProjectionMatrix();
+    }
+    // the ceiling is put away while it is out of the picture, before the view goes up through it
+    this.roof.visible = this.camera.position.y < ROOF - 0.4;
+    (this.scene.fog as THREE.FogExp2).density = 0.013 * (1 - 0.8 * rise);   // and from up there the haze is not in the way
     // each picture lies on its ball's face toward you; the one over the podium opens up until nearly the
     // whole picture shows, so the project can be recognised from it
     for (const p of this.planets) {
-      (p.card.material as THREE.ShaderMaterial).uniforms.uOpen.value = smooth((p.focus - 0.3) / 0.7);   // the picture opens late, as the ball is let down
+      // the picture opens late, as the ball is let down; and in the plan every ball shows its picture, to be told apart by
+      (p.card.material as THREE.ShaderMaterial).uniforms.uOpen.value = Math.max(smooth((p.focus - 0.3) / 0.7), open * 0.9);
       p.card.position.copy(p.mesh.position);
       p.card.scale.copy(p.mesh.scale).multiplyScalar(1.004);
       p.card.visible = p.mesh.visible;
@@ -638,8 +755,9 @@ export class Orrery {
    */
   draw(f: number) {
     if (!this.running || this.disposed) return;
-    const dt = Math.min(this.clock.getDelta(), 0.05);
+    const raw = this.clock.getDelta(), dt = Math.min(raw, 0.05);
     this.f = this.target = f;
+    this.step = Math.min(raw, 0.12);                  // what runs on the clock keeps its real pace on a slow machine
     this.eased.lerp(this.pointer, 1 - Math.pow(0.03, dt));
     this.apply(this.clock.elapsedTime);
     this.renderer.render(this.scene, this.camera);
@@ -656,11 +774,22 @@ export class Orrery {
     this.renderer.setSize(w, h, false);
     this.camera.aspect = w / h;
     this.camera.fov = w / h < 0.8 ? 50 : w / h < 1.25 ? 46 : 42;
-    // on a tall screen the words sit at the foot and the scene steps up for them
-    if (w / h >= 1.25) this.camera.setViewOffset(w, h, 0, h * 0.075, w, h);   // centred, and a little high: the words are set round the globe and along the ring
-    else if (w / h < 0.8) this.camera.setViewOffset(w, h, 0, h * 0.17, w, h);
-    else this.camera.clearViewOffset();
-    this.camera.updateProjectionMatrix();
+    // The plan: the ring is drawn a quarter of the window's height in radius (or as wide as a narrow window
+    // lets it be), so the view stands this high over the floor.
+    const wide = w / h >= 1.25, tall = w / h < 0.8;
+    const ringPx = tall ? Math.min(0.19 * h, 0.35 * w) : Math.min(0.25 * h, 0.38 * w);
+    this.planH = ORBIT * (h / 2) / (ringPx * Math.tan(THREE.MathUtils.degToRad(this.camera.fov / 2)));
+    // Where the picture sits in the window (see `lens`). In the room: on a wide window centred and a little high,
+    // for the words set round the globe and along the ring; on a tall one well up, for the words at its foot. In
+    // the plan: the ring in the middle of a wide window; higher on the others, clear of the words at the foot and
+    // of the page's title. And when a project is picked on a wide window the ring goes to the left, as far as
+    // leaves it whole inside the window, and the project's words take the right.
+    const L = this.lens;
+    L.w = w; L.h = h; L.x = L.y = NaN;
+    L.room = (wide ? 0.075 : tall ? 0.17 : 0) * h;
+    L.plan = (wide ? 0 : tall ? 0.11 : 0.14) * h;
+    L.aside = wide ? Math.min(0.2 * w, w / 2 - ringPx * (1 + ALL / ORBIT) - 36) : 0;
+    this.step = 0;
     this.placeForms(w / h >= 1.25);
     this.apply(this.clock.elapsedTime); this.renderer.render(this.scene, this.camera);
   }
