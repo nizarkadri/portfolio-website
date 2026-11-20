@@ -2,19 +2,22 @@ import * as THREE from 'three';
 import { Reflector } from 'three/examples/jsm/objects/Reflector.js';
 import { pieceGeometry, disposePieces, cnTower, PieceKind } from './pieces';
 import { MIRROR } from './mirror';
+import { buildLogo, Logo, STATIONS } from './logos';
 import { asTexture, boardCanvas, cloudCanvas, gradientCanvas, paleSkyCanvas, radialCanvas, stoneCanvas } from './textures';
 
 /* ==========================================================================
    The Long Game: one continuous place, rendered live.
    A pale, quiet studio with no walls: the board runs away into mist, the
    pieces stand on it like sculpture, one thread of blue light runs the length
-   of it and climbs the tower at the far end. Scroll moves one camera along one
-   line; nothing in the world pops, rises or swings.
+   of it and climbs the tower at the far end. Between the game and the city the
+   path is lined with where he studied and worked: each one its own mark, in its
+   own colours, made solid and standing over a square of the board. Scroll moves
+   one camera along one line; nothing in the world pops or rises, and the only
+   things that stir are those marks, turning to whoever walks past.
    ========================================================================== */
 
 export interface WorldOptions {
   mobile: boolean;
-  covers: string[];        // three featured project covers
   tower: string[];         // certificate + cover images for the tower
   figure?: string;         // unused by this world; kept so callers need not change
   still?: boolean;         // render on demand only (reduced motion / posters)
@@ -34,6 +37,9 @@ const CX = 0, CZ = -60;    // the tower's axis
 const RIM = 24;            // where the cloud closes under the last board
 const SUMMIT = 27.5;       // the last board floats above the rim
 const ORBIT_END = Math.PI * 0.92;
+const PATH_Z = -10.5;      // the first mark on the path, and how far it is to the next
+const PATH_GAP = 4;
+const FLOAT = 1.6;         // how high a mark hangs over its square
 
 const clamp = (v: number, a = 0, b = 1) => Math.min(b, Math.max(a, v));
 const ss = (a: number, b: number, x: number) => {
@@ -59,10 +65,13 @@ function buildKeys(): Key[] {
     { v: 1.1, pos: [-2.25, 1.72, 12.3], look: [-3.3, 1.45, -3.6] },
     { v: 2.3, pos: [-3.1, 0.95, 2.9], look: [2.2, 1.3, -2.8] },
     { v: 3.4, pos: [-2.7, 0.9, 1.9], look: [2.4, 1.35, -3.5] },
-    { v: 3.95, pos: [-1.8, 1.9, -0.5], look: [2.6, 1.4, -11] },
-    { v: 4.6, pos: [0, 1.75, -3.6], look: [0, 1.62, -14] },
-    { v: 6.0, pos: [0, 1.68, -4.3], look: [0, 1.62, -14] },
-    { v: 6.65, pos: [-0.7, 3.9, -14], look: [1.6, 3.1, -30] },
+    { v: 3.95, pos: [-1.8, 2.3, -0.2], look: [0.9, 1.4, -11] },
+    // the path: seen whole from a little above, then walked, with a mark passing on each side in turn
+    { v: 4.5, pos: [0, 3.6, -1.2], look: [0, 1.25, -16] },
+    { v: 5.05, pos: [0, 3.4, -2.4], look: [0, 1.25, -17] },
+    { v: 5.75, pos: [0.15, 2.4, -8.6], look: [0.2, 1.7, -22] },
+    { v: 6.4, pos: [-0.15, 2.15, -15.6], look: [0.9, 2.2, -29] },
+    { v: 6.95, pos: [-1.2, 2.35, -22.0], look: [2.2, 3.0, -35] },
     { v: 7.3, pos: [-1.7, 2.5, -24.0], look: [2.7, 3.3, -36] },
     { v: 8.4, pos: [-1.4, 2.6, -25.6], look: [2.8, 3.5, -36] },
     { v: 9.7, pos: [0, 2.3, -45.6], look: [-1.4, 4.6, CZ] },
@@ -204,7 +213,7 @@ export class World {
   private fog: THREE.FogExp2;
   private game = new THREE.Group();
   private finale = new THREE.Group();
-  private doorAnchors: THREE.Vector3[] = [];
+  private stations: Array<{ at: THREE.Vector3; holder: THREE.Group; ring: THREE.Mesh; glow: THREE.Mesh; pool: THREE.Mesh; phase: number; half: number; unit: number; here: number; parts: Logo['parts'] }> = [];
   private sky!: THREE.Mesh;
   private mirror: Reflector | null = null;
   private threadMats: THREE.ShaderMaterial[] = [];
@@ -253,7 +262,7 @@ export class World {
     this.buildShaft();
     this.buildPieces();
     this.buildArcs();
-    this.buildDoors();
+    this.buildPath();
     this.buildCity();
     this.buildTower();
     this.buildSummit();
@@ -342,7 +351,7 @@ export class World {
       new THREE.PlaneGeometry(600, 600),
       new THREE.MeshStandardMaterial({ color: 0xe9f1f8, roughness: 0.36, metalness: 0, envMapIntensity: 0.35 })
     );
-    ground.rotation.x = -Math.PI / 2; ground.position.set(0, -0.004, -20); ground.receiveShadow = true;
+    ground.rotation.x = -Math.PI / 2; ground.position.set(0, -0.03, -20); ground.receiveShadow = true;
 
     // the board runs the whole length and out of sight
     const floor = new THREE.Mesh(
@@ -436,39 +445,39 @@ export class World {
     return t;
   }
 
-  /** A picture standing in the hall: a dark bronze slab with the image set into its face, evenly lit. */
-  private panel(w: number, h: number, tex: THREE.Texture, level: number, lip = 0.06) {
-    const g = new THREE.Group();
-    const slab = new THREE.Mesh(
-      new THREE.BoxGeometry(w + lip * 2, h + lip * 2, 0.12),
-      new THREE.MeshStandardMaterial({ color: INK, roughness: 0.42, metalness: 0.5, envMapIntensity: 0.7 })
-    );
-    slab.position.set(0, h / 2 + lip, 0); slab.castShadow = true; slab.receiveShadow = true;
-    const picture = new THREE.Mesh(
-      new THREE.PlaneGeometry(w, h),
-      new THREE.MeshBasicMaterial({ map: tex, color: new THREE.Color(0xffffff).multiplyScalar(level) })
-    );
-    picture.position.set(0, h / 2 + lip, 0.0615);
-    g.add(slab, picture);
-    return g;
-  }
-
-  private buildDoors() {
-    const xs = this.opts.mobile ? [-1.5, 0, 1.5] : [-2.5, 0, 2.5];
-    const w = this.opts.mobile ? 1.1 : 1.5, h = this.opts.mobile ? 1.65 : 2.25;
-    xs.forEach((x, i) => {
-      // covers are cropped to fill the doorway rather than squashed into it
-      const tex = this.opts.covers[i]
-        ? this.image(this.opts.covers[i], 1536, (t, aspect) => {
-            const k = (w / h) / aspect;
-            if (k < 1) { t.repeat.set(k, 1); t.offset.set((1 - k) / 2, 0); } else { t.repeat.set(1, 1 / k); t.offset.set(0, (1 - 1 / k) / 2); }
-          })
-        : this.tex.doorway;
-      const g = this.panel(w, h, tex, 1);
-      g.position.set(x, 0, -14 + Math.abs(x) * 0.14);
-      g.rotation.y = -x * 0.07;
-      this.scene.add(g, this.blob(g.position, w * 1.9, 0.5));
-      this.doorAnchors.push(new THREE.Vector3(x, 0, g.position.z));
+  /** The path to the tower: where he studied and worked, each as its own mark hanging over a square of the board. */
+  private buildPath() {
+    const m = this.opts.mobile;
+    const X = m ? 1.5 : 2.5, size = m ? 0.75 : 1;
+    STATIONS.forEach((spec, i) => {
+      const at = new THREE.Vector3((i % 2 ? 1 : -1) * X, 0, PATH_Z - i * PATH_GAP);
+      const holder = new THREE.Group();
+      holder.position.set(at.x, FLOAT, at.z);
+      // the square it hangs over, marked the way the board marks a move
+      const ring = new THREE.Mesh(
+        new THREE.RingGeometry(0.62, 0.665, 4, 1, Math.PI / 4),
+        new THREE.MeshBasicMaterial({ color: 0x2f62c4, transparent: true, opacity: 0.22, depthWrite: false })
+      );
+      ring.rotation.x = -Math.PI / 2; ring.position.set(at.x, 0.012, at.z); ring.renderOrder = 3;
+      const glow = new THREE.Mesh(
+        new THREE.PlaneGeometry(2.8, 2.8),
+        new THREE.MeshBasicMaterial({ map: this.tex.glow, color: THREAD, transparent: true, opacity: 0, depthWrite: false })
+      );
+      glow.rotation.x = -Math.PI / 2; glow.position.set(at.x, 0.009, at.z); glow.renderOrder = 2;
+      const pool = this.blob(at, 2.6, 0.32);
+      const st = { at, holder, ring, glow, pool, phase: i * 1.7, half: 0.6, unit: 1, here: 0, parts: [] as Logo['parts'] };
+      this.stations.push(st);
+      this.scene.add(holder, ring, glow, pool);
+      fetch(spec.file)
+        .then((r) => (r.ok ? r.text() : Promise.reject(new Error(spec.file))))
+        .then((svg) => {
+          if (this.disposed) return;
+          const logo = buildLogo(svg, spec, size);
+          holder.add(logo.root);
+          st.parts = logo.parts; st.unit = logo.unit; st.half = logo.height / 2;
+          if (!this.running) { this.apply(this.p, 0); this.render(); }
+        })
+        .catch(() => { /* its square stays empty */ });
     });
   }
 
@@ -671,12 +680,22 @@ export class World {
   setProgress(p: number) { this.target = clamp(p); if (this.opts.still) this.p = this.target; }
   setPointer(x: number, y: number) { this.pointer.set(x, y); }
 
-  /** Screen position of a featured door's foot, for the HTML label. */
-  project(i: number) {
-    const d = this.doorAnchors[i];
-    if (!d) return null;
-    this.v1.copy(d).project(this.camera);
-    return { x: (this.v1.x * 0.5 + 0.5) * this.canvas.clientWidth, y: (-this.v1.y * 0.5 + 0.5) * this.canvas.clientHeight };
+  /** Where a mark's caption goes on screen, just under it, and how present it is: only the marks within reach are named. */
+  station(i: number) {
+    const s = this.stations[i];
+    if (!s) return null;
+    const cam = this.camera.position;
+    const dist = Math.hypot(cam.x - s.at.x, cam.z - s.at.z);
+    this.v1.set(s.at.x, FLOAT - s.half - 0.16, s.at.z).project(this.camera);
+    const seen = this.v1.z < 1 ? ss(1.0, 0.8, Math.abs(this.v1.x)) : 0;
+    // a mark further down the same side is named once the one in front of it is being passed, never through it
+    const before = this.stations[i - 2];
+    const clear = before ? ss(before.at.z + 4.2, before.at.z + 1.6, cam.z) : 1;
+    return {
+      x: (this.v1.x * 0.5 + 0.5) * this.canvas.clientWidth,
+      y: (-this.v1.y * 0.5 + 0.5) * this.canvas.clientHeight,
+      on: seen * clear * s.here * ss(14.6, 12.2, dist) * ss(3.6, 5.2, dist),
+    };
   }
 
   /** Screen position just above a tagged piece, for its stack label. */
@@ -719,6 +738,26 @@ export class World {
 
   private apply(p: number, t: number) {
     this.cameraAt(p, t);
+
+    // the marks on the path. They are not there while the game is being read: each turns into its place, one after
+    // the other, as the view comes round to the path. After that each turns to whoever is walking past and rides its
+    // own slow swell, a wave passes through its letters, and the square under it lights as it is reached.
+    const cam = this.camera.position, vv = p * SPAN;
+    this.stations.forEach((s, i) => {
+      const dx = cam.x - s.at.x, dz = cam.z - s.at.z;
+      const near = ss(17, 9, Math.hypot(dx, dz));
+      const here = (s.here = ss(3.5 + i * 0.13, 4.15 + i * 0.13, vv));
+      s.holder.visible = here > 0.002;
+      s.holder.scale.setScalar(0.55 + 0.45 * here);
+      s.holder.rotation.y = Math.atan2(dx, dz) * 0.72 + Math.sin(t * 0.55 + s.phase) * 0.2 + (1 - here) * (i % 2 ? -1.9 : 1.9);
+      s.holder.rotation.x = Math.sin(t * 0.41 + s.phase * 1.7) * 0.045;
+      s.holder.position.y = FLOAT + Math.sin(t * 0.8 + s.phase) * 0.06 - (1 - here) * 0.5;
+      const swell = (0.022 + 0.03 * near) / s.unit;
+      for (const part of s.parts) part.node.position.z = Math.sin(t * 1.15 - part.phase) * swell;
+      (s.ring.material as THREE.MeshBasicMaterial).opacity = (0.22 + near * 0.6) * here;
+      (s.glow.material as THREE.MeshBasicMaterial).opacity = near * 0.3 * here;
+      (s.pool.material as THREE.MeshBasicMaterial).opacity = 0.32 * here;
+    });
 
     // air: a slate haze in the hall, darker in the shaft, pale cloud at the top
     const v = p * SPAN;

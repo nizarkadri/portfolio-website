@@ -7,17 +7,7 @@ import type { World as WorldType } from './World';
 import { Arrow, CTA_LABEL } from '../Navbar';
 import { SOCIALS } from '../NewFooter';
 
-export interface LandingDoor {
-  slug: string;
-  title: string;
-  summary: string;
-  technologies: string[];
-  cover: string;
-  liveUrl?: string;
-}
-
 interface Props {
-  doors: LandingDoor[];
   tower: string[];
   projectCount: number;
   certificateCount: number;
@@ -27,7 +17,7 @@ interface Props {
 const MOVES = [
   { san: 'e4', label: 'Opening', fn: 'open()', from: 0, at: 0.04 },
   { san: 'Nf3', label: 'Calculation', fn: 'calculate()', from: 0.143, at: 0.19 },
-  { san: 'Bc4', label: 'The work', fn: 'ship(3)', from: 0.293, at: 0.353 },
+  { san: 'Bc4', label: 'The path', fn: 'develop()', from: 0.293, at: 0.32 },
   { san: 'O-O', label: 'The city', fn: 'deploy("toronto")', from: 0.47, at: 0.523 },
   { san: 'd4', label: 'The tower', fn: 'prove()', from: 0.687, at: 0.767 },
   { san: 'Re1', label: 'Your move', fn: 'await yourMove()', from: 0.933, at: 1 },
@@ -36,7 +26,15 @@ const MOVES = [
 const NAME = ['Nizar', 'Kadri'];
 const LINE = ['I', 'think', 'several', 'moves', 'ahead.'];
 
-const WINDOWS: Array<[number, number]> = [[0, 0.088], [0.138, 0.238], [0.288, 0.412], [0.465, 0.572], [0.682, 0.858], [0.93, 1.01]];
+const WINDOWS: Array<[number, number]> = [[0, 0.088], [0.138, 0.238], [0.288, 0.462], [0.465, 0.572], [0.682, 0.858], [0.93, 1.01]];
+
+/** The path to the tower: where he studied and worked, in the order they are met. Order matches STATIONS in logos.ts. */
+const PATH = [
+  { name: 'University of Windsor', role: 'Master of Applied Computing', logo: '/images/companies/University_of_Windsor.svg' },
+  { name: 'Fiera Capital', role: 'Cloud Administrator', logo: '/images/companies/Fiera_Capital.svg' },
+  { name: 'CGI', role: 'Software Engineer', logo: '/images/companies/CGI.svg' },
+  { name: 'Google DevFest', role: '', logo: '/images/companies/Google_DevFest.svg' },
+];
 
 /** What each piece stands for. Order matches TAGGED in World.ts. */
 const TAGS = [
@@ -70,7 +68,7 @@ function webglOk() {
   }
 }
 
-export default function Landing({ doors, tower, projectCount, certificateCount }: Props) {
+export default function Landing({ tower, projectCount, certificateCount }: Props) {
   const router = useRouter();
   const act = useRef<HTMLElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
@@ -166,10 +164,21 @@ export default function Landing({ doors, tower, projectCount, certificateCount }
           el.style.fontWeight = String(Math.round(300 + 330 * Math.exp(-(d * d) / (150 * 150))));
         }
       }
-      if (w && !mobile && p > 0.267 && p < 0.433) {
+      // each mark on the path is named just under it, while it is within reach
+      if (w) {
+        const span = Math.min(1, Math.max(0, (p - 0.283) / 0.012)) * Math.min(1, Math.max(0, (0.468 - p) / 0.012));
         labels.current.forEach((node, i) => {
-          const s = w!.project(i);
-          if (node && s) node.style.setProperty('--x', `${s.x.toFixed(1)}px`);
+          if (!node) return;
+          const s = span > 0 ? w!.station(i) : null;
+          const o = s ? s.on * span : 0;
+          if (s && o > 0.004) {
+            node.style.transform = `translate3d(${s.x.toFixed(1)}px, ${s.y.toFixed(1)}px, 0)`;
+            node.style.opacity = o.toFixed(3);
+            node.style.visibility = 'visible';
+          } else if (node.style.visibility !== 'hidden') {
+            node.style.opacity = '0';
+            node.style.visibility = 'hidden';
+          }
         });
       }
     };
@@ -177,11 +186,7 @@ export default function Landing({ doors, tower, projectCount, certificateCount }
     import('./World').then(({ World }) => {
       if (dead || !canvas.current) return;
       try {
-        w = new World(canvas.current, {
-          mobile,
-          covers: doors.map((d) => d.cover),
-          tower,
-        });
+        w = new World(canvas.current, { mobile, tower });
       } catch {
         setMode('static');
         return;
@@ -212,7 +217,7 @@ export default function Landing({ doors, tower, projectCount, certificateCount }
       w?.dispose();
       world.current = null;
     };
-  }, [mode, doors, tower]);
+  }, [mode, tower]);
 
   const flyTo = useCallback((i: number) => {
     const el = act.current;
@@ -302,21 +307,21 @@ export default function Landing({ doors, tower, projectCount, certificateCount }
             </div>
           </div>
 
-          {/* 3. Bc4: the work */}
-          <div ref={setScrim(2)} className="scrim scrim--top" data-win="0.293 0.407 0 0" aria-hidden="true" />
-          <div ref={setPoint(2)} className="wp wp--work" data-wp="work">
-            <div className="wp__copy" data-sc-cue="0.293 0.407">
-              <h2 className="lg-display lg-display--lg" data-sc-cue="0.293 0.407" data-sc-kinetic="words">Three doors. Each one shipped.</h2>
-              <Link href="/projects" className="lg-link">All {projectCount} projects</Link>
+          {/* 3. Bc4: the path. Where he studied and worked stands along the way to the tower, each as its own mark. */}
+          <div ref={setScrim(2)} className="scrim scrim--top scrim--path" data-win="0.293 0.4 0 0" aria-hidden="true" />
+          <div ref={setPoint(2)} className="wp wp--path" data-wp="path">
+            <div className="wp__copy" data-sc-cue="0.293 0.395">
+              <h2 className="lg-display lg-display--lg" data-sc-cue="0.293 0.395" data-sc-kinetic="words">The moves that got me here.</h2>
             </div>
-            <ol className="doors" data-sc-cue="0.293 0.407">
-              {doors.map((d, i) => (
-                <li key={d.slug} ref={(n) => { labels.current[i] = n; }} className="door">
-                  <h3 className="lg-display lg-display--sm">
-                    <Link href={`/projects/${d.slug}`}>{d.title}</Link>
-                  </h3>
-                  <p>{d.summary}</p>
-                  <p className="lg-note">{d.technologies.slice(0, 3).join(' · ')}</p>
+            <ol className="stops" aria-label="The path so far">
+              {PATH.map((s, i) => (
+                <li key={s.name} ref={(n) => { labels.current[i] = n; }} className="stop">
+                  <div className="stop__card">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img className="stop__logo" src={s.logo} alt="" loading="lazy" decoding="async" />
+                    {s.role && <p className="lg-note">{s.name}</p>}
+                    <h3 className="stop__what">{s.role || s.name}</h3>
+                  </div>
                 </li>
               ))}
             </ol>
