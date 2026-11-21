@@ -3,3 +3,12 @@ node_modules
 *.log
 **/tests
 README.md
+
+# Not needed to build or run the site. Paths here are relative to the repository root,
+# so "*.md" only drops the notes at the top level: the Markdown in data/ (projects, blog,
+# experience) is still sent, and "scrollcraft" does not touch public/scrollcraft.
+.next
+.claude
+scrollcraft
+docs
+*.md
