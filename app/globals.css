@@ -26,7 +26,7 @@
   --transition-speed: 0.24s;
 }
 
-html { scroll-behavior: auto; background: var(--sc-canvas); }
+html { scroll-behavior: auto; background: var(--sc-canvas); color-scheme: only light; }
 html.lenis, html.lenis body { height: auto; }
 body { overflow-x: clip; font-feature-settings: "ss01", "cv11"; }
 main { min-height: 100svh; position: relative; }

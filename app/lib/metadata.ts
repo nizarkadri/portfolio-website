@@ -88,4 +88,6 @@ export const siteMetadata: Metadata = {
     google: process.env.GOOGLE_VERIFICATION_CODE,
   },
   category: 'portfolio',
+  // Dark Reader leaves a page alone when it carries this
+  other: { 'darkreader-lock': 'true' },
 };

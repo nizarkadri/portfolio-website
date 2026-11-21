@@ -1,7 +1,7 @@
 // app/layout.tsx
 import type { NextWebVitalsMetric } from 'next/app';
 import { Suspense } from 'react';
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import Navbar from '../components/Navbar';
 import NewFooter from '../components/NewFooter';
@@ -31,6 +31,13 @@ export function reportWebVitals(metric: NextWebVitalsMetric) {
 }
 
 export const metadata: Metadata = siteMetadata;
+
+// The site is drawn light only. Saying so keeps browsers, and dark-mode tools that honour it, from recolouring
+// the text for a dark page it is not; the phone's own bars take the page's pale blue.
+export const viewport: Viewport = {
+  colorScheme: 'only light',
+  themeColor: '#e3f2fb',
+};
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
