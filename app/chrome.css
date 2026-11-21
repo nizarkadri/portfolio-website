@@ -8,6 +8,9 @@
 .lg-bar::before { content: ""; position: absolute; inset: 0 0 -2.5rem 0; background: linear-gradient(180deg, color-mix(in oklab, var(--sc-canvas) 82%, transparent), transparent); pointer-events: none; z-index: -1; transition: opacity 240ms var(--sc-ease-out); }
 .lg-bar.is-solid { background: color-mix(in oklab, var(--sc-canvas) 88%, transparent); backdrop-filter: blur(14px) saturate(1.2); border-bottom-color: var(--sc-hairline); }
 .lg-bar.is-solid::before { opacity: 0; }
+/* A blur on the bar makes it the frame its fixed children are placed in, so the open menu would be squeezed into
+   the bar's own 68px and the page would show through below. While the menu is open the bar is solid instead. */
+.lg-bar.is-open { background: var(--sc-canvas); backdrop-filter: none; -webkit-backdrop-filter: none; }
 .lg-bar__inner { height: 100%; width: min(100% - 2 * var(--sc-gutter), 96rem); margin-inline: auto; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 1.5rem; }
 .lg-bar__mark { display: inline-flex; align-items: center; gap: 0.6rem; font-family: var(--sc-font-display); font-weight: 700; font-stretch: 110%; letter-spacing: -0.015em; font-size: 1.02rem; color: var(--sc-ink); text-decoration: none; justify-self: start; }
 .lg-bar__king { width: 1.35rem; height: 1.35rem; color: var(--sc-accent); }

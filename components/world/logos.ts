@@ -60,8 +60,35 @@ function material(colour: string, metal: boolean) {
     : new THREE.MeshPhysicalMaterial({ color: colour, roughness: 0.42, metalness: 0, clearcoat: 0.55, clearcoatRoughness: 0.24, envMapIntensity: 0.55 });
 }
 
+/**
+ * Colours set by class in a <style> block are written onto each shape as plain attributes. Safari gives an SVG that
+ * is parsed but never shown no style sheets at all, so without this every class-coloured shape comes out black.
+ */
+function inlineClasses(svg: string) {
+  const rules = new Map<string, Array<[string, string]>>();
+  for (const block of svg.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/g)) {
+    for (const rule of block[1].matchAll(/([^{}]+)\{([^}]*)\}/g)) {
+      const decls = rule[2].split(';').map((d) => d.split(':').map((x) => x.trim())).filter((d): d is [string, string] => d.length === 2 && !!d[0] && !!d[1]);
+      for (const sel of rule[1].split(',')) {
+        const m = sel.trim().match(/^\.([\w-]+)$/);
+        if (m) rules.set(m[1], [...(rules.get(m[1]) ?? []), ...decls]);
+      }
+    }
+  }
+  if (!rules.size) return svg;
+  return svg
+    .replace(/<style[^>]*>[\s\S]*?<\/style>/g, '')
+    .replace(/<([\w:-]+)([^>]*?)\sclass="([^"]+)"([^>]*?)(\/?)>/g, (all, tag: string, before: string, cls: string, after: string, end: string) => {
+      const own = ` ${before} ${after}`;
+      const add = cls.split(/\s+/).flatMap((c) => rules.get(c) ?? [])
+        .filter(([k]) => !own.includes(` ${k}=`))
+        .map(([k, v]) => ` ${k}="${v}"`).join('');
+      return add ? `<${tag}${before}${after}${add}${end}>` : all;
+    });
+}
+
 export function buildLogo(svg: string, spec: LogoSpec, size = 1): Logo {
-  let text = svg;
+  let text = inlineClasses(svg);
   for (const [a, b] of spec.swap ?? []) text = text.replace(a, b);
   const data = new SVGLoader().parse(text);
 

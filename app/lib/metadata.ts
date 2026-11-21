@@ -47,7 +47,7 @@ export const siteMetadata: Metadata = {
     siteName: 'Nizar Kadri Portfolio',
     images: [
       {
-        url: '/og-image.png',
+        url: '/og-image.jpg',
         width: 1200,
         height: 630,
         alt: 'Nizar Kadri - Full Stack Developer & Software Engineer',
@@ -58,7 +58,7 @@ export const siteMetadata: Metadata = {
     card: 'summary_large_image',
     title: 'Nizar Kadri - Full Stack Developer & Software Engineer',
     description: 'Full Stack Developer specializing in React, Node.js, Python, and cloud technologies.',
-    images: ['/og-image.png'],
+    images: ['/og-image.jpg'],
   },
   robots: {
     index: true,
@@ -81,7 +81,7 @@ export const siteMetadata: Metadata = {
       { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
     ],
     other: [
-      { rel: 'mask-icon', url: '/safari-pinned-tab.svg', color: '#FF8A4C' },
+      { rel: 'mask-icon', url: '/safari-pinned-tab.svg', color: '#0b0f15' },
     ],
   },
   verification: {

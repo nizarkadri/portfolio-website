@@ -103,6 +103,7 @@ export default function WorkWorld({ projects, fallback }: { projects: ProjectSum
   const [picked, setPicked] = useState(-1);     // the project picked out of the plan, if any
   const [glanced, setGlanced] = useState(-1);   // the last one picked: its words stay while they fade
   const [mode, setMode] = useState<'pending' | 'live' | 'off'>('pending');
+  const [swiped, setSwiped] = useState(false);  // on a touch screen the hint to swipe stays until the first swipe
   const n = projects.length;
 
   useLayoutEffect(() => {
@@ -178,7 +179,7 @@ export default function WorkWorld({ projects, fallback }: { projects: ProjectSum
       const to = place(-r.top / Math.max(1, r.height - window.innerHeight * (1 + DWELL)), n + 1);
       const now = performance.now(), dt = Math.min(0.1, (now - then) / 1000);
       then = now;
-      at0 = at0 < 0 || Math.abs(to - at0) < 0.0004 ? to : at0 + (to - at0) * (1 - Math.exp(-dt * 4.4));
+      at0 = at0 < 0 || Math.abs(to - at0) < 0.0004 ? to : at0 + (to - at0) * (1 - Math.exp(-dt * 8));
       const f = at0;
       w?.draw(f);
       const here = Math.min(n, Math.max(0, Math.round(f)));
@@ -375,6 +376,55 @@ export default function WorkWorld({ projects, fallback }: { projects: ProjectSum
       e.preventDefault();
     };
     const onVis = () => (document.hidden ? w?.stop() : w?.start());
+
+    // On a touch screen the projects turn like pages: a sideways swipe steps to the next or the previous one (on the
+    // ring at the end, to the next or previous project picked out of it). Up and down still scrolls the page, and
+    // when a scroll comes to rest between two projects the page settles onto the nearer one.
+    const touch = window.matchMedia('(pointer: coarse)').matches;
+    let sx = 0, sy = 0, sid = -1, down = false, idle = 0;
+    const step = (dir: number) => {
+      if (!w) return;
+      setSwiped(true);
+      if (w.opened > 0.9) {
+        if (w.selected >= 0) w.select((w.selected + dir + n) % n);
+        else if (dir > 0) w.select(0);
+        else walkTo(n - 1);
+        return;
+      }
+      walkTo(Math.min(n, Math.max(0, Math.max(0, last) + dir)));
+    };
+    const onDown = (e: PointerEvent) => {
+      if (e.pointerType !== 'touch' || !e.isPrimary) return;
+      sid = e.pointerId; sx = e.clientX; sy = e.clientY; down = true;
+      window.clearTimeout(idle);
+    };
+    const onCancel = (e: PointerEvent) => { if (e.pointerId === sid) { sid = -1; down = false; } };
+    const onUp = (e: PointerEvent) => {
+      if (e.pointerId !== sid) return;
+      sid = -1; down = false;
+      const dx = e.clientX - sx, dy = e.clientY - sy;
+      if (Math.abs(dx) < 44 || Math.abs(dx) < Math.abs(dy) * 1.3) return;
+      step(dx < 0 ? 1 : -1);
+    };
+    // the settle: only between projects, never in the plan at the end, and never while a finger is still down
+    const onScroll = () => {
+      window.clearTimeout(idle);
+      idle = window.setTimeout(() => {
+        if (down || !w || w.opened > 0.05) return;
+        const r = el.getBoundingClientRect();
+        if (r.top > 0 || r.bottom < window.innerHeight) return;
+        const p = (-r.top / Math.max(1, r.height - window.innerHeight * (1 + DWELL))) * n;
+        const near = Math.round(p);
+        if (near < n && Math.abs(p - near) > 0.03) walkTo(near);
+      }, 220);
+    };
+    if (touch) {
+      el.addEventListener('pointerdown', onDown, { passive: true });
+      el.addEventListener('pointerup', onUp, { passive: true });
+      el.addEventListener('pointercancel', onCancel, { passive: true });
+      window.addEventListener('scroll', onScroll, { passive: true });
+    }
+
     window.addEventListener('resize', onResize);
     window.addEventListener('pointermove', onPointer, { passive: true });
     cv.addEventListener('click', onClick);
@@ -388,6 +438,11 @@ export default function WorkWorld({ projects, fallback }: { projects: ProjectSum
       cv.removeEventListener('click', onClick);
       window.removeEventListener('keydown', onKey);
       document.removeEventListener('visibilitychange', onVis);
+      el.removeEventListener('pointerdown', onDown);
+      el.removeEventListener('pointerup', onUp);
+      el.removeEventListener('pointercancel', onCancel);
+      window.removeEventListener('scroll', onScroll);
+      window.clearTimeout(idle);
       w?.dispose();
       world.current = null;
     };
@@ -536,6 +591,9 @@ export default function WorkWorld({ projects, fallback }: { projects: ProjectSum
           </ol>
           <button type="button" className="pj-pill" onClick={() => walkTo(n)}>All {n} at a glance</button>
         </div>
+        {!swiped && active < n && (
+          <p className="pw__swipe" aria-hidden="true"><span>Swipe</span><i /></p>
+        )}
       </div>
     </section>
   );

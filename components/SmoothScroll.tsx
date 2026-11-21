@@ -58,9 +58,10 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
     
     const isMobile = window.matchMedia('(max-width: 768px)').matches;
     
+    // The scroll follows the wheel closely: each frame it closes a fixed share of the distance left, rather than
+    // spreading every wheel step over a second or more. The 3D scenes add a little easing of their own on top.
     const lenis = new Lenis({
-      duration: isMobile ? 1.0 : 1.2,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      lerp: 0.14,
       orientation: 'vertical',
       gestureOrientation: 'vertical',
       smoothWheel: true,

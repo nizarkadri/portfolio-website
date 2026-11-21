@@ -809,7 +809,7 @@ export class World {
     this.raf = requestAnimationFrame(this.tick);
     const dt = Math.min(this.clock.getDelta(), 0.05);
     const t = this.clock.elapsedTime;
-    this.p += (this.target - this.p) * (1 - Math.pow(0.003, dt));
+    this.p += (this.target - this.p) * (1 - Math.pow(0.0004, dt));   // a short glide after the scroll, not a long one
     this.pointerEased.lerp(this.pointer, 1 - Math.pow(0.03, dt));
     if (this.replyT >= 0 && this.replyT < 1) {
       this.replyT = Math.min(1, this.replyT + dt / 0.75);
