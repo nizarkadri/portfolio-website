@@ -5,6 +5,6 @@ degrees:
     
   
   - institution: 'IBM' 
-    degree: 'B.Tech in Computer Science (IBM Cloud Certified)'
+    degree: 'Bachelor in Computer Science - Speicalized in Cloud Computing (IBM Cloud Certified)'
     
 ---

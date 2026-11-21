@@ -1,9 +1,9 @@
 ---
 title: UI Palette Explorer (colorBrain)
-description: A full-stack web app that turns UI screenshots into hundreds of live-previewable color palettes with AI-generated recreations rendered in sandboxed Chromium.
-summary: Screenshot-to-color-palette tool with Kanban role correction, Space-cycle exploration, and CSS variables / JSON export.
+description: A full-stack web app that allows users to explore wide range of color palettes directly in their own app ui with just a screenshot. Helps user see their app's design potential with one space click.
+summary: Quick way to explore and find  the best color palette of any app/website/software with just a screenshot.
 imageUrl: /images/Projects/ui-palette-explorer.webp
-slug: ui-palette-explorer
+slug: palette-explorer
 technologies: ['Google Cloud Run', 'Cloud Tasks', 'Firestore', 'Chromium', 'TypeScript', 'AI']
 featured: true
 order: 3
@@ -19,7 +19,7 @@ highlights:
 
 ## 🔬 Project Overview
 
-"Coolors, but applied to the user's own real UI screenshot." Upload a screenshot and the app recreates a simplified static HTML/CSS version of the interface, identifies UI parts (backgrounds, cards, buttons, headings, links, captions, icons), and groups them into color roles.
+"Coolors, but applied to the user's own real UI screenshot." Upload a screenshot and the app recreates a simplified static version of the interface, identifies UI parts (backgrounds, cards, buttons, headings, links, captions, icons), and groups them into color roles.
 
 **🎯 Problem**: Designers and developers waste time guessing palettes for existing screens instead of deriving them from real UI.
 
