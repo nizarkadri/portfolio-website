@@ -30,23 +30,23 @@ export const GROUPS: Group[] = [
   {
     piece: 'knight',
     san: 'N',
-    role: 'AI and ML',
+    role: 'AI engineering',
     line: 'The only piece that jumps. Useful when the direct route is blocked.',
-    skills: ['LangChain', 'Hugging Face', 'ChromaDB', 'Google Gemini', 'Stable Diffusion', 'Computer Vision', 'MCP'],
+    skills: ['Agent Orchestration', 'Context Engineering', 'Prompt Engineering', 'RAG', 'LangChain', 'Hugging Face', 'MCP Servers', 'Observability & Tracing'],
   },
   {
     piece: 'bishop',
     san: 'B',
     role: 'Cloud and DevOps',
     line: 'Long diagonals. Getting the work from my machine to everyone else.',
-    skills: ['AWS', 'Microsoft Azure', 'Docker', 'Kubernetes', 'Jenkins', 'CI/CD', 'GitHub', 'GitLab', 'Linux'],
+    skills: ['Google Cloud', 'AWS', 'Microsoft Azure', 'Docker', 'Kubernetes', 'Jenkins', 'CI/CD', 'GitHub', 'GitLab', 'Linux'],
   },
   {
     piece: 'pawn',
     san: 'P',
     role: 'Everyday tools',
     line: 'Small moves that hold the structure together.',
-    skills: ['Git', 'VS Code', 'WordPress', 'Shopify', 'SharePoint'],
+    skills: ['Git', 'VS Code', 'Claude Code', 'Codex', 'Cursor', 'Pi', 'OpenRouter'],
   },
 ];
 

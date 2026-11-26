@@ -80,6 +80,7 @@ function normalizeProject(slug: string, data: ProjectFrontmatter): ProjectSummar
     order: typeof data.order === 'number' ? data.order : Number.MAX_SAFE_INTEGER,
     repoUrl: data.repoUrl?.trim() || undefined,
     liveUrl: data.liveUrl?.trim() || undefined,
+    liveInviteOnly: data.liveInviteOnly === true,
     year: data.year?.trim() || undefined,
     status: data.status?.trim() || undefined,
     impact: data.impact?.trim() || undefined,

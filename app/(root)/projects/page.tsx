@@ -4,19 +4,19 @@ import { getSortedProjectsData } from '../../lib/projects'
 import ProjectsClient from './ProjectsClient'
 
 export const metadata: Metadata = {
-  title: 'Projects - Innovative Software Solutions',
-  description: 'Explore my portfolio of innovative software projects including AI-powered applications, full-stack web solutions, and modern responsive designs. Built with React, Node.js, Python, and cutting-edge technologies.',
-  keywords: 'software projects, web development portfolio, React projects, Node.js applications, AI projects, full-stack development, innovative solutions',
+  title: 'Projects - AI Products, Built End to End',
+  description: 'AI products built end to end: RAG assistants grounded in real documents, a screenshot-to-palette app on a queue-based Google Cloud backend, computer-vision screening, and a Flutter community app with vision-driven UI tests.',
+  keywords: 'AI engineer portfolio, AI projects, RAG, LLM applications, Google Gemini, LangChain, ChromaDB, Google Cloud Run, Cloud Tasks, computer vision, Flutter, Next.js, full-stack AI',
   openGraph: {
     title: 'Projects - Nizar Kadri Portfolio',
-    description: 'Explore innovative software projects and applications built with modern technologies.',
-    images: ['/images/projects-og.jpg'],
+    description: 'AI products built end to end, from the model call to the cloud backend.',
+    images: ['/og-image.jpg'],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Projects - Nizar Kadri Portfolio',
-    description: 'Explore innovative software projects and applications built with modern technologies.',
-    images: ['/images/projects-og.jpg'],
+    description: 'AI products built end to end, from the model call to the cloud backend.',
+    images: ['/og-image.jpg'],
   },
 }
 

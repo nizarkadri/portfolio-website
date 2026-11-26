@@ -262,7 +262,7 @@ export default function Landing({ tower, projectCount, certificateCount }: Props
           <div ref={setScrim(0)} className="scrim scrim--lead scrim--on" data-win="0.0 0.08 1 0" aria-hidden="true" />
           <div ref={setPoint(0)} className="wp wp--open" data-wp="open">
             <div className="wp__copy" data-sc-cue="0 0.08 0">
-              <p className="lg-note hero__eyebrow"><i aria-hidden="true" />Software engineer, Toronto</p>
+              <p className="lg-note hero__eyebrow"><i aria-hidden="true" />Full-stack AI engineer, Toronto</p>
               <h1 ref={name} className="lg-display hero__name" aria-label="Nizar Kadri">
                 {NAME.map((word, w) => (
                   <React.Fragment key={word}>
@@ -284,7 +284,7 @@ export default function Landing({ tower, projectCount, certificateCount }: Props
                 ))}
               </p>
               <p className="lg-body lg-body--lg">
-                Chess player since childhood, engineer by trade, allergic to default settings. I read a system the way
+                Chess player since childhood, AI engineer by trade, allergic to default settings. I read a system the way
                 I read a board: every piece, every line, then one committed move.
               </p>
               <div className="wp__actions">

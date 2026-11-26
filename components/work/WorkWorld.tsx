@@ -527,7 +527,7 @@ export default function WorkWorld({ projects, fallback }: { projects: ProjectSum
               <>
                 <Link href={`/projects/${current.slug}`} className="lg-cta lg-cta--sm">Case study <Arrow /></Link>
                 {current.liveUrl && (
-                  <a href={current.liveUrl} target="_blank" rel="noreferrer noopener" className="pj-pill" aria-label={`Live preview of ${name} (opens in a new tab)`}>Live preview</a>
+                  <a href={current.liveUrl} target="_blank" rel="noreferrer noopener" className="pj-pill" aria-label={`Live preview of ${name}${current.liveInviteOnly ? ', invite only: ask for an invite on the contact page' : ''} (opens in a new tab)`}>{current.liveInviteOnly ? 'Live · invite' : 'Live preview'}</a>
                 )}
                 {current.repoUrl && (
                   <a href={current.repoUrl} target="_blank" rel="noreferrer noopener" className="pj-pill" aria-label={`Source code of ${name} (opens in a new tab)`}>Code</a>
@@ -567,7 +567,7 @@ export default function WorkWorld({ projects, fallback }: { projects: ProjectSum
                 <div className="pj-links lg-up" style={{ ['--d' as string]: 210 }}>
                   <Link href={`/projects/${seen.slug}`} className="lg-cta lg-cta--sm">Case study <Arrow /></Link>
                   {seen.liveUrl && (
-                    <a href={seen.liveUrl} target="_blank" rel="noreferrer noopener" className="pj-pill" aria-label={`Live preview of ${seenName} (opens in a new tab)`}>Live preview</a>
+                    <a href={seen.liveUrl} target="_blank" rel="noreferrer noopener" className="pj-pill" aria-label={`Live preview of ${seenName}${seen.liveInviteOnly ? ', invite only: ask for an invite on the contact page' : ''} (opens in a new tab)`}>{seen.liveInviteOnly ? 'Live · invite' : 'Live preview'}</a>
                   )}
                   {seen.repoUrl && (
                     <a href={seen.repoUrl} target="_blank" rel="noreferrer noopener" className="pj-pill" aria-label={`Source code of ${seenName} (opens in a new tab)`}>Code</a>
