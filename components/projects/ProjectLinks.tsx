@@ -3,6 +3,7 @@ import clsx from 'clsx';
 
 interface ProjectLinksProps {
   liveUrl?: string;
+  liveInviteOnly?: boolean;
   repoUrl?: string;
   compact?: boolean;
   className?: string;
@@ -40,12 +41,15 @@ function LinkButton({ href, label, primary = false, compact = false, icon }: { h
 }
 
 /** The two ways out of a project: the live thing, and the code. */
-export function ProjectLinks({ liveUrl, repoUrl, compact = false, className = '' }: ProjectLinksProps) {
+export function ProjectLinks({ liveUrl, liveInviteOnly = false, repoUrl, compact = false, className = '' }: ProjectLinksProps) {
   if (!liveUrl && !repoUrl) return null;
   return (
     <div className={clsx('cs-btns', className)}>
       {liveUrl ? <LinkButton href={liveUrl} label="Live preview" primary compact={compact} icon={<ArrowIcon />} /> : null}
       {repoUrl ? <LinkButton href={repoUrl} label="GitHub" primary={!liveUrl} compact={compact} icon={<GithubIcon />} /> : null}
+      {liveUrl && liveInviteOnly ? (
+        <p className="cs-invite">The live app is invite only. <Link href="/contact">Contact me</Link> to request an invite.</p>
+      ) : null}
     </div>
   );
 }

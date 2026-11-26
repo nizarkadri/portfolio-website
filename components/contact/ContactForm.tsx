@@ -253,7 +253,7 @@ export default function ContactForm({ onSent }: { onSent: () => void }) {
                 {(c) => <input {...register('company')} {...c} className="fx-input" type="text" autoComplete="organization" />}
               </Field>
               <Field id="ct-position" label="Role you are filling" error={errors.position?.message}>
-                {(c) => <input {...register('position')} {...c} className="fx-input" type="text" autoComplete="off" placeholder="Senior Full Stack Developer" />}
+                {(c) => <input {...register('position')} {...c} className="fx-input" type="text" autoComplete="off" placeholder="Senior AI Engineer" />}
               </Field>
             </div>
             {emailField('Work email')}

@@ -70,7 +70,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
           <h1 className="lg-display cs-title"><Chars text={project.title} /></h1>
           <p className="cs-lede lg-up" style={{ ['--d' as string]: 520 }}>{project.description}</p>
           <div className="cs-hero__row lg-up" style={{ ['--d' as string]: 640 }}>
-            <ProjectLinks liveUrl={project.liveUrl} repoUrl={project.repoUrl} />
+            <ProjectLinks liveUrl={project.liveUrl} liveInviteOnly={project.liveInviteOnly} repoUrl={project.repoUrl} />
             <ProjectTechnologyBadges technologies={project.technologies} />
           </div>
         </header>

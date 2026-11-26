@@ -30,8 +30,8 @@ function Links({ project, compact = false }: { project: ProjectSummary; compact?
         Case study {!compact && <Arrow />}
       </Link>
       {project.liveUrl && (
-        <a href={project.liveUrl} target="_blank" rel="noreferrer noopener" className="pj-pill" aria-label={`Live preview of ${shortTitle(project.title)} (opens in a new tab)`}>
-          Live preview
+        <a href={project.liveUrl} target="_blank" rel="noreferrer noopener" className="pj-pill" aria-label={`Live preview of ${shortTitle(project.title)}${project.liveInviteOnly ? ', invite only: ask for an invite on the contact page' : ''} (opens in a new tab)`}>
+          {project.liveInviteOnly ? 'Live · invite' : 'Live preview'}
         </a>
       )}
       {project.repoUrl && (

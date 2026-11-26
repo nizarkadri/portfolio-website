@@ -11,19 +11,19 @@ import '../../about-experience.css'
 import '../../about.css'
 
 export const metadata: Metadata = {
-  title: 'About Me - Full Stack Developer Journey',
-  description: 'Learn about my journey as a Full Stack Developer, my passion for technology, problem-solving approach, and the experiences that shaped my career in software engineering.',
-  keywords: 'about me, full stack developer, software engineer, developer journey, programming experience, technology passion, problem solving',
+  title: 'About Me - Full-Stack AI Engineer Journey',
+  description: 'How a chess player and designer became a Full-Stack AI Engineer: the story, the problem-solving approach, and the AI tools I work with every day.',
+  keywords: 'about Nizar Kadri, AI engineer, full-stack AI engineer, AI agents, agentic workflows, software engineer, Toronto, chess, problem solving',
   openGraph: {
-    title: 'About Nizar Kadri - Full Stack Developer',
-    description: 'Learn about my journey as a Full Stack Developer and passion for technology.',
-    images: ['/images/about-og.jpg'],
+    title: 'About Nizar Kadri - Full-Stack AI Engineer',
+    description: 'How a chess player and designer became a Full-Stack AI Engineer in Toronto.',
+    images: ['/og-image.jpg'],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'About Nizar Kadri - Full Stack Developer',
-    description: 'Learn about my journey as a Full Stack Developer and passion for technology.',
-    images: ['/images/about-og.jpg'],
+    title: 'About Nizar Kadri - Full-Stack AI Engineer',
+    description: 'How a chess player and designer became a Full-Stack AI Engineer in Toronto.',
+    images: ['/og-image.jpg'],
   },
 }
 
@@ -50,7 +50,7 @@ export default function AboutPage() {
             <Image src="/images/portraits/nizar-hero.webp" alt="Nizar Kadri in a dark navy jacket, looking to one side, against a pale blue studio wall"
               fill priority sizes="(max-width: 860px) 100vw, 44vw" />
           </div>
-          <figcaption className="lg-note ab2-hero__caption">Toronto · full stack and AI · chess since childhood</figcaption>
+          <figcaption className="lg-note ab2-hero__caption">Toronto · full-stack AI engineer · chess since childhood</figcaption>
           <div className="ab2-hero__king" data-depth="16"><PieceCanvas kind="king" tone="dark" turn={0.003} still={0.35} /></div>
         </figure>
       </Depth>

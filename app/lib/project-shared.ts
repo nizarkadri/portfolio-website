@@ -10,6 +10,8 @@ export interface ProjectFrontmatter {
   order?: number;
   repoUrl?: string;
   liveUrl?: string;
+  /** The live app needs an invite: the link says so and points to the contact page. */
+  liveInviteOnly?: boolean;
   year?: string;
   status?: string;
   impact?: string;
@@ -27,6 +29,8 @@ export interface ProjectSummary {
   order: number;
   repoUrl?: string;
   liveUrl?: string;
+  /** The live app needs an invite: the link says so and points to the contact page. */
+  liveInviteOnly?: boolean;
   year?: string;
   status?: string;
   impact?: string;

@@ -8,6 +8,8 @@ technologies: ['Google Cloud Run', 'Cloud Tasks', 'Firestore', 'Chromium', 'Type
 featured: true
 order: 3
 repoUrl: https://github.com/nizarkadri/palette-mvp
+liveUrl: https://palette-280409938318.northamerica-northeast2.run.app/
+liveInviteOnly: true
 year: '2024'
 status: Live
 impact: Hundreds of live-previewable palettes per screenshot

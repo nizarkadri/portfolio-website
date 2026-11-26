@@ -25,6 +25,8 @@
 .cs-chip--sm { font-size: 0.68rem; padding: 0.2rem 0.6rem; }
 
 .cs-btns { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.cs-invite { flex-basis: 100%; margin: 0.2rem 0 0; font-size: 0.85rem; color: var(--sc-ink-soft); }
+.cs-invite a { color: var(--sc-ink); text-decoration: underline; text-underline-offset: 0.2em; }
 .cs-btn { display: inline-flex; align-items: center; gap: 0.55rem; padding: 0.8rem 1.3rem; border-radius: 999px; border: 1px solid var(--sc-hairline-strong); background: rgba(255, 255, 255, 0.5);
   color: var(--sc-ink); font-size: 0.92rem; font-weight: 500; text-decoration: none; transition: background-color 220ms var(--sc-ease-out), color 220ms var(--sc-ease-out), border-color 220ms var(--sc-ease-out); }
 .cs-btn svg { width: 0.95rem; height: 0.95rem; flex: none; transition: transform 260ms var(--sc-ease-out); }

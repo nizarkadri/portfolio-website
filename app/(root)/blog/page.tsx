@@ -8,9 +8,9 @@ import '../../blog-contact.css';
 import '../../notes.css';
 
 export const metadata: Metadata = {
-  title: 'Blog: Engineering Notes',
-  description: 'Engineering notes on AI agents, distributed systems, RAG, and mobile testing.',
-  openGraph: { title: 'Blog: Engineering Notes', description: 'Engineering notes on AI agents, distributed systems, RAG, and mobile testing.', type: 'website' },
+  title: 'Blog: AI Engineering Notes',
+  description: 'Notes from building with AI: agent workflows, RAG in practice, MCP tooling, and AI-driven mobile testing.',
+  openGraph: { title: 'Blog: AI Engineering Notes', description: 'Notes from building with AI: agent workflows, RAG in practice, MCP tooling, and AI-driven mobile testing.', type: 'website' },
 };
 
 /**

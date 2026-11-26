@@ -1,50 +1,44 @@
 ---
 title: Portfolio Website
-description: A personal portfolio website showcasing my skills, selected projects, and professional experience.
-summary: A cinematic developer portfolio focused on storytelling, motion, and fast project discovery.
+description: A scroll-driven Next.js, React and TypeScript portfolio with live 3D scenes, shipped as a container to Google Cloud Run through a Cloud Build CI/CD pipeline that builds and deploys on every push to GitHub.
+summary: Next.js portfolio with Three.js scenes, deployed to Google Cloud Run by a push-triggered Cloud Build pipeline.
 imageUrl: /images/Projects/portfolio-website.webp
 slug: portfolio-website
-technologies: ['Next.js', 'TypeScript', 'Tailwind CSS']
+technologies: ['Next.js', 'React', 'TypeScript', 'Three.js', 'Docker', 'Google Cloud Run', 'Cloud Build', 'Artifact Registry', 'Google Analytics']
 featured: true
 order: 2
 repoUrl: https://github.com/nizarkadri/portfolio-website
 year: '2026'
 status: Live
-impact: Stronger personal brand and faster project discovery
+impact: Every push to GitHub ships to production with no manual steps
 highlights:
-  - Premium single-page storytelling with motion-led sections
-  - Markdown-powered project system with reusable UI primitives
-  - Responsive experience tuned for recruiters and clients
+  - Push-triggered Cloud Build CI/CD that builds a Docker image, stores it in Artifact Registry and deploys it to Cloud Run
+  - Scroll-driven Three.js scenes for the landing, work and experience pages
+  - Markdown-powered projects and blog, with Google Analytics and Core Web Vitals tracking
 ---
 
 ## About the Project
 
-This portfolio website serves as a showcase of my skills, projects, and professional experience. The site is designed to provide visitors with an overview of my capabilities and the work I've done.
+This site is where my projects, experience and writing live. I built it end to end: the front end, the server routes behind it, and the pipeline that puts it on Google Cloud.
 
 ## Key Features
 
-* **Responsive Design:** Optimal viewing experience on all devices, from mobile to desktop.
-* **Project Showcase:** Detailed descriptions and visuals of my technical projects.
-* **Skills Highlighting:** Interactive display of my technical skills and expertise.
-* **Contact Form:** Easy way for potential clients or employers to reach out.
-* **Modern UI:** Clean, minimalist design with smooth animations and transitions.
+* **3D, scroll-driven pages:** Three.js scenes with smooth scrolling (Lenis) that move with the reader instead of stopping them.
+* **Markdown content:** projects and blog posts are Markdown files with front matter, so adding one needs no code change.
+* **Contact form:** validated on both sides with Zod and React Hook Form, rate-limited, and delivered by email.
+* **Analytics:** Google Analytics page views plus Core Web Vitals reported as events.
+* **Responsive:** separate phone layouts, including swiping between projects.
 
 ## Technologies Used
 
-* Next.js
-* TypeScript
+* Next.js, React and TypeScript
+* Three.js and Lenis
 * Tailwind CSS
-* Framer Motion
-* Markdown
-* Vercel
+* Zod and React Hook Form
+* Docker
+* Google Cloud Run, Cloud Build and Artifact Registry
+* Google Analytics
 
-## Technical Implementation
+## Deployment and CI/CD
 
-The website is built with Next.js for server-side rendering and optimal performance. TypeScript is used for type safety and better developer experience. The UI is styled with Tailwind CSS for a customized and responsive design. Deployment is handled through Vercel for continuous integration and delivery.
-
-## Future Enhancements
-
-* Add a blog section for technical articles
-* Implement dark/light mode toggle
-* Add internationalization support
-* Improve accessibility features
+The site runs on Google Cloud Run. A Cloud Build trigger on the GitHub repository starts a build on every push: a multi-stage Dockerfile installs production dependencies, builds the Next.js app and copies only what the runtime needs into a small image. The image is stored in Artifact Registry and deployed to Cloud Run as a new revision, so a merged change reaches production with no manual steps.

@@ -25,11 +25,11 @@ function getBaseUrl() {
 export const siteMetadata: Metadata = {
   metadataBase: new URL(getBaseUrl()),
   title: {
-    default: 'Nizar Kadri - Full Stack Developer & Software Engineer',
+    default: 'Nizar Kadri - Full-Stack AI Engineer',
     template: '%s | Nizar Kadri Portfolio'
   },
-  description: 'Full Stack Developer specializing in React, Node.js, Python, and cloud technologies. Experienced in building scalable web applications, AI-powered solutions, and modern responsive designs.',
-  keywords: 'full stack developer, software engineer, React developer, Node.js, Python, cloud computing, web development, AI applications, portfolio',
+  description: 'Full-Stack AI Engineer in Toronto building AI products end to end: RAG assistants, agent workflows, MCP developer tools, and the Next.js, Python and Google Cloud systems that run them.',
+  keywords: 'AI engineer, full-stack AI engineer, LLM applications, RAG, AI agents, agent orchestration, context engineering, prompt engineering, MCP server, AI developer tools, Next.js, TypeScript, Python, Google Cloud Run, full stack developer, Toronto',
   authors: [{ name: 'Nizar Kadri' }],
   creator: 'Nizar Kadri',
   publisher: 'Nizar Kadri',
@@ -42,22 +42,22 @@ export const siteMetadata: Metadata = {
     type: 'website',
     locale: 'en_US',
     url: getBaseUrl(),
-    title: 'Nizar Kadri - Full Stack Developer & Software Engineer',
-    description: 'Full Stack Developer specializing in React, Node.js, Python, and cloud technologies. Building innovative web applications and AI-powered solutions.',
+    title: 'Nizar Kadri - Full-Stack AI Engineer',
+    description: 'I build AI products end to end: RAG assistants, agent workflows, MCP developer tools, and the cloud backends that run them.',
     siteName: 'Nizar Kadri Portfolio',
     images: [
       {
         url: '/og-image.jpg',
         width: 1200,
         height: 630,
-        alt: 'Nizar Kadri - Full Stack Developer & Software Engineer',
+        alt: 'Nizar Kadri - Full-Stack AI Engineer, Toronto',
       }
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Nizar Kadri - Full Stack Developer & Software Engineer',
-    description: 'Full Stack Developer specializing in React, Node.js, Python, and cloud technologies.',
+    title: 'Nizar Kadri - Full-Stack AI Engineer',
+    description: 'I build AI products end to end: RAG assistants, agent workflows, MCP developer tools, and the cloud backends that run them.',
     images: ['/og-image.jpg'],
   },
   robots: {

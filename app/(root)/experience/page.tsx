@@ -17,7 +17,7 @@ import '../../experience.css';
 export const metadata: Metadata = {
   title: 'Experience',
   description:
-    'Where Nizar Kadri has worked as a software engineer and cloud administrator in Toronto, what changed there, what he builds with, and his degrees and certificates.',
+    'Full-Stack AI Engineer Nizar Kadri: his work as a software engineer and cloud administrator in Toronto, the AI, full-stack and cloud stack he builds with, and his degrees and certificates.',
 };
 
 function getRoles(): Role[] {
